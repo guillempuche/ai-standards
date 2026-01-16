@@ -66,7 +66,7 @@ for repo_dir in "$DIST_DIR"/*/; do
       echo "  No changes"
     else
       git add -A
-      git commit --author="Guillem Puche <>" -m "Update from ai-standards
+      git commit -m "Update from ai-standards
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
       git push origin main
@@ -82,7 +82,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
     cd "$cache_dir"
     git init
     git add -A
-    git commit --author="Guillem Puche <>" -m "Initial commit
+    git commit -m "Initial commit
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
     git remote add origin "https://github.com/$AUTHOR/$repo_name.git"
