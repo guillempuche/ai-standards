@@ -43,6 +43,15 @@ for skill_dir in "$ROOT_DIR"/skills/*/; do
 node_modules/
 GITIGNORE
 
+  # Copy REQUIREMENTS.md from templates/ if exists
+  requirements_file="$ROOT_DIR/templates/skills/${skill_name}-REQUIREMENTS.md"
+  if [ -f "$requirements_file" ]; then
+    cp "$requirements_file" "$repo_dir/REQUIREMENTS.md"
+    has_requirements=true
+  else
+    has_requirements=false
+  fi
+
   # Extract description from SKILL.md frontmatter
   description=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^description:' | sed 's/^description: *//' | head -1)
   [ -z "$description" ] && description="AI skill for $skill_name"
@@ -65,6 +74,16 @@ GITIGNORE
 EOF
 
   # Generate README
+  if [ "$has_requirements" = true ]; then
+    requirements_section="
+## Requirements
+
+See [REQUIREMENTS.md](./REQUIREMENTS.md) for setup instructions.
+"
+  else
+    requirements_section=""
+  fi
+
   cat > "$repo_dir/README.md" << EOF
 # $repo_name
 
@@ -75,7 +94,7 @@ $description
 \`\`\`bash
 /plugin marketplace add $AUTHOR/$repo_name
 \`\`\`
-
+$requirements_section
 ## Part of AI Standards
 
 This skill is also available in the [ai-standards](https://github.com/$AUTHOR/ai-standards) bundle with other skills and agents.
