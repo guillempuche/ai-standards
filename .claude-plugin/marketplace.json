@@ -8,6 +8,26 @@
     {
       "name": "ai-standards",
       "source": "./"
+    },
+    {
+      "name": "ai-skill-powersync",
+      "source": "guillempuche/ai-skill-powersync"
+    },
+    {
+      "name": "ai-skill-effect-lookup",
+      "source": "guillempuche/ai-skill-effect-lookup"
+    },
+    {
+      "name": "ai-skill-unikraft",
+      "source": "guillempuche/ai-skill-unikraft"
+    },
+    {
+      "name": "ai-agent-readability-improver",
+      "source": "guillempuche/ai-agent-readability-improver"
+    },
+    {
+      "name": "ai-agent-a11y-accessibility-reviewer",
+      "source": "guillempuche/ai-agent-a11y-accessibility-reviewer"
     }
   ]
 }
