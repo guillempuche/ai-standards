@@ -7,12 +7,15 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 ## Quick Install
 
 ```bash
-# Claude Code - install from marketplace
+# Full bundle (all skills + agents)
 /plugin marketplace add guillempuche/ai-standards
 
-# Or clone and load locally
-git clone https://github.com/guillempuche/ai-standards.git
-claude --plugin-dir ./ai-standards
+# Or install individually
+/plugin marketplace add guillempuche/ai-skill-powersync
+/plugin marketplace add guillempuche/ai-skill-effect-lookup
+/plugin marketplace add guillempuche/ai-skill-unikraft
+/plugin marketplace add guillempuche/ai-agent-readability-improver
+/plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
 
 ## Skills Catalog
@@ -132,15 +135,37 @@ See [AGENTS.md](./AGENTS.md) for full guidelines.
 ```
 ai-standards/
 ├── .claude-plugin/
-│   └── plugin.json      # Claude Code plugin manifest
+│   └── plugin.json          # Claude Code plugin manifest
 ├── skills/
 │   └── <skill-name>/
-│       ├── SKILL.md     # Main skill file
-│       └── references/  # Detailed documentation
+│       ├── SKILL.md         # Main skill file
+│       └── references/      # Detailed documentation
 ├── agents/
-│   └── <agent-name>.md  # Agent with YAML frontmatter
-├── AGENTS.md            # AI agent instructions
+│   └── <agent-name>.md      # Agent with YAML frontmatter
+├── templates/
+│   ├── skills/              # Extra files for skill repos (REQUIREMENTS.md)
+│   └── agents/              # Extra files for agent repos
+├── scripts/
+│   ├── generate-individual-repos.sh  # Generate dist-repos/
+│   └── create-github-repos.sh        # Push to GitHub
+├── AGENTS.md                # AI agent instructions
 └── README.md
+```
+
+## Individual Repos
+
+Skills and agents are also published as individual repos for standalone installation:
+
+```bash
+/plugin marketplace add guillempuche/ai-skill-powersync
+/plugin marketplace add guillempuche/ai-agent-readability-improver
+```
+
+Generate individual repos with:
+
+```bash
+./scripts/generate-individual-repos.sh  # Creates dist-repos/
+./scripts/create-github-repos.sh        # Pushes to GitHub
 ```
 
 ## Standards

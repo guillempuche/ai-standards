@@ -42,21 +42,27 @@ Run before publishing:
 claude plugin validate .
 ```
 
-## Distribution Methods
+## Installation
 
-### GitHub (recommended)
-
-Users install with:
+### Full Bundle (all skills + agents)
 
 ```bash
 /plugin marketplace add guillempuche/ai-standards
 ```
 
-### Local plugin loading
+### Individual Skills
 
 ```bash
-git clone https://github.com/guillempuche/ai-standards.git
-claude --plugin-dir ./ai-standards
+/plugin marketplace add guillempuche/ai-skill-powersync
+/plugin marketplace add guillempuche/ai-skill-effect-lookup
+/plugin marketplace add guillempuche/ai-skill-unikraft
+```
+
+### Individual Agents
+
+```bash
+/plugin marketplace add guillempuche/ai-agent-readability-improver
+/plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
 
 ## Skills Structure

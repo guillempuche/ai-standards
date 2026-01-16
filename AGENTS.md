@@ -10,14 +10,22 @@ This repository contains AI skills following the [Agent Skills specification](ht
 
 ```
 ai-standards/
-├── README.md           # Human documentation
-├── AGENTS.md           # You are here - agent instructions
+├── README.md               # Human documentation
+├── AGENTS.md               # You are here - agent instructions
 ├── skills/
 │   └── <skill-name>/
-│       ├── SKILL.md    # Required: skill definition
-│       ├── references/ # Optional: detailed docs
-│       ├── scripts/    # Optional: helper scripts
-│       └── assets/     # Optional: schemas, examples
+│       ├── SKILL.md        # Required: skill definition
+│       ├── references/     # Optional: detailed docs
+│       └── assets/         # Optional: schemas, examples
+├── agents/
+│   └── <agent-name>.md     # Agent with YAML frontmatter
+├── templates/
+│   ├── skills/             # Extra files for individual skill repos
+│   └── agents/             # Extra files for individual agent repos
+├── scripts/
+│   ├── generate-individual-repos.sh  # Generate dist-repos/
+│   └── create-github-repos.sh        # Push to GitHub
+└── dist-repos/             # Generated individual repos (gitignored)
 ```
 
 ## Adding a New Skill
@@ -83,11 +91,32 @@ Before committing, verify:
 
 ## Testing Changes
 
-To test a skill locally with Claude Code:
+To test locally with Claude Code:
 
 ```bash
-# From repo root
-claude --skill ./skills/your-skill-name
+# Load entire plugin
+claude --plugin-dir .
+
+# Or install from marketplace
+/plugin marketplace add guillempuche/ai-skill-powersync
+```
+
+## Templates
+
+Add extra files for individual repos in `templates/`:
+
+- `templates/skills/<skill-name>-REQUIREMENTS.md` → copied to skill repo as `REQUIREMENTS.md`
+- `templates/agents/<agent-name>-REQUIREMENTS.md` → copied to agent repo as `REQUIREMENTS.md`
+
+These files are NOT part of the main plugin, only the individual repos.
+
+## Generating Individual Repos
+
+Skills and agents are published both in the bundle and as individual repos:
+
+```bash
+./scripts/generate-individual-repos.sh  # Creates dist-repos/
+./scripts/create-github-repos.sh        # Pushes to GitHub
 ```
 
 ## PR Guidelines
