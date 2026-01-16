@@ -83,8 +83,6 @@ ai-standards/
 │   └── <skill-name>/
 │       ├── SKILL.md     # Main skill file
 │       └── references/  # Detailed documentation
-├── template/
-│   └── SKILL.md         # Starter template
 ├── AGENTS.md            # AI agent instructions
 └── README.md
 ```
@@ -97,7 +95,7 @@ ai-standards/
 ## Contributing
 
 1. Fork this repository
-2. Create your skill following `template/SKILL.md`
+2. Create your skill under `skills/` following the structure above
 3. Validate: folder name matches `name` field, description under 1024 chars
 4. Submit PR with title: `[skill-name] Brief description`
 

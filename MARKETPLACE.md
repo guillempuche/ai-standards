@@ -6,12 +6,12 @@ Quick reference for maintaining this plugin for the Claude Code marketplace.
 
 | Topic | Link |
 |-------|------|
-| **Create plugins** | https://code.claude.com/docs/en/plugins |
-| **Plugin marketplaces** | https://code.claude.com/docs/en/plugin-marketplaces |
-| **Plugins reference** | https://code.claude.com/docs/en/plugins-reference |
-| **Agent Skills** | https://code.claude.com/docs/en/skills |
-| **Plugin settings** | https://code.claude.com/docs/en/settings#plugin-configuration |
-| **Discover plugins** | https://code.claude.com/docs/en/discover-plugins |
+| **Create plugins** | <https://code.claude.com/docs/en/plugins> |
+| **Plugin marketplaces** | <https://code.claude.com/docs/en/plugin-marketplaces> |
+| **Plugins reference** | <https://code.claude.com/docs/en/plugins-reference> |
+| **Agent Skills** | <https://code.claude.com/docs/en/skills> |
+| **Plugin settings** | <https://code.claude.com/docs/en/settings#plugin-configuration> |
+| **Discover plugins** | <https://code.claude.com/docs/en/discover-plugins> |
 
 ## Plugin Manifest Schema
 
@@ -26,6 +26,7 @@ Required fields in `.claude-plugin/plugin.json`:
 ```
 
 Optional fields:
+
 - `author` - `{ "name": "...", "email": "...", "url": "..." }`
 - `homepage` - plugin docs URL
 - `repository` - source code URL
@@ -36,6 +37,7 @@ Optional fields:
 ## Validation
 
 Run before publishing:
+
 ```bash
 claude plugin validate .
 ```
@@ -43,12 +45,15 @@ claude plugin validate .
 ## Distribution Methods
 
 ### GitHub (recommended)
+
 Users install with:
+
 ```bash
 /plugin marketplace add guillempuche/ai-standards
 ```
 
 ### Direct skill loading
+
 ```bash
 claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/powersync/SKILL.md
 ```

@@ -17,9 +17,7 @@ ai-standards/
 │       ├── SKILL.md    # Required: skill definition
 │       ├── references/ # Optional: detailed docs
 │       ├── scripts/    # Optional: helper scripts
-│       └── assets/     # Optional: templates, schemas
-└── template/
-    └── SKILL.md        # Template for new skills
+│       └── assets/     # Optional: schemas, examples
 ```
 
 ## Adding a New Skill
