@@ -56,7 +56,7 @@ git push
 This creates/updates `dist-repos/` with:
 
 - Copies skill/agent files
-- Generates plugin.json
+- Generates plugin.json and marketplace.json
 - Generates README.md
 - Copies REQUIREMENTS.md from templates/ (if exists)
 - Copies LICENSE and .gitignore
