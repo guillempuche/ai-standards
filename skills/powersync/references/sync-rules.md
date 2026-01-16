@@ -2,258 +2,70 @@
 
 Sync Rules control which data gets synchronized to which devices (dynamic partial replication).
 
-## Overview
+## Official Documentation
 
-Sync Rules are defined in YAML with SQL-like queries on your PowerSync instance. They determine:
+For comprehensive Sync Rules documentation, see the official PowerSync docs:
 
-- Which tables/columns to sync
-- Which rows each user can access
-- How data is transformed before syncing
+- **Main documentation**: <https://docs.powersync.com/usage/sync-rules.md>
+- **Key sections**:
+  - [Overview](https://docs.powersync.com/usage/sync-rules.md) - Introduction and concepts
+  - [Global Data](https://docs.powersync.com/usage/sync-rules/example-global-data.md) - Data synced to all users
+  - [Organize Data Into Buckets](https://docs.powersync.com/usage/sync-rules/organize-data-into-buckets.md) - Bucket structure
+  - [Parameter Queries](https://docs.powersync.com/usage/sync-rules/parameter-queries.md) - User-specific filtering
+  - [Data Queries](https://docs.powersync.com/usage/sync-rules/data-queries.md) - Selecting and transforming data
+  - [Types](https://docs.powersync.com/usage/sync-rules/types.md) - Type mapping (Postgres → SQLite)
+  - [Operators and Functions](https://docs.powersync.com/usage/sync-rules/operators-and-functions.md) - Supported SQL operations
+  - [Many-to-Many Relationships](https://docs.powersync.com/usage/sync-rules/guide-many-to-many-and-join-tables.md) - Join table patterns
+  - [Advanced Topics](https://docs.powersync.com/usage/sync-rules/advanced-topics.md) - Client parameters, edge cases
 
-## Basic Structure
+## Sync Streams (Future)
 
-```yaml
-bucket_definitions:
-  # Global data - synced to all users
-  global:
-    data:
-      - SELECT * FROM categories
-      - SELECT id, name FROM products WHERE active = true
+PowerSync is developing **Sync Streams** as the next evolution of Sync Rules:
 
-  # User-specific data
-  user_data:
-    parameters: SELECT token_parameters.user_id AS user_id
-    data:
-      - SELECT * FROM todos WHERE owner_id = bucket.user_id
-      - SELECT * FROM lists WHERE owner_id = bucket.user_id
-```
+- On-demand syncing with client-specified parameters
+- Configurable TTL for temporary caching behavior
+- Simplified syntax and React hooks integration
 
-## Bucket Types
+See [Sync Streams docs](https://docs.powersync.com/usage/sync-streams.md) for early alpha details.
 
-### Global Buckets
+## Source Code Reference
 
-Data synced to all authenticated users:
+The sync rules implementation is open source at [powersync-ja/powersync-service](https://github.com/powersync-ja/powersync-service).
 
-```yaml
-bucket_definitions:
-  global:
-    data:
-      - SELECT * FROM categories
-      - SELECT * FROM settings
-```
+### Repository structure
 
-### Parameter Buckets
+| Path                                                                                                                              | Description                            |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| [`packages/sync-rules/`](https://github.com/powersync-ja/powersync-service/tree/main/packages/sync-rules)                         | Core sync rules library                |
+| [`packages/sync-rules/src/`](https://github.com/powersync-ja/powersync-service/tree/main/packages/sync-rules/src)                 | Implementation source code             |
+| [`packages/sync-rules/test/`](https://github.com/powersync-ja/powersync-service/tree/main/packages/sync-rules/test)               | Test cases and examples                |
+| [`packages/sync-rules/src/streams/`](https://github.com/powersync-ja/powersync-service/tree/main/packages/sync-rules/src/streams) | Sync Streams implementation (alpha)    |
+| [`docs/`](https://github.com/powersync-ja/powersync-service/tree/main/docs)                                                       | Technical implementation documentation |
 
-Data filtered per user using JWT token parameters:
+### Key source files
 
-```yaml
-bucket_definitions:
-  user_todos:
-    # Extract user_id from JWT
-    parameters: SELECT token_parameters.user_id AS user_id
-    data:
-      # Only sync todos belonging to this user
-      - SELECT * FROM todos WHERE owner_id = bucket.user_id
-```
+| File                                                                                                                                           | Purpose                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [`SqlSyncRules.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/SqlSyncRules.ts)                       | Main sync rules parser and orchestrator                  |
+| [`SqlDataQuery.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/SqlDataQuery.ts)                       | Data query compilation: `(row) => Array<{bucket, data}>` |
+| [`SqlParameterQuery.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/SqlParameterQuery.ts)             | Parameter queries with table lookups                     |
+| [`StaticSqlParameterQuery.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/StaticSqlParameterQuery.ts) | Token-only parameter queries (no table joins)            |
+| [`sql_filters.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/sql_filters.ts)                         | WHERE clause and `ParameterMatchClause` compilation      |
+| [`sql_functions.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/sql_functions.ts)                     | SQL function implementations (30+ functions)             |
+| [`types.ts`](https://github.com/powersync-ja/powersync-service/blob/main/packages/sync-rules/src/types.ts)                                     | Core type definitions                                    |
 
-### Shared Data Buckets
+### Technical docs in repo
 
-Data shared between multiple users:
+| Doc                                                                                                                     | Topic                                |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [`parameters-lookups.md`](https://github.com/powersync-ja/powersync-service/blob/main/docs/parameters-lookups.md)       | Parameter query index implementation |
+| [`bucket-properties.md`](https://github.com/powersync-ja/powersync-service/blob/main/docs/bucket-properties.md)         | Bucket storage design                |
+| [`compacting-operations.md`](https://github.com/powersync-ja/powersync-service/blob/main/docs/compacting-operations.md) | Data compaction strategy             |
+| [`sync-protocol.md`](https://github.com/powersync-ja/powersync-service/blob/main/docs/sync-protocol.md)                 | Wire protocol details                |
 
-```yaml
-bucket_definitions:
-  team_data[]:
-    # Get all team IDs for this user
-    parameters: SELECT team_id FROM team_members WHERE user_id = token_parameters.user_id
-    data:
-      # Sync all data for user's teams
-      - SELECT * FROM projects WHERE team_id = bucket.team_id
-      - SELECT * FROM tasks WHERE team_id = bucket.team_id
-```
+### Design constraints
 
-## Data Queries
+1. **Data queries**: Given a data row, compute which buckets it belongs to
+1. **Parameter queries**: Given an authenticated user, return their bucket list
 
-### Column Selection
-
-```yaml
-data:
-  # All columns
-  - SELECT * FROM todos
-
-  # Specific columns
-  - SELECT id, name, created_at FROM todos
-
-  # Renamed columns
-  - SELECT id, full_name AS name FROM users
-
-  # Computed columns
-  - SELECT id, first_name || ' ' || last_name AS full_name FROM users
-```
-
-### Filtering
-
-```yaml
-data:
-  # Static filter
-  - SELECT * FROM products WHERE active = true
-
-  # User-based filter
-  - SELECT * FROM todos WHERE owner_id = bucket.user_id
-
-  # Multiple conditions
-  - SELECT * FROM todos WHERE owner_id = bucket.user_id AND deleted = false
-```
-
-### Supported Operators
-
-| Operator                 | Example                           |
-| ------------------------ | --------------------------------- |
-| `=`, `!=`                | `status = 'active'`               |
-| `<`, `>`, `<=`, `>=`     | `price > 100`                     |
-| `AND`, `OR`              | `a = 1 AND b = 2`                 |
-| `IN`                     | `status IN ('active', 'pending')` |
-| `IS NULL`, `IS NOT NULL` | `deleted_at IS NULL`              |
-| `LIKE`                   | `name LIKE '%search%'`            |
-
-### Supported Functions
-
-| Function                   | Description                  |
-| -------------------------- | ---------------------------- |
-| `ifnull(a, b)`             | Returns b if a is null       |
-| `coalesce(a, b, ...)`      | Returns first non-null value |
-| `upper(s)`, `lower(s)`     | Case conversion              |
-| `substr(s, start, len)`    | Substring                    |
-| `length(s)`                | String length                |
-| `json_extract(json, path)` | Extract from JSON            |
-
-## Parameter Queries
-
-Extract parameters from JWT for filtering:
-
-```yaml
-bucket_definitions:
-  user_data:
-    parameters: SELECT token_parameters.user_id AS user_id
-    data:
-      - SELECT * FROM todos WHERE owner_id = bucket.user_id
-```
-
-### JWT Token Parameters
-
-Available in `token_parameters`:
-
-- `user_id` - From JWT `sub` claim
-- Any custom claims in your JWT
-
-### Client Parameters
-
-Pass parameters from client:
-
-```typescript
-// Client-side
-db.connect(connector, {
-  params: { region: 'us-east' }
-});
-```
-
-```yaml
-# Sync Rules
-bucket_definitions:
-  regional_data:
-    parameters: SELECT client_parameters.region AS region
-    data:
-      - SELECT * FROM stores WHERE region = bucket.region
-```
-
-## Many-to-Many Relationships
-
-```yaml
-bucket_definitions:
-  # User's projects through membership
-  user_projects[]:
-    parameters: |
-      SELECT project_id
-      FROM project_members
-      WHERE user_id = token_parameters.user_id
-    data:
-      - SELECT * FROM projects WHERE id = bucket.project_id
-      - SELECT * FROM tasks WHERE project_id = bucket.project_id
-```
-
-## Type Mapping
-
-| Source (Postgres) | Sync Rules Type    | SQLite Type |
-| ----------------- | ------------------ | ----------- |
-| TEXT, VARCHAR     | text               | TEXT        |
-| INTEGER, BIGINT   | integer            | INTEGER     |
-| REAL, DOUBLE      | real               | REAL        |
-| BOOLEAN           | integer (0/1)      | INTEGER     |
-| TIMESTAMP         | text (ISO 8601)    | TEXT        |
-| JSON, JSONB       | text (JSON string) | TEXT        |
-| UUID              | text               | TEXT        |
-
-## Client-Side Schema Matching
-
-Ensure client schema matches Sync Rules output:
-
-```yaml
-# Sync Rules
-data:
-  - SELECT id, name, price FROM products
-```
-
-```typescript
-// Client schema
-const products = new Table({
-  name: column.text,
-  price: column.real
-  // id is auto-created
-});
-```
-
-## Best Practices
-
-1. **Start simple** - Begin with global data, add user filtering later
-1. **Minimize synced data** - Only sync what clients need
-1. **Use indexes** - Add indexes on filtered columns in source DB
-1. **Test with diagnostics** - Use PowerSync Dashboard to validate
-1. **Version carefully** - Schema changes may require client updates
-
-## Common Patterns
-
-### Soft Deletes
-
-```yaml
-data:
-  - SELECT * FROM todos WHERE deleted_at IS NULL
-```
-
-### Tenant Isolation
-
-```yaml
-bucket_definitions:
-  tenant_data:
-    parameters: SELECT token_parameters.tenant_id AS tenant_id
-    data:
-      - SELECT * FROM orders WHERE tenant_id = bucket.tenant_id
-```
-
-### Recent Data Only
-
-```yaml
-data:
-  - SELECT * FROM logs WHERE created_at > datetime('now', '-30 days')
-```
-
-## Debugging
-
-Use the PowerSync Dashboard or CLI to:
-
-- Validate Sync Rules syntax
-- Preview which data syncs to specific users
-- Check for errors in data queries
-
-```bash
-# CLI validation
-powersync sync-rules validate
-```
+SQL queries are not executed against a database—they define transformations applied during replication preprocessing. The queries build "indexes" for efficient lookup during sync.
