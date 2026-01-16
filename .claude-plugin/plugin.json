@@ -1,0 +1,24 @@
+{
+  "name": "ai-standards",
+  "version": "1.0.0",
+  "description": "AI coding skills for TypeScript, React, local-first apps, and modern web development",
+  "author": {
+    "name": "guillempuche",
+    "url": "https://github.com/guillempuche"
+  },
+  "homepage": "https://github.com/guillempuche/ai-standards",
+  "repository": "https://github.com/guillempuche/ai-standards",
+  "license": "MIT",
+  "keywords": [
+    "ai-skills",
+    "claude-code",
+    "typescript",
+    "react",
+    "local-first",
+    "offline-first",
+    "powersync",
+    "sqlite",
+    "sync"
+  ],
+  "skills": "./skills/"
+}
