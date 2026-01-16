@@ -63,6 +63,21 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+### tamagui
+
+**Universal React + React Native UI with optimizing compiler**
+
+|            |                                                  |
+| ---------- | ------------------------------------------------ |
+| Platforms  | Web, React Native, iOS, Android                  |
+| Frameworks | Next.js, Expo, Vite, Metro                       |
+| Features   | Design tokens, themes, 50+ accessible components |
+| Compiler   | Build-time style extraction for performance      |
+
+[View skill](./skills/tamagui/) | [Tamagui docs](https://tamagui.dev/)
+
+______________________________________________________________________
+
 ## Agents Catalog
 
 ### readability-improver
