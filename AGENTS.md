@@ -19,9 +19,6 @@ ai-standards/
 │       └── assets/         # Optional: schemas, examples
 ├── agents/
 │   └── <agent-name>.md     # Agent with YAML frontmatter
-├── templates/
-│   ├── skills/             # Extra files for individual skill repos
-│   └── agents/             # Extra files for individual agent repos
 ├── scripts/
 │   ├── generate-individual-repos.sh  # Generate dist-repos/
 │   └── create-github-repos.sh        # Push to GitHub
@@ -44,7 +41,7 @@ metadata:
 ---
 ```
 
-3. Add markdown instructions below the frontmatter
+1. Add markdown instructions below the frontmatter
 1. Optionally add `references/`, `scripts/`, or `assets/` directories
 
 ## SKILL.md Requirements
