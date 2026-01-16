@@ -64,7 +64,7 @@ This creates/updates `dist-repos/` with:
 ### 4. Push to Individual Repos
 
 ```bash
-./scripts/create-github-repos.sh
+./scripts/deploy-individual-repos.sh
 ```
 
 This:
@@ -113,7 +113,7 @@ git push
 
 # 2. Deploy to individual repos
 ./scripts/generate-individual-repos.sh
-./scripts/create-github-repos.sh
+./scripts/deploy-individual-repos.sh
 ```
 
 ## Version Bumping

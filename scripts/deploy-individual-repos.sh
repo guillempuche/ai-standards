@@ -1,5 +1,6 @@
 #!/bin/bash
-# Create/update GitHub repos for all individual plugins in dist-repos/
+# Deploy individual plugin repos to GitHub
+# Handles: additions, updates, removals (full sync)
 # Run after generate-individual-repos.sh
 
 set -e
