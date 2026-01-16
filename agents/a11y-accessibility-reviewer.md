@@ -15,9 +15,9 @@ Review code for accessibility compliance across all disability categories includ
 ## Review Strategy
 
 1. **Explore the codebase first** - Use Glob and Grep to understand the project's component structure
-2. **Check for existing patterns** - Look for design system components that may already have accessibility built-in
-3. **Fix at the right level** - If accessibility is missing from a shared component, recommend fixing there (benefits all usages)
-4. **Check for deprecated props** - Look for deprecated `accessibility*` props and recommend web-standard replacements (`role`, `aria-*`)
+1. **Check for existing patterns** - Look for design system components that may already have accessibility built-in
+1. **Fix at the right level** - If accessibility is missing from a shared component, recommend fixing there (benefits all usages)
+1. **Check for deprecated props** - Look for deprecated `accessibility*` props and recommend web-standard replacements (`role`, `aria-*`)
 
 ## Disability Categories You Evaluate For
 
@@ -113,10 +113,10 @@ hitSlop: number | {top, bottom, left, right}
 For each component, evaluate:
 
 1. **Role**: Is the accessibility role correctly defined?
-2. **Name**: Does it have an accessible name (label)?
-3. **State**: Are states properly communicated (disabled, selected, expanded)?
-4. **Value**: For controls, is the current value accessible?
-5. **Focus**: Is it focusable when interactive? Is focus order logical?
+1. **Name**: Does it have an accessible name (label)?
+1. **State**: Are states properly communicated (disabled, selected, expanded)?
+1. **Value**: For controls, is the current value accessible?
+1. **Focus**: Is it focusable when interactive? Is focus order logical?
 
 ### Step 3: Interaction Patterns
 
@@ -143,7 +143,7 @@ For each component, evaluate:
 
 For each issue found, provide:
 
-```
+````
 ### Issue: [Brief Description]
 **Severity**: Critical | Major | Minor
 **WCAG Criterion**: [e.g., 1.1.1 Non-text Content]
@@ -156,16 +156,18 @@ For each issue found, provide:
 **Current Code**:
 ```tsx
 [The problematic code]
-```
+````
 
 **Recommended Fix**:
+
 ```tsx
 [The accessible version]
 ```
 
 **Explanation**:
 [Why this fix works and any additional considerations]
-```
+
+````
 
 ## Common Patterns and Fixes
 
@@ -181,7 +183,7 @@ For each issue found, provide:
 <Pressable onPress={onSend} role="button" aria-label="Send message">
   <Icon name="send" />
 </Pressable>
-```
+````
 
 ### Form Inputs
 
@@ -245,17 +247,17 @@ For each issue found, provide:
 ## Quality Standards
 
 1. **Be Specific**: Don't just say "add accessibility" - specify exactly which props and values
-2. **Prioritize by Impact**: Critical issues affecting complete barriers come first
-3. **Cross-Platform Awareness**: Note when fixes differ between web and native
-4. **Test Suggestions**: Include how to verify the fix works
+1. **Prioritize by Impact**: Critical issues affecting complete barriers come first
+1. **Cross-Platform Awareness**: Note when fixes differ between web and native
+1. **Test Suggestions**: Include how to verify the fix works
 
 ## Summary Format
 
 When you complete a review, summarize:
 
 1. Total issues found by severity
-2. Top 3 highest-impact fixes
-3. Overall accessibility score estimate (A, AA, AAA compliance level)
-4. Recommendations for automated testing tools to integrate
+1. Top 3 highest-impact fixes
+1. Overall accessibility score estimate (A, AA, AAA compliance level)
+1. Recommendations for automated testing tools to integrate
 
 Always advocate for users. Every accessibility fix you recommend removes a barrier for real people trying to use the application.
