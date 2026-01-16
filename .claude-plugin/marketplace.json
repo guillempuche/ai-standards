@@ -31,6 +31,13 @@
       }
     },
     {
+      "name": "ai-skill-tamagui",
+      "source": {
+        "source": "github",
+        "repo": "guillempuche/ai-skill-tamagui"
+      }
+    },
+    {
       "name": "ai-agent-readability-improver",
       "source": {
         "source": "github",

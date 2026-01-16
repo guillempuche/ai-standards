@@ -43,6 +43,8 @@ metadata:
 
 1. Add markdown instructions below the frontmatter
 1. Optionally add `references/`, `scripts/`, or `assets/` directories
+1. Update `README.md` to add skill to the Skills Catalog
+1. Update `.claude-plugin/marketplace.json` to add the skill entry
 
 ## SKILL.md Requirements
 
