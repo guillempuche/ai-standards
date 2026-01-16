@@ -1,0 +1,13 @@
+{
+  "name": "ai-standards",
+  "owner": {
+    "name": "guillempuche",
+    "url": "https://github.com/guillempuche"
+  },
+  "plugins": [
+    {
+      "name": "ai-standards",
+      "source": "./"
+    }
+  ]
+}

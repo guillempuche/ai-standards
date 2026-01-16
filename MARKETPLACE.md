@@ -47,22 +47,39 @@ claude plugin validate .
 ### Full Bundle (all skills + agents)
 
 ```bash
+# Add marketplace
 /plugin marketplace add guillempuche/ai-standards
+
+# Install plugin
+/plugin install ai-standards@guillempuche-ai-standards
 ```
 
 ### Individual Skills
 
 ```bash
+# PowerSync
 /plugin marketplace add guillempuche/ai-skill-powersync
+/plugin install ai-skill-powersync@guillempuche-ai-skill-powersync
+
+# Effect Lookup
 /plugin marketplace add guillempuche/ai-skill-effect-lookup
+/plugin install ai-skill-effect-lookup@guillempuche-ai-skill-effect-lookup
+
+# Unikraft
 /plugin marketplace add guillempuche/ai-skill-unikraft
+/plugin install ai-skill-unikraft@guillempuche-ai-skill-unikraft
 ```
 
 ### Individual Agents
 
 ```bash
+# Readability Improver
 /plugin marketplace add guillempuche/ai-agent-readability-improver
+/plugin install ai-agent-readability-improver@guillempuche-ai-agent-readability-improver
+
+# Accessibility Reviewer
 /plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
+/plugin install ai-agent-a11y-accessibility-reviewer@guillempuche-ai-agent-a11y-accessibility-reviewer
 ```
 
 ## Skills Structure

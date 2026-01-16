@@ -73,6 +73,23 @@ GITIGNORE
 }
 EOF
 
+  # Generate marketplace.json (makes repo installable via /plugin marketplace add)
+  cat > "$repo_dir/.claude-plugin/marketplace.json" << EOF
+{
+  "name": "$repo_name",
+  "owner": {
+    "name": "$AUTHOR",
+    "url": "$AUTHOR_URL"
+  },
+  "plugins": [
+    {
+      "name": "$repo_name",
+      "source": "./"
+    }
+  ]
+}
+EOF
+
   # Generate README
   if [ "$has_requirements" = true ]; then
     requirements_section="
@@ -92,7 +109,11 @@ $description
 ## Install
 
 \`\`\`bash
+# Add marketplace
 /plugin marketplace add $AUTHOR/$repo_name
+
+# Install plugin
+/plugin install $repo_name@$AUTHOR-$repo_name
 \`\`\`
 $requirements_section
 ## Part of AI Standards
@@ -158,6 +179,23 @@ GITIGNORE
 }
 EOF
 
+  # Generate marketplace.json (makes repo installable via /plugin marketplace add)
+  cat > "$repo_dir/.claude-plugin/marketplace.json" << EOF
+{
+  "name": "$repo_name",
+  "owner": {
+    "name": "$AUTHOR",
+    "url": "$AUTHOR_URL"
+  },
+  "plugins": [
+    {
+      "name": "$repo_name",
+      "source": "./"
+    }
+  ]
+}
+EOF
+
   # Generate README
   cat > "$repo_dir/README.md" << EOF
 # $repo_name
@@ -167,7 +205,11 @@ $description
 ## Install
 
 \`\`\`bash
+# Add marketplace
 /plugin marketplace add $AUTHOR/$repo_name
+
+# Install plugin
+/plugin install $repo_name@$AUTHOR-$repo_name
 \`\`\`
 
 ## Part of AI Standards
