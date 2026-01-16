@@ -1,3 +1,4 @@
 # opensrc - source code for packages
 opensrc/
 dist-repos/
+.repo-cache/
