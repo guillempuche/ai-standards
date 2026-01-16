@@ -52,10 +52,11 @@ Users install with:
 /plugin marketplace add guillempuche/ai-standards
 ```
 
-### Direct skill loading
+### Local plugin loading
 
 ```bash
-claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/powersync/SKILL.md
+git clone https://github.com/guillempuche/ai-standards.git
+claude --plugin-dir ./ai-standards
 ```
 
 ## Skills Structure

@@ -7,21 +7,12 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 ## Quick Install
 
 ```bash
-# Install full plugin (all skills + agents)
+# Claude Code - install from marketplace
 /plugin marketplace add guillempuche/ai-standards
-```
 
-### Individual Skills
-
-```bash
-# PowerSync - local-first apps
-claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/powersync/SKILL.md
-
-# Effect - TypeScript library lookup
-claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/effect-lookup/SKILL.md
-
-# Unikraft - unikernel deployment
-claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/unikraft/SKILL.md
+# Or clone and load locally
+git clone https://github.com/guillempuche/ai-standards.git
+claude --plugin-dir ./ai-standards
 ```
 
 ## Skills Catalog
@@ -85,17 +76,17 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### a11y-reviewer
+### a11y-accessibility-reviewer
 
 **Review code for accessibility compliance (WCAG, VoiceOver, TalkBack)**
 
 |           |                                                       |
 | --------- | ----------------------------------------------------- |
-| Platforms | React, React Native, Tamagui, Web                     |
+| Platforms | React, React Native, Web                              |
 | Standards | WCAG 2.1/2.2, WAI-ARIA, iOS/Android a11y APIs         |
 | Coverage  | Visual, motor, auditory, cognitive, vestibular issues |
 
-[View agent](./agents/a11y-reviewer.md)
+[View agent](./agents/a11y-accessibility-reviewer.md)
 
 ______________________________________________________________________
 
