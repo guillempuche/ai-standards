@@ -5,6 +5,7 @@ Sync Rules control which data gets synchronized to which devices (dynamic partia
 ## Overview
 
 Sync Rules are defined in YAML with SQL-like queries on your PowerSync instance. They determine:
+
 - Which tables/columns to sync
 - Which rows each user can access
 - How data is transformed before syncing
@@ -105,25 +106,25 @@ data:
 
 ### Supported Operators
 
-| Operator | Example |
-|----------|---------|
-| `=`, `!=` | `status = 'active'` |
-| `<`, `>`, `<=`, `>=` | `price > 100` |
-| `AND`, `OR` | `a = 1 AND b = 2` |
-| `IN` | `status IN ('active', 'pending')` |
-| `IS NULL`, `IS NOT NULL` | `deleted_at IS NULL` |
-| `LIKE` | `name LIKE '%search%'` |
+| Operator                 | Example                           |
+| ------------------------ | --------------------------------- |
+| `=`, `!=`                | `status = 'active'`               |
+| `<`, `>`, `<=`, `>=`     | `price > 100`                     |
+| `AND`, `OR`              | `a = 1 AND b = 2`                 |
+| `IN`                     | `status IN ('active', 'pending')` |
+| `IS NULL`, `IS NOT NULL` | `deleted_at IS NULL`              |
+| `LIKE`                   | `name LIKE '%search%'`            |
 
 ### Supported Functions
 
-| Function | Description |
-|----------|-------------|
-| `ifnull(a, b)` | Returns b if a is null |
-| `coalesce(a, b, ...)` | Returns first non-null value |
-| `upper(s)`, `lower(s)` | Case conversion |
-| `substr(s, start, len)` | Substring |
-| `length(s)` | String length |
-| `json_extract(json, path)` | Extract from JSON |
+| Function                   | Description                  |
+| -------------------------- | ---------------------------- |
+| `ifnull(a, b)`             | Returns b if a is null       |
+| `coalesce(a, b, ...)`      | Returns first non-null value |
+| `upper(s)`, `lower(s)`     | Case conversion              |
+| `substr(s, start, len)`    | Substring                    |
+| `length(s)`                | String length                |
+| `json_extract(json, path)` | Extract from JSON            |
 
 ## Parameter Queries
 
@@ -140,6 +141,7 @@ bucket_definitions:
 ### JWT Token Parameters
 
 Available in `token_parameters`:
+
 - `user_id` - From JWT `sub` claim
 - Any custom claims in your JWT
 
@@ -180,15 +182,15 @@ bucket_definitions:
 
 ## Type Mapping
 
-| Source (Postgres) | Sync Rules Type | SQLite Type |
-|-------------------|-----------------|-------------|
-| TEXT, VARCHAR | text | TEXT |
-| INTEGER, BIGINT | integer | INTEGER |
-| REAL, DOUBLE | real | REAL |
-| BOOLEAN | integer (0/1) | INTEGER |
-| TIMESTAMP | text (ISO 8601) | TEXT |
-| JSON, JSONB | text (JSON string) | TEXT |
-| UUID | text | TEXT |
+| Source (Postgres) | Sync Rules Type    | SQLite Type |
+| ----------------- | ------------------ | ----------- |
+| TEXT, VARCHAR     | text               | TEXT        |
+| INTEGER, BIGINT   | integer            | INTEGER     |
+| REAL, DOUBLE      | real               | REAL        |
+| BOOLEAN           | integer (0/1)      | INTEGER     |
+| TIMESTAMP         | text (ISO 8601)    | TEXT        |
+| JSON, JSONB       | text (JSON string) | TEXT        |
+| UUID              | text               | TEXT        |
 
 ## Client-Side Schema Matching
 
@@ -212,10 +214,10 @@ const products = new Table({
 ## Best Practices
 
 1. **Start simple** - Begin with global data, add user filtering later
-2. **Minimize synced data** - Only sync what clients need
-3. **Use indexes** - Add indexes on filtered columns in source DB
-4. **Test with diagnostics** - Use PowerSync Dashboard to validate
-5. **Version carefully** - Schema changes may require client updates
+1. **Minimize synced data** - Only sync what clients need
+1. **Use indexes** - Add indexes on filtered columns in source DB
+1. **Test with diagnostics** - Use PowerSync Dashboard to validate
+1. **Version carefully** - Schema changes may require client updates
 
 ## Common Patterns
 
@@ -246,6 +248,7 @@ data:
 ## Debugging
 
 Use the PowerSync Dashboard or CLI to:
+
 - Validate Sync Rules syntax
 - Preview which data syncs to specific users
 - Check for errors in data queries

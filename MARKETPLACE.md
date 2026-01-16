@@ -4,14 +4,14 @@ Quick reference for maintaining this plugin for the Claude Code marketplace.
 
 ## Official Documentation
 
-| Topic | Link |
-|-------|------|
-| **Create plugins** | <https://code.claude.com/docs/en/plugins> |
-| **Plugin marketplaces** | <https://code.claude.com/docs/en/plugin-marketplaces> |
-| **Plugins reference** | <https://code.claude.com/docs/en/plugins-reference> |
-| **Agent Skills** | <https://code.claude.com/docs/en/skills> |
-| **Plugin settings** | <https://code.claude.com/docs/en/settings#plugin-configuration> |
-| **Discover plugins** | <https://code.claude.com/docs/en/discover-plugins> |
+| Topic                   | Link                                                            |
+| ----------------------- | --------------------------------------------------------------- |
+| **Create plugins**      | <https://code.claude.com/docs/en/plugins>                       |
+| **Plugin marketplaces** | <https://code.claude.com/docs/en/plugin-marketplaces>           |
+| **Plugins reference**   | <https://code.claude.com/docs/en/plugins-reference>             |
+| **Agent Skills**        | <https://code.claude.com/docs/en/skills>                        |
+| **Plugin settings**     | <https://code.claude.com/docs/en/settings#plugin-configuration> |
+| **Discover plugins**    | <https://code.claude.com/docs/en/discover-plugins>              |
 
 ## Plugin Manifest Schema
 

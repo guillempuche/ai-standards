@@ -1,7 +1,7 @@
 {
   "name": "ai-standards",
-  "version": "1.0.0",
-  "description": "AI coding skills for TypeScript, React, local-first apps, and modern web development",
+  "version": "1.1.0",
+  "description": "AI coding skills for TypeScript, React, Effect, local-first apps, and unikernel deployment",
   "author": {
     "name": "guillempuche",
     "url": "https://github.com/guillempuche"
@@ -14,11 +14,12 @@
     "claude-code",
     "typescript",
     "react",
+    "effect",
     "local-first",
     "offline-first",
     "powersync",
-    "sqlite",
-    "sync"
+    "unikraft",
+    "unikernel"
   ],
   "skills": "./skills/"
 }

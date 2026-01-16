@@ -20,39 +20,62 @@ claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/
 
 **Build local-first, offline-capable apps with real-time sync**
 
-| | |
-|-|-|
-| Platforms | Web, React Native, Node.js, Capacitor, Electron |
-| Frameworks | React, Vue, Angular |
-| ORMs | Kysely, Drizzle, TanStack DB |
-| Backends | Postgres, MongoDB, MySQL, SQL Server, Supabase |
-
-```bash
-# Install just this skill
-claude --skill ./skills/powersync
-```
+|            |                                                 |
+| ---------- | ----------------------------------------------- |
+| Platforms  | Web, React Native, Node.js, Capacitor, Electron |
+| Frameworks | React, Vue, Angular                             |
+| ORMs       | Kysely, Drizzle, TanStack DB                    |
+| Backends   | Postgres, MongoDB, MySQL, SQL Server, Supabase  |
 
 [View skill](./skills/powersync/) | [PowerSync docs](https://docs.powersync.com/)
 
----
+______________________________________________________________________
+
+### effect-lookup
+
+**Quick lookup for Effect TypeScript library APIs and patterns**
+
+|          |                                                       |
+| -------- | ----------------------------------------------------- |
+| Coverage | Core Effect, Platform, CLI, RPC, SQL, AI packages     |
+| Features | Module reference, common patterns, source code lookup |
+| Includes | MCP server integration for indexed docs               |
+
+[View skill](./skills/effect-lookup/) | [Effect docs](https://effect.website/)
+
+______________________________________________________________________
+
+### unikraft
+
+**Kraft CLI for building and deploying Unikraft unikernels**
+
+|          |                                                    |
+| -------- | -------------------------------------------------- |
+| Commands | Build, deploy, manage instances, volumes, services |
+| Platform | Unikraft Cloud (KraftCloud)                        |
+| Features | Rolling updates, scale-to-zero, compose support    |
+
+[View skill](./skills/unikraft/) | [Unikraft docs](https://unikraft.org/docs/cli)
+
+______________________________________________________________________
 
 ## Compatibility
 
 Skills follow the [Agent Skills specification](https://agentskills.io/specification) and work with:
 
-| Agent | Support |
-|-------|---------|
-| Claude Code | Native plugin support |
-| Cursor | Via SKILL.md loading |
-| VS Code Copilot | Via context files |
-| Windsurf | Via context files |
-| Gemini CLI | Via skill loading |
-| Custom agents | Via agentskills.io spec |
+| Agent           | Support                 |
+| --------------- | ----------------------- |
+| Claude Code     | Native plugin support   |
+| Cursor          | Via SKILL.md loading    |
+| VS Code Copilot | Via context files       |
+| Windsurf        | Via context files       |
+| Gemini CLI      | Via skill loading       |
+| Custom agents   | Via agentskills.io spec |
 
 ## Creating Skills
 
 1. Create folder under `skills/` with lowercase hyphenated name
-2. Add `SKILL.md` with YAML frontmatter:
+1. Add `SKILL.md` with YAML frontmatter:
 
 ```yaml
 ---
@@ -95,9 +118,9 @@ ai-standards/
 ## Contributing
 
 1. Fork this repository
-2. Create your skill under `skills/` following the structure above
-3. Validate: folder name matches `name` field, description under 1024 chars
-4. Submit PR with title: `[skill-name] Brief description`
+1. Create your skill under `skills/` following the structure above
+1. Validate: folder name matches `name` field, description under 1024 chars
+1. Submit PR with title: `[skill-name] Brief description`
 
 ## License
 

@@ -23,7 +23,7 @@ ai-standards/
 ## Adding a New Skill
 
 1. Create a folder under `skills/` with a lowercase, hyphenated name
-2. Create `SKILL.md` with required YAML frontmatter:
+1. Create `SKILL.md` with required YAML frontmatter:
 
 ```yaml
 ---
@@ -37,25 +37,25 @@ metadata:
 ```
 
 3. Add markdown instructions below the frontmatter
-4. Optionally add `references/`, `scripts/`, or `assets/` directories
+1. Optionally add `references/`, `scripts/`, or `assets/` directories
 
 ## SKILL.md Requirements
 
 ### Frontmatter (Required Fields)
 
-| Field | Constraints |
-|-------|-------------|
-| `name` | Max 64 chars, lowercase letters/numbers/hyphens, must match folder name |
-| `description` | Max 1024 chars, describes what skill does AND when to use it |
+| Field         | Constraints                                                             |
+| ------------- | ----------------------------------------------------------------------- |
+| `name`        | Max 64 chars, lowercase letters/numbers/hyphens, must match folder name |
+| `description` | Max 1024 chars, describes what skill does AND when to use it            |
 
 ### Frontmatter (Optional Fields)
 
-| Field | Purpose |
-|-------|---------|
-| `license` | License name or reference |
+| Field           | Purpose                                  |
+| --------------- | ---------------------------------------- |
+| `license`       | License name or reference                |
 | `compatibility` | Environment requirements (max 500 chars) |
-| `metadata` | Key-value pairs for additional info |
-| `allowed-tools` | Space-delimited pre-approved tools |
+| `metadata`      | Key-value pairs for additional info      |
+| `allowed-tools` | Space-delimited pre-approved tools       |
 
 ### Body Content Guidelines
 
@@ -68,6 +68,7 @@ metadata:
 ## Validation
 
 Before committing, verify:
+
 - Folder name matches `name` field in frontmatter
 - Name uses only lowercase, numbers, hyphens (no consecutive hyphens, no leading/trailing hyphens)
 - Description is non-empty and under 1024 characters
@@ -83,6 +84,7 @@ Before committing, verify:
 ## Testing Changes
 
 To test a skill locally with Claude Code:
+
 ```bash
 # From repo root
 claude --skill ./skills/your-skill-name

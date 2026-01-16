@@ -17,6 +17,12 @@
             nodejs_24
             nodePackages.pnpm
             git
+
+            # Markdown formatter with YAML frontmatter support
+            (mdformat.withPlugins (p: [
+              p.mdformat-frontmatter
+              p.mdformat-gfm
+            ]))
           ];
 
           # Helper function to fetch source code
@@ -33,6 +39,10 @@
             echo "  npx opensrc owner/repo            # e.g., npx opensrc powersync-ja/powersync-js"
             echo ""
             echo "Sources are stored in ./opensrc/"
+            echo ""
+            echo "Format markdown files:"
+            echo "  mdformat skills/          # Format all skills"
+            echo "  mdformat *.md             # Format root markdown"
             echo ""
           '';
         };
