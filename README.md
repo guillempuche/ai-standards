@@ -7,11 +7,21 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 ## Quick Install
 
 ```bash
-# Claude Code
+# Install full plugin (all skills + agents)
 /plugin marketplace add guillempuche/ai-standards
+```
 
-# Or use individual skills directly
+### Individual Skills
+
+```bash
+# PowerSync - local-first apps
 claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/powersync/SKILL.md
+
+# Effect - TypeScript library lookup
+claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/effect-lookup/SKILL.md
+
+# Unikraft - unikernel deployment
+claude --skill https://raw.githubusercontent.com/guillempuche/ai-standards/main/skills/unikraft/SKILL.md
 ```
 
 ## Skills Catalog
@@ -56,6 +66,36 @@ ______________________________________________________________________
 | Features | Rolling updates, scale-to-zero, compose support    |
 
 [View skill](./skills/unikraft/) | [Unikraft docs](https://unikraft.org/docs/cli)
+
+______________________________________________________________________
+
+## Agents Catalog
+
+### readability-improver
+
+**Improve code readability through renaming, comments, and whitespace**
+
+|         |                                                             |
+| ------- | ----------------------------------------------------------- |
+| Focus   | Selective improvements - skips self-documenting code        |
+| Actions | Rename variables, add whitespace, document "why" not "what" |
+| Safety  | Never changes functionality, updates all imports            |
+
+[View agent](./agents/readability-improver.md)
+
+______________________________________________________________________
+
+### a11y-reviewer
+
+**Review code for accessibility compliance (WCAG, VoiceOver, TalkBack)**
+
+|           |                                                       |
+| --------- | ----------------------------------------------------- |
+| Platforms | React, React Native, Tamagui, Web                     |
+| Standards | WCAG 2.1/2.2, WAI-ARIA, iOS/Android a11y APIs         |
+| Coverage  | Visual, motor, auditory, cognitive, vestibular issues |
+
+[View agent](./agents/a11y-reviewer.md)
 
 ______________________________________________________________________
 
@@ -106,6 +146,8 @@ ai-standards/
 │   └── <skill-name>/
 │       ├── SKILL.md     # Main skill file
 │       └── references/  # Detailed documentation
+├── agents/
+│   └── <agent-name>.md  # Agent with YAML frontmatter
 ├── AGENTS.md            # AI agent instructions
 └── README.md
 ```

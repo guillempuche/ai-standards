@@ -49,6 +49,6 @@ git commit -m "Commit message"
 ## Workflow Summary
 
 1. Run `nix develop -c mdformat skills/ .claude/ *.md`
-2. Show `git status` and `git diff`
-3. Wait for user approval
-4. Stage and commit changes
+1. Show `git status` and `git diff`
+1. Wait for user approval
+1. Stage and commit changes

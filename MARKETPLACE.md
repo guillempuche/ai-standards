@@ -80,6 +80,51 @@ metadata:
 ---
 ```
 
+## Agents Structure
+
+```
+agents/
+└── agent-name.md         # Markdown with YAML frontmatter
+```
+
+### Agent Frontmatter
+
+```yaml
+---
+name: agent-name
+description: When Claude should invoke this agent (required for delegation)
+tools: Read, Grep, Glob, Edit, Write
+model: sonnet | opus | haiku
+color: yellow                    # Optional: terminal color
+permissionMode: default          # Optional: permission handling
+---
+```
+
+### Supported Agent Fields
+
+| Field             | Required | Purpose                                                          |
+| ----------------- | -------- | ---------------------------------------------------------------- |
+| `name`            | Yes      | Unique identifier (lowercase, hyphens)                           |
+| `description`     | Yes      | When Claude should delegate to this agent                        |
+| `tools`           | No       | Tools available (inherits all if omitted)                        |
+| `disallowedTools` | No       | Tools to deny/remove                                             |
+| `model`           | No       | Model: `sonnet`, `opus`, `haiku`, or `inherit`                   |
+| `color`           | No       | Terminal color for agent output                                  |
+| `permissionMode`  | No       | `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, `plan` |
+| `skills`          | No       | Skills to load into agent context                                |
+| `hooks`           | No       | Lifecycle hooks (PreToolUse, PostToolUse, Stop)                  |
+
+### plugin.json with Agents
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "skills": "./skills/",
+  "agents": "./agents/"
+}
+```
+
 ## Checklist for Updates
 
 - [ ] Update version in `.claude-plugin/plugin.json`

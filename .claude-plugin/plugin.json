@@ -1,7 +1,7 @@
 {
   "name": "ai-standards",
-  "version": "1.1.0",
-  "description": "AI coding skills for TypeScript, React, Effect, local-first apps, and unikernel deployment",
+  "version": "1.2.0",
+  "description": "AI coding skills and agents for TypeScript, React, Effect, local-first apps, unikernels, and accessibility",
   "author": {
     "name": "guillempuche",
     "url": "https://github.com/guillempuche"
@@ -11,6 +11,7 @@
   "license": "MIT",
   "keywords": [
     "ai-skills",
+    "ai-agents",
     "claude-code",
     "typescript",
     "react",
@@ -19,7 +20,9 @@
     "offline-first",
     "powersync",
     "unikraft",
-    "unikernel"
+    "accessibility",
+    "a11y"
   ],
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "agents": "./agents/"
 }
