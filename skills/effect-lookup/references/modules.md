@@ -2,6 +2,8 @@
 
 Complete categorization of Effect modules for quick lookup.
 
+All paths below are relative to `opensrc/repos/github.com/effect-ts/effect/` (or `https://github.com/effect-ts/effect/tree/main/` on GitHub).
+
 ## Core Effect System
 
 | Module       | Path                                  | Description                                      |

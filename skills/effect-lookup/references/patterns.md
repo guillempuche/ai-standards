@@ -16,7 +16,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/Effect.ts` (search for `export const gen`)
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts` (search for `export const gen`)
 
 ## Service Definition (Context.Tag)
 
@@ -41,7 +41,7 @@ const UserRepoLive = Layer.succeed(UserRepo, {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/Context.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Context.ts`
 
 ## Layer Composition
 
@@ -67,7 +67,7 @@ const ServicesLayer = Layer.mergeAll(
 const runnable = program.pipe(Effect.provide(AppLayer))
 ```
 
-**Source**: `docs/effect/packages/effect/src/Layer.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Layer.ts`
 
 ## Error Handling
 
@@ -103,7 +103,7 @@ program.pipe(
 )
 ```
 
-**Source**: `docs/effect/packages/effect/src/Data.ts`, `docs/effect/packages/effect/src/Effect.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Data.ts`, `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts`
 
 ## Schema Validation
 
@@ -138,7 +138,7 @@ const encode = Schema.encodeSync(User)
 const json = encode(user)
 ```
 
-**Source**: `docs/effect/packages/effect/src/Schema.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Schema.ts`
 
 ## HTTP APIs (Platform)
 
@@ -186,7 +186,7 @@ const UsersApiLive = HttpApiBuilder.group(MyApi, "users", (handlers) =>
 )
 ```
 
-**Source**: `docs/effect/packages/platform/src/HttpApi.ts`, `docs/effect/packages/platform/src/HttpApiBuilder.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/platform/src/HttpApi.ts`, `opensrc/repos/github.com/effect-ts/effect/packages/platform/src/HttpApiBuilder.ts`
 
 ## Concurrency Patterns
 
@@ -224,7 +224,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/FiberSet.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/FiberSet.ts`
 
 ## Resource Management
 
@@ -247,7 +247,7 @@ const program = Effect.scoped(
 )
 ```
 
-**Source**: `docs/effect/packages/effect/src/Scope.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Scope.ts`
 
 ## Retry & Scheduling
 
@@ -274,7 +274,7 @@ const selective = myEffect.pipe(
 )
 ```
 
-**Source**: `docs/effect/packages/effect/src/Schedule.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Schedule.ts`
 
 ## Configuration
 
@@ -296,7 +296,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/Config.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Config.ts`
 
 ## Testing Patterns
 
@@ -329,7 +329,7 @@ const test = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/TestClock.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/TestClock.ts`
 
 ## STM (Software Transactional Memory)
 
@@ -374,7 +374,7 @@ const program = STM.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/STM.ts`, `docs/effect/packages/effect/src/TRef.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/STM.ts`, `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/TRef.ts`
 
 ## Request Batching & Caching
 
@@ -427,7 +427,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/Request.ts`, `docs/effect/packages/effect/src/RequestResolver.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Request.ts`, `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/RequestResolver.ts`
 
 ## RateLimiter
 
@@ -451,7 +451,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/RateLimiter.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/RateLimiter.ts`
 
 ## Reloadable Services
 
@@ -478,7 +478,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/Reloadable.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Reloadable.ts`
 
 ## FiberHandle/FiberMap/FiberSet
 
@@ -520,7 +520,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/FiberHandle.ts`, `docs/effect/packages/effect/src/FiberMap.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/FiberHandle.ts`, `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/FiberMap.ts`
 
 ## Redacted (Sensitive Data)
 
@@ -544,7 +544,7 @@ const program = Effect.gen(function* () {
 })
 ```
 
-**Source**: `docs/effect/packages/effect/src/Redacted.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Redacted.ts`
 
 ## Match (Pattern Matching)
 
@@ -571,26 +571,26 @@ const result = Match.value(myShape).pipe(
 )
 ```
 
-**Source**: `docs/effect/packages/effect/src/Match.ts`
+**Source**: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Match.ts`
 
 ## Lookup Commands
 
 ```bash
 # Find a specific pattern in Effect source
-grep -rn "yield\* Effect" docs/effect/packages/effect/src/
+grep -rn "yield\* Effect" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/
 
 # Find all exports from a module
-grep "^export" docs/effect/packages/effect/src/Effect.ts | head -50
+grep "^export" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts | head -50
 
 # Find type definition
-grep -A 5 "interface Effect<" docs/effect/packages/effect/src/Effect.ts
+grep -A 5 "interface Effect<" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts
 
 # Find usage in tests
-grep -rn "Effect.gen" docs/effect/packages/effect/test/
+grep -rn "Effect.gen" opensrc/repos/github.com/effect-ts/effect/packages/effect/test/
 
 # Find STM patterns
-grep -rn "STM.gen" docs/effect/packages/effect/test/
+grep -rn "STM.gen" opensrc/repos/github.com/effect-ts/effect/packages/effect/test/
 
 # Find Request batching examples
-grep -rn "RequestResolver.makeBatched" docs/effect/packages/effect/
+grep -rn "RequestResolver.makeBatched" opensrc/repos/github.com/effect-ts/effect/packages/effect/
 ```
