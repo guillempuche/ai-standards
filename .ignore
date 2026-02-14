@@ -1,0 +1,3 @@
+# Override .gitignore for AI search tools (ripgrep).
+# opensrc/ is gitignored (too large for git) but should be searchable by AI.
+!opensrc/
