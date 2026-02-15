@@ -52,15 +52,17 @@ GITIGNORE
     has_requirements=false
   fi
 
-  # Extract description from SKILL.md frontmatter
+  # Extract description and version from SKILL.md frontmatter
   description=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^description:' | sed 's/^description: *//' | head -1)
   [ -z "$description" ] && description="AI skill for $skill_name"
+  version=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^version:' | sed 's/^version: *//' | head -1)
+  [ -z "$version" ] && version="1.0.0"
 
   # Generate plugin.json
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
   "name": "$repo_name",
-  "version": "1.0.0",
+  "version": "$version",
   "description": "$description",
   "author": {
     "name": "$AUTHOR",
@@ -155,9 +157,11 @@ for agent_file in "$ROOT_DIR"/agents/*.md; do
 node_modules/
 GITIGNORE
 
-  # Extract description from agent frontmatter
+  # Extract description and version from agent frontmatter
   description=$(sed -n '/^---$/,/^---$/p' "$agent_file" | grep '^description:' | sed 's/^description: *//' | head -1)
   [ -z "$description" ] && description="AI agent for $agent_name"
+  version=$(sed -n '/^---$/,/^---$/p' "$agent_file" | grep '^version:' | sed 's/^version: *//' | head -1)
+  [ -z "$version" ] && version="1.0.0"
 
   # Truncate description if too long (for JSON)
   description=$(echo "$description" | cut -c1-200)
@@ -166,7 +170,7 @@ GITIGNORE
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
   "name": "$repo_name",
-  "version": "1.0.0",
+  "version": "$version",
   "description": "$description",
   "author": {
     "name": "$AUTHOR",

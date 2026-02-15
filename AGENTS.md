@@ -21,8 +21,9 @@ ai-standards/
 │   └── <agent-name>.md     # Agent with YAML frontmatter
 ├── scripts/
 │   ├── generate-individual-repos.sh  # Generate dist-repos/
-│   └── create-github-repos.sh        # Push to GitHub
-└── dist-repos/             # Generated individual repos (gitignored)
+│   └── deploy-individual-repos.sh    # Push to GitHub
+├── .claude/skills/          # Local skills (/commit, /release)
+└── dist-repos/              # Generated individual repos (gitignored)
 ```
 
 ## Adding a New Skill
@@ -33,11 +34,11 @@ ai-standards/
 ```yaml
 ---
 name: skill-name
+version: 1.0.0
 description: Description of what this skill does and when to use it (max 1024 chars)
 license: Apache-2.0
 metadata:
   author: author-name
-  version: "1.0"
 ---
 ```
 
@@ -114,9 +115,13 @@ These files are NOT part of the main plugin, only the individual repos.
 Skills and agents are published both in the bundle and as individual repos:
 
 ```bash
-./scripts/generate-individual-repos.sh  # Creates dist-repos/
-./scripts/create-github-repos.sh        # Pushes to GitHub
+./scripts/generate-individual-repos.sh    # Creates dist-repos/
+./scripts/deploy-individual-repos.sh      # Pushes to GitHub
 ```
+
+Or use the `/release` skill which automates the full workflow: detect changes, bump versions, regenerate, and deploy.
+
+Use `/commit` to format and commit changes to the main repo.
 
 ## PR Guidelines
 

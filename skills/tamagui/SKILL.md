@@ -1,10 +1,10 @@
 ---
 name: tamagui
+version: 1.0.0
 description: Universal React + React Native UI library with optimizing compiler. Use when building cross-platform apps with shared styling, design tokens, themes, and accessible components.
 license: MIT
 metadata:
   author: ai-standards
-  version: '1.0'
   language: typescript
   frameworks: react, react-native, next, expo, vite
 compatibility: React 18+, React Native 0.71+
