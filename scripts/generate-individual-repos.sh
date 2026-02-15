@@ -162,7 +162,7 @@ GITIGNORE
   # Truncate description if too long (for JSON)
   description=$(echo "$description" | cut -c1-200)
 
-  # Generate plugin.json
+  # Generate plugin.json (agents field requires explicit file paths, not directory)
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
   "name": "$repo_name",
@@ -175,7 +175,7 @@ GITIGNORE
   "homepage": "https://github.com/$AUTHOR/$repo_name",
   "repository": "https://github.com/$AUTHOR/$repo_name",
   "license": "MIT",
-  "agents": "./agents/"
+  "agents": ["./agents/${agent_name}.md"]
 }
 EOF
 
