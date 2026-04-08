@@ -30,8 +30,8 @@ for skill_dir in "$ROOT_DIR"/skills/*/; do
   mkdir -p "$repo_dir/.claude-plugin"
   mkdir -p "$repo_dir/skills"
 
-  # Copy skill
-  cp -r "$skill_dir" "$repo_dir/skills/"
+  # Copy skill (strip trailing slash so cp preserves the skill_name subfolder on BSD/macOS)
+  cp -r "${skill_dir%/}" "$repo_dir/skills/"
 
   # Copy LICENSE
   cp "$ROOT_DIR/LICENSE" "$repo_dir/"
@@ -58,10 +58,10 @@ GITIGNORE
   version=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^version:' | sed 's/^version: *//' | head -1)
   [ -z "$version" ] && version="1.0.0"
 
-  # Generate plugin.json
+  # Generate plugin.json (plugin name is topic-only; repo slug stays ai-skill-*)
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
-  "name": "$repo_name",
+  "name": "$skill_name",
   "version": "$version",
   "description": "$description",
   "author": {
@@ -75,7 +75,7 @@ GITIGNORE
 }
 EOF
 
-  # Generate marketplace.json (makes repo installable via /plugin marketplace add)
+  # Generate marketplace.json (outer name = marketplace ID mirrors repo slug; inner plugin name = topic)
   cat > "$repo_dir/.claude-plugin/marketplace.json" << EOF
 {
   "name": "$repo_name",
@@ -85,7 +85,7 @@ EOF
   },
   "plugins": [
     {
-      "name": "$repo_name",
+      "name": "$skill_name",
       "source": "./"
     }
   ]
@@ -111,11 +111,11 @@ $description
 ## Install
 
 \`\`\`bash
-# Add marketplace
+# Add marketplace (uses repo slug)
 /plugin marketplace add $AUTHOR/$repo_name
 
-# Install plugin
-/plugin install $repo_name@$AUTHOR-$repo_name
+# Install plugin (plugin name is topic-only)
+/plugin install $skill_name@$AUTHOR-$repo_name
 \`\`\`
 $requirements_section
 ## Part of AI Standards
@@ -166,10 +166,10 @@ GITIGNORE
   # Truncate description if too long (for JSON)
   description=$(echo "$description" | cut -c1-200)
 
-  # Generate plugin.json (agents field requires explicit file paths, not directory)
+  # Generate plugin.json (plugin name is topic-only; agents field requires explicit file paths)
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
-  "name": "$repo_name",
+  "name": "$agent_name",
   "version": "$version",
   "description": "$description",
   "author": {
@@ -183,7 +183,7 @@ GITIGNORE
 }
 EOF
 
-  # Generate marketplace.json (makes repo installable via /plugin marketplace add)
+  # Generate marketplace.json (outer name = marketplace ID mirrors repo slug; inner plugin name = topic)
   cat > "$repo_dir/.claude-plugin/marketplace.json" << EOF
 {
   "name": "$repo_name",
@@ -193,7 +193,7 @@ EOF
   },
   "plugins": [
     {
-      "name": "$repo_name",
+      "name": "$agent_name",
       "source": "./"
     }
   ]
@@ -209,11 +209,11 @@ $description
 ## Install
 
 \`\`\`bash
-# Add marketplace
+# Add marketplace (uses repo slug)
 /plugin marketplace add $AUTHOR/$repo_name
 
-# Install plugin
-/plugin install $repo_name@$AUTHOR-$repo_name
+# Install plugin (plugin name is topic-only)
+/plugin install $agent_name@$AUTHOR-$repo_name
 \`\`\`
 
 ## Part of AI Standards

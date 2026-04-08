@@ -145,6 +145,25 @@ Instructions here...
 
 See [AGENTS.md](./AGENTS.md) for full guidelines.
 
+## Naming Conventions
+
+Plugin names and GitHub repo slugs follow different conventions on purpose:
+
+| Surface                                                       | Convention                  | Example                                                                         |
+| ------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------- |
+| Marketplace plugin name (`/plugin` UI, `/plugin install`)     | topic only, kebab-case      | `powersync`, `test-bdd`, `readability-improver`                                 |
+| GitHub repo slug (`/plugin marketplace add guillempuche/…`)   | `ai-{skill\|agent}-{topic}` | `guillempuche/ai-skill-powersync`, `guillempuche/ai-agent-readability-improver` |
+| Mixed-type escape hatch (repo bundles both skills and agents) | `ai-plugin-{topic}`         | `guillempuche/ai-plugin-toolbox`                                                |
+
+**Why the split:** repo slugs are user-typed during `marketplace add` (one-time, and `guillempuche/powersync` would look like a library fork). Plugin names live inside the `/plugin` UI where users already know they're browsing Claude plugins, so a prefix would be noise.
+
+**Install command shape** combines both:
+
+```bash
+/plugin install powersync@guillempuche-ai-skill-powersync
+#              └─plugin──┘ └────── marketplace ──────┘
+```
+
 ## Repository Structure
 
 ```
@@ -172,8 +191,13 @@ ai-standards/
 Skills and agents are also published as individual repos for standalone installation:
 
 ```bash
+# Add the marketplace (one-time, uses repo slug)
 /plugin marketplace add guillempuche/ai-skill-powersync
 /plugin marketplace add guillempuche/ai-agent-readability-improver
+
+# Install the plugin (plugin name is topic-only, marketplace suffix is repo-slug form)
+/plugin install powersync@guillempuche-ai-skill-powersync
+/plugin install readability-improver@guillempuche-ai-agent-readability-improver
 ```
 
 Generate individual repos with:

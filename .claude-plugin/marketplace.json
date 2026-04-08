@@ -10,42 +10,42 @@
       "source": "./"
     },
     {
-      "name": "ai-skill-powersync",
+      "name": "powersync",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-powersync"
       }
     },
     {
-      "name": "ai-skill-effect-lookup",
+      "name": "effect-lookup",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-effect-lookup"
       }
     },
     {
-      "name": "ai-skill-unikraft",
+      "name": "unikraft",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-unikraft"
       }
     },
     {
-      "name": "ai-skill-tamagui",
+      "name": "tamagui",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-tamagui"
       }
     },
     {
-      "name": "ai-agent-readability-improver",
+      "name": "readability-improver",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-agent-readability-improver"
       }
     },
     {
-      "name": "ai-agent-a11y-accessibility-reviewer",
+      "name": "a11y-accessibility-reviewer",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-agent-a11y-accessibility-reviewer"
