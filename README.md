@@ -14,6 +14,8 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 /plugin marketplace add guillempuche/ai-skill-powersync
 /plugin marketplace add guillempuche/ai-skill-effect-lookup
 /plugin marketplace add guillempuche/ai-skill-unikraft
+/plugin marketplace add guillempuche/ai-skill-tamagui
+/plugin marketplace add guillempuche/ai-skill-test-bdd
 /plugin marketplace add guillempuche/ai-agent-readability-improver
 /plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
@@ -75,6 +77,21 @@ ______________________________________________________________________
 | Compiler   | Build-time style extraction for performance      |
 
 [View skill](./skills/tamagui/) | [Tamagui docs](https://tamagui.dev/)
+
+______________________________________________________________________
+
+### test-bdd
+
+**Generate BDD-style tests that document behavior and test public API only**
+
+|         |                                                                            |
+| ------- | -------------------------------------------------------------------------- |
+| Style   | GIVEN / WHEN / THEN / AND comments (flexible combinations)                 |
+| Tooling | Vitest + testing-library (TypeScript-first, framework-agnostic principles) |
+| Covers  | Components, hooks, utilities, constants                                    |
+| Focus   | Observable behavior over implementation details                            |
+
+[View skill](./skills/test-bdd/)
 
 ______________________________________________________________________
 

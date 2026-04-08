@@ -68,6 +68,14 @@ claude plugin validate .
 # Unikraft
 /plugin marketplace add guillempuche/ai-skill-unikraft
 /plugin install unikraft@guillempuche-ai-skill-unikraft
+
+# Tamagui
+/plugin marketplace add guillempuche/ai-skill-tamagui
+/plugin install tamagui@guillempuche-ai-skill-tamagui
+
+# Test BDD
+/plugin marketplace add guillempuche/ai-skill-test-bdd
+/plugin install test-bdd@guillempuche-ai-skill-test-bdd
 ```
 
 ### Individual Agents

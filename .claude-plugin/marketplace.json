@@ -38,6 +38,13 @@
       }
     },
     {
+      "name": "test-bdd",
+      "source": {
+        "source": "github",
+        "repo": "guillempuche/ai-skill-test-bdd"
+      }
+    },
+    {
       "name": "readability-improver",
       "source": {
         "source": "github",
