@@ -2,3 +2,6 @@
 opensrc/
 dist-repos/
 .repo-cache/
+
+# direnv
+.direnv/
