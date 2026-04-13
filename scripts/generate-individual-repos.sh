@@ -1,8 +1,15 @@
 #!/bin/bash
 # Generate individual plugin repos from ai-standards bundle
-# Each skill becomes ai-skill-<name>, each agent becomes ai-agent-<name>
+# Usage: generate-individual-repos.sh <repo-name> [repo-name...]
+# Example: generate-individual-repos.sh ai-agent-readability-improver ai-skill-tamagui
 
 set -e
+
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <repo-name> [repo-name...]"
+  echo "Example: $0 ai-agent-readability-improver ai-skill-tamagui"
+  exit 1
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -11,10 +18,12 @@ OUTPUT_DIR="${ROOT_DIR}/dist-repos"
 AUTHOR="guillempuche"
 AUTHOR_URL="https://github.com/guillempuche"
 
-rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
-echo "Generating individual repos in $OUTPUT_DIR"
+TARGETS=("$@")
+GENERATED=()
+
+echo "Generating repos in $OUTPUT_DIR"
 
 # Generate skill repos
 for skill_dir in "$ROOT_DIR"/skills/*/; do
@@ -22,7 +31,12 @@ for skill_dir in "$ROOT_DIR"/skills/*/; do
 
   skill_name=$(basename "$skill_dir")
   repo_name="ai-skill-${skill_name}"
+
+  # Skip if not in targets
+  [[ " ${TARGETS[*]} " == *" $repo_name "* ]] || continue
+
   repo_dir="$OUTPUT_DIR/$repo_name"
+  rm -rf "$repo_dir"
 
   echo "Creating $repo_name..."
 
@@ -57,6 +71,9 @@ GITIGNORE
   [ -z "$description" ] && description="AI skill for $skill_name"
   version=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^version:' | sed 's/^version: *//' | head -1)
   [ -z "$version" ] && version="1.0.0"
+
+  # Truncate description if too long (for JSON)
+  description=$(echo "$description" | cut -c1-200)
 
   # Generate plugin.json (plugin name is topic-only; repo slug stays ai-skill-*)
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
@@ -127,6 +144,7 @@ This skill is also available in the [ai-standards](https://github.com/$AUTHOR/ai
 MIT
 EOF
 
+  GENERATED+=("$repo_name")
   echo "  ✓ $repo_name"
 done
 
@@ -136,7 +154,12 @@ for agent_file in "$ROOT_DIR"/agents/*.md; do
 
   agent_name=$(basename "$agent_file" .md)
   repo_name="ai-agent-${agent_name}"
+
+  # Skip if not in targets
+  [[ " ${TARGETS[*]} " == *" $repo_name "* ]] || continue
+
   repo_dir="$OUTPUT_DIR/$repo_name"
+  rm -rf "$repo_dir"
 
   echo "Creating $repo_name..."
 
@@ -225,14 +248,17 @@ This agent is also available in the [ai-standards](https://github.com/$AUTHOR/ai
 MIT
 EOF
 
+  GENERATED+=("$repo_name")
   echo "  ✓ $repo_name"
 done
 
+# Warn about targets that didn't match any source
+for target in "${TARGETS[@]}"; do
+  if [[ ! " ${GENERATED[*]} " == *" $target "* ]]; then
+    echo "ERROR: '$target' did not match any skill or agent source"
+    exit 1
+  fi
+done
+
 echo ""
-echo "Done! Generated repos:"
-ls -1 "$OUTPUT_DIR"
-echo ""
-echo "Next steps:"
-echo "1. Review repos in $OUTPUT_DIR"
-echo "2. Create GitHub repos for each"
-echo "3. Push each directory to its repo"
+echo "Done!"

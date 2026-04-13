@@ -1,9 +1,15 @@
 #!/bin/bash
 # Deploy individual plugin repos to GitHub
-# Handles: additions, updates, removals (full sync)
-# Run after generate-individual-repos.sh
+# Usage: deploy-individual-repos.sh <repo-name> [repo-name...]
+# Example: deploy-individual-repos.sh ai-agent-readability-improver ai-skill-tamagui
 
 set -e
+
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <repo-name> [repo-name...]"
+  echo "Example: $0 ai-agent-readability-improver ai-skill-tamagui"
+  exit 1
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -16,20 +22,18 @@ AUTHOR="guillempuche"
 SKILL_TOPICS="ai-skills claude-code cursor copilot ai-agents"
 AGENT_TOPICS="ai-agents claude-code cursor copilot ai-skills"
 
-if [ ! -d "$DIST_DIR" ]; then
-  echo "Error: dist-repos/ not found. Run generate-individual-repos.sh first."
-  exit 1
-fi
-
 mkdir -p "$TEMP_DIR"
 
-echo "Updating GitHub repos from $DIST_DIR"
+echo "Deploying repos from $DIST_DIR"
 echo ""
 
-for repo_dir in "$DIST_DIR"/*/; do
-  [ -d "$repo_dir" ] || continue
+for repo_name in "$@"; do
+  repo_dir="$DIST_DIR/$repo_name"
 
-  repo_name=$(basename "$repo_dir")
+  if [ ! -d "$repo_dir" ]; then
+    echo "ERROR: $repo_dir not found. Run generate-individual-repos.sh $repo_name first."
+    exit 1
+  fi
   cache_dir="$TEMP_DIR/$repo_name"
 
   echo "=== $repo_name ==="
@@ -106,7 +110,6 @@ done
 echo "Done!"
 echo ""
 echo "Install commands:"
-for repo_dir in "$DIST_DIR"/*/; do
-  repo_name=$(basename "$repo_dir")
+for repo_name in "$@"; do
   echo "  /plugin marketplace add $AUTHOR/$repo_name"
 done
