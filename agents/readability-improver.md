@@ -64,7 +64,25 @@ export function proc(data: Data[]) { ... }
 
 **Import handling**: Before renaming anything non-local, run `Grep` to find all usages. Update them all atomically or don't rename at all.
 
-### 2. Whitespace (Good)
+### 2. Destructure Opaque Parameters (Good)
+
+When a function takes an object and accesses its properties, destructuring makes the interface visible at a glance:
+
+```typescript
+// Before: what's in opts?
+function createUser(opts: CreateUserOpts) {
+  db.insert({ name: opts.name, role: opts.role, org: opts.orgId })
+}
+
+// After: clear contract
+function createUser({ name, role, orgId }: CreateUserOpts) {
+  db.insert({ name, role, org: orgId })
+}
+```
+
+This is zero-risk and eliminates the need for a comment listing the expected properties.
+
+### 3. Whitespace (Good)
 
 Group related code with blank lines to show logical sections.
 
@@ -86,7 +104,7 @@ const result = sorted.slice(0, limit)
 return formatResponse(result)
 ```
 
-### 3. Comments (Last Resort)
+### 4. Comments (Last Resort)
 
 Only when renaming and whitespace aren't sufficient.
 
@@ -130,6 +148,11 @@ I have a few questions before improving readability:
 - Every comment starts with a capital letter and ends with a period.
 - Multi-line docblocks (`/** ... */`) have `/**` and `*/` on separate lines.
 
+### JSDoc vs Inline
+
+- **JSDoc (`/** */`)** — use for exported functions/types. Importers see it in IDE tooltips without opening the file. Include `@example` when usage isn't obvious from the signature.
+- **Inline (`//`)** — use for everything else. The reader is already in the file; put the comment next to the relevant line.
+
 ### Content
 
 - **Document the "why"**: business rules, constraints, non-obvious decisions
@@ -141,6 +164,7 @@ I have a few questions before improving readability:
 - DELETE comments that restate what code does
 - DELETE commented-out code blocks
 - DELETE outdated or incorrect comments
+- **Triage stale TODOs/FIXMEs**: If a TODO looks outdated or resolved, flag it to the user via AskUserQuestion rather than silently deleting or ignoring it.
 
 ## Example: Selective Improvement
 
@@ -155,12 +179,10 @@ function processItems(data: Data[]) {
 }
 ```
 
-After (renamed locals + docblock for context):
+After (renamed locals + inline comment for context):
 
 ```typescript
-/**
- * Returns top 10 active items by priority for the dashboard widget.
- */
+// Returns top 10 active items by priority for the dashboard widget.
 function processItems(items: Data[]) {
   const activeItems = items.filter(item => item.status === 1)
   const byPriority = activeItems.sort((a, b) => a.priority - b.priority)
@@ -172,7 +194,7 @@ function processItems(items: Data[]) {
 }
 ```
 
-Note: The function name `processItems` was kept (it's used elsewhere). Only locals and parameter were renamed. The docblock adds context ("dashboard widget") that isn't inferrable from code.
+Note: The function name `processItems` was kept (it's used elsewhere). Only locals and parameter were renamed. The inline comment adds context ("dashboard widget") that isn't inferrable from code. Since the function isn't exported, an inline comment is used instead of JSDoc.
 
 ## Final Check
 
@@ -184,3 +206,7 @@ Before finishing, ask yourself:
 1. Did I update all imports/usages for anything I renamed?
 
 **When in doubt, leave it alone.**
+
+## Language Note
+
+All examples use TypeScript, but the principles apply to any language. Map the tooling to equivalents: JSDoc maps to Python docstrings, Go godoc comments, Rust `///` doc comments, etc.
