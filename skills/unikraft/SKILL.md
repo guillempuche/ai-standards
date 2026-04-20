@@ -12,6 +12,12 @@ Build and deploy unikernels with the `kraft` CLI.
 - Issues & support: <https://github.com/unikraft/kraftkit/issues>
 - Platform: <https://unikraft.cloud>
 
+**Targets `kraft` / KraftKit `v0.12.x`** (verified against `0.12.9`) and the
+Unikraft Cloud REST API `v1`. If `kraft version` reports a different major or
+minor, flag the mismatch and re-check flags/endpoints before following this
+skill — older versions may miss commands (e.g. rolling updates, volume
+templates) and breaking changes may appear in later majors.
+
 ## Important: Running Kraft Commands
 
 When working with kraft CLI commands:
@@ -23,12 +29,45 @@ When working with kraft CLI commands:
 
 ## Environment Setup
 
-Required for cloud commands (developer must set these in their terminal):
+Cloud commands need `UKC_TOKEN` (and usually `UKC_METRO`). **Export them once
+per terminal session, not once per command** — every shell in the same session
+inherits them, so there is no reason to re-export before each `kraft cloud`,
+`curl`, or deploy call.
 
 ```bash
-export UKC_TOKEN="your-token"   # Unikraft Cloud API token
-export UKC_METRO=fra            # Metro/region (e.g., fra, ams, lon)
+# Run once when you open the terminal:
+export UKC_TOKEN="your-token"   # Unikraft Cloud API token (Bearer for the REST API too)
+export UKC_METRO=fra            # Metro/region (e.g., fra, dal, sin, was, sfo)
 ```
+
+If the token lives in a dotenv file, source it once:
+
+```bash
+# Once per session:
+set -a; source .env.github; set +a
+export UKC_TOKEN="$KRAFTCLOUD_TOKEN"
+```
+
+Don't repeat the `export` in follow-up commands or copy-paste snippets — if a
+later command can't see the token, re-check the session, don't re-export
+blindly. Persist the token in a shell profile or secret manager only if you
+understand the blast radius; otherwise keep it session-scoped.
+
+### Metro Names: Never Use `fra0`
+
+Unikraft Cloud migrated to suffix-less metro codes. Use the current names only:
+
+| Use   | Never use |
+| ----- | --------- |
+| `fra` | `fra0`    |
+| `dal` | `dal0`    |
+| `sin` | `sin0`    |
+
+This applies everywhere a metro appears: `--metro` / `UKC_METRO`, the API host
+(`api.fra.unikraft.cloud`, not `api.fra0.unikraft.cloud`), and instance FQDNs
+(`*.fra.unikraft.app`, not `*.fra0.unikraft.app`). Older docs, cached examples,
+and legacy deployments may still show `fra0` — treat any `fra0` string as a
+bug and replace it with `fra`.
 
 ## Build Commands
 
@@ -212,6 +251,24 @@ kraft cloud compose ls      # List service deployments at a given path
 
 ______________________________________________________________________
 
+## Unikraft Cloud REST API (v1)
+
+`kraft cloud` wraps a REST API. Reach for it directly when the CLI doesn't
+cover what you need, or when building automation/CI.
+
+- Base URLs are metro-scoped: `https://api.<metro>.unikraft.cloud/v1` for
+  `fra`, `dal`, `sin`, `was`, `sfo`. **Never use `fra0`** or any `<metro>0`
+  legacy host.
+- Auth: `Authorization: Bearer $UKC_TOKEN` (same token the CLI uses; export
+  it once per session).
+- Every response uses the `{status, message, data, errors, op_time_us}`
+  envelope; bulk endpoints return per-item `status`.
+
+Full endpoint tables, curl examples, and gotchas:
+[references/api-v1.md](references/api-v1.md).
+
+______________________________________________________________________
+
 ## Xiroi Server Deployment
 
 ### Project Structure
@@ -260,10 +317,16 @@ The production Dockerfile uses `FROM scratch` for minimal Unikraft compatibility
 
 **Manual deployment:**
 
+Make sure `UKC_TOKEN` is already exported in the current shell (see
+**Environment Setup** — set it once per session). If it isn't, source the env
+file first, then run the deploy without re-exporting before every command:
+
 ```bash
-source .env.github
+# Once per session, only if UKC_TOKEN isn't set yet:
+set -a; source .env.github; set +a
 export UKC_TOKEN="$KRAFTCLOUD_TOKEN"
 
+# Thereafter, just deploy:
 kraft cloud --metro fra deploy \
   --name xiroi-server-prod \
   -M 1024 \
