@@ -1,6 +1,6 @@
 ---
 name: test-bdd
-version: 1.1.0
+version: 1.2.0
 description: Generate BDD-style test files that document behavior with GIVEN/WHEN/THEN comments and test only public API and observable outcomes. Language and framework agnostic, with patterns and examples tuned for TypeScript + vitest + testing-library (hooks, components, utilities, constants).
 ---
 
@@ -68,8 +68,11 @@ Notes for the agent's report:
 - Group scenarios by the code branch or collaborator state they exercise
   (the `context`), not by a "happy / edge / error" bucket — BDD treats them
   as a single flat list of scenarios.
-- Annotate each `it` with the `file:line` or named branch that motivates
-  it, so pruning is reviewable.
+- Annotate each `it` with the code anchor that motivates it, so pruning is
+  reviewable. Prefer a **stable** anchor — a named branch or symbol
+  (`` `if (!user)` branch ``, `split('?')`) — over `file:line`; line
+  numbers drift even between the agent writing the report and you reading
+  it. This annotation lives in the report, to be reviewed and discarded.
 - Cap report length (e.g. "under 400 lines") so it stays reviewable.
 
 When the report comes back:
@@ -175,6 +178,26 @@ Use BDD-style descriptions with flexible GIVEN/WHEN/THEN/AND comments:
 // WHEN accessing admin panel
 // THEN access should be granted
 ```
+
+### Optional code anchor in the committed test
+
+The motivating annotations from the agent's case-list report are for review
+and pruning — by default keep them OUT of the committed test; the
+GIVEN/WHEN/THEN already documents intent. Add an anchor only when an
+assertion genuinely benefits from pointing at the code it locks in (e.g.
+several sibling `it`s each pin a different branch). When you do, use a
+**bare symbol or branch hint** in brackets and nothing more:
+
+```typescript
+// GIVEN a magic-link URL with the token in the query
+// WHEN normalised
+// THEN only the path survives
+// [split('?')]
+```
+
+Never put a `file:line` in a committed test — the line goes stale on the
+next edit above it and silently misleads. Drop the filename too when the
+test is co-located with the unit it imports; it's redundant.
 
 ## Coverage Requirements
 
