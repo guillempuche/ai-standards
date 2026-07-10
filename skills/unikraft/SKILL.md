@@ -1,541 +1,285 @@
 ---
 name: unikraft
-version: 1.1.0
-description: Kraft CLI commands for building and deploying Unikraft unikernels. Use when working with Kraftfiles, deploying to Unikraft Cloud, or managing unikernel instances.
+version: 2.0.0
+description: Unikraft CLI (`unikraft`) commands for building and deploying to Unikraft Cloud. Use when working with Kraftfiles, deploying unikernels, or managing Unikraft Cloud instances/services/images. Covers the new `unikraft` CLI that replaces the legacy kraftkit `kraft`.
 ---
 
-# Kraft CLI Reference
+# Unikraft CLI Reference
 
-Build and deploy unikernels with the `kraft` CLI.
+Build and deploy unikernels with the `unikraft` CLI.
 
-- Documentation: <https://unikraft.org/docs/cli>
-- Issues & support: <https://github.com/unikraft/kraftkit/issues>
+- Documentation: <https://unikraft.com/docs/cli>
+- CLI source & releases: <https://github.com/unikraft-cloud/cli>
 - Platform: <https://unikraft.cloud>
 
-**Targets `kraft` / KraftKit `v0.12.x`** (verified against `0.12.9`) and the
-Unikraft Cloud REST API `v1`. If `kraft version` reports a different major or
-minor, flag the mismatch and re-check flags/endpoints before following this
-skill — older versions may miss commands (e.g. rolling updates, volume
-templates) and breaking changes may appear in later majors.
+**Targets the new `unikraft` CLI `0.4.x`** (verified against `0.4.1`) and the Unikraft Cloud REST API `v1`.
+Run `unikraft version` to check; if the major or minor differs, re-verify flags/commands against `--help` before following this skill.
 
-## Important: Running Kraft Commands
+## New CLI vs legacy kraftkit — they are different tools
 
-When working with kraft CLI commands:
+The binary is **`unikraft`** (from `unikraft-cloud/cli`).
+It **replaces the legacy kraftkit `kraft`** (`v0.12.x`).
+They are separate programs with:
 
-1. **Always show the commands first** - Tell the developer what commands to run before executing them
-1. **Format for copy-paste** - Display commands in a code block ready to copy-paste into the terminal
-1. **Ask before running** - Ask if the developer wants you to run the commands, as there can be authentication issues when `UKC_TOKEN` is not set in the AI's terminal session
-1. **Let developer run if needed** - If commands fail due to missing tokens, provide the commands for the developer to run manually
+- a **different command tree** (`unikraft run` / `unikraft build` / `unikraft instances …`, not `kraft cloud deploy`),
+- a **separate auth store** — a `kraft login` / `UKC_TOKEN` env from kraftkit does **not** authenticate `unikraft`; you must run `unikraft login` (see below).
+  The new CLI writes its own profile under `~/.config/unikraft`, kraftkit uses `~/.config/kraftkit`,
+- **packaging split from deploy** — `unikraft build --output <ref>` publishes an image, then `unikraft run --image <ref>` deploys it (kraftkit did both in one `kraft cloud deploy`).
 
-## Environment Setup
+If you see `kraft`, `UKC_TOKEN`, `kraft cloud`, or `--rollout` in a config or runbook, it is the legacy CLI — translate it to the new commands here.
 
-Cloud commands need `UKC_TOKEN` (and usually `UKC_METRO`). **Export them once
-per terminal session, not once per command** — every shell in the same session
-inherits them, so there is no reason to re-export before each `kraft cloud`,
-`curl`, or deploy call.
+## Important: running commands
 
-```bash
-# Run once when you open the terminal:
-export UKC_TOKEN="your-token"   # Unikraft Cloud API token (Bearer for the REST API too)
-export UKC_METRO=fra            # Metro/region (e.g., fra, dal, sin, was, sfo)
-```
+When working with `unikraft` commands:
 
-If the token lives in a dotenv file, source it once:
+1. **Show the command first** — display it in a copy-paste code block before running it.
+1. **Authenticated (cloud) commands need a login** — anything hitting Unikraft Cloud (`run`, `instances`, `services`, `images`, `metros`, `api`, a publishing `build`) fails with `profile not setup` until `unikraft login` has run in that environment.
+   The AI's shell may not be logged in; if a command returns `profile not setup`, hand it to the developer to run.
+1. **Let the developer run it** when a login or a real deploy is involved.
 
-```bash
-# Once per session:
-set -a; source .env.github; set +a
-export UKC_TOKEN="$KRAFTCLOUD_TOKEN"
-```
+## Installation
 
-Don't repeat the `export` in follow-up commands or copy-paste snippets — if a
-later command can't see the token, re-check the session, don't re-export
-blindly. Persist the token in a shell profile or secret manager only if you
-understand the blast radius; otherwise keep it session-scoped.
+- **CI (GitHub Actions):** `unikraft/setup-action@v1` — installs the CLI and logs in headlessly.
+  Inputs: `version` (`latest`/`stable`, `dev`/`staging`, or a release tag), `token` (login token), `organization`.
+  It downloads the release asset `unikraft-cli_<version>_<os>_<arch>.tar.gz` from `unikraft-cloud/cli`.
 
-### Metro Names: Never Use `fra0`
+  ```yaml
+  - uses: unikraft/setup-action@v1
+    with:
+      version: 0.4.1
+      token: ${{ secrets.KRAFTCLOUD_TOKEN }}
+      organization: my-org
+  ```
 
-Unikraft Cloud migrated to suffix-less metro codes. Use the current names only:
+- **Local:** `unikraft upgrade` self-updates an installed CLI.
+  Otherwise pull the tarball for your platform from <https://github.com/unikraft-cloud/cli/releases> (it holds the `unikraft` binary at its root).
 
-| Use   | Never use |
-| ----- | --------- |
-| `fra` | `fra0`    |
-| `dal` | `dal0`    |
-| `sin` | `sin0`    |
+- **Nix:** the CLI is not in nixpkgs (only the legacy `kraft` is), but the Unikraft team maintains a NUR flake at `github:unikraft/nur` exposing `packages.<system>.{unikraft-cli, unikraft-cli-staging, kraftkit}` (+ an overlay).
+  Add it as a flake input and take `unikraft-cli` — or `unikraft-cli-staging` while the stable attr is being fixed upstream.
 
-This applies everywhere a metro appears: `--metro` / `UKC_METRO`, the API host
-(`api.fra.unikraft.cloud`, not `api.fra0.unikraft.cloud`), and instance FQDNs
-(`*.fra.unikraft.app`, not `*.fra0.unikraft.app`). Older docs, cached examples,
-and legacy deployments may still show `fra0` — treat any `fra0` string as a
-bug and replace it with `fra`.
+## Authentication
 
-## Build Commands
+The new CLI reads the token from a **file or stdin**, not an env var, and associates the session with an organization.
 
 ```bash
-kraft build                 # Configure and build Unikraft unikernels
-kraft clean                 # Remove build object files
-kraft menu                  # Open configuration editor TUI
+# From a file:
+unikraft login --token /path/to/token --organization my-org
+
+# From stdin (no token on disk / no token in argv):
+printf '%s' "$UKC_TOKEN" | unikraft login --token - --organization my-org
 ```
 
-## Project Library Commands
+`--organization` is resolved from the control plane if omitted.
+A successful login stores a **profile** (named after the organization) under `~/.config/unikraft`.
+Manage profiles with:
 
 ```bash
-kraft lib add <lib>         # Add unikraft library to the project
-kraft lib create            # Initialize a library from a template
-kraft lib remove <lib>      # Remove a library dependency
+unikraft profile list          # profiles + their metros + which is active
+unikraft profile use <name>    # switch active profile
 ```
 
-## Packaging Commands
+Global flags / env available on every command: `--profile` (`$UNIKRAFT_PROFILE`), `--config` (`$UNIKRAFT_CONFIG`), `--timeout` (`$UNIKRAFT_TIMEOUT`), `--log-level` (`$UNIKRAFT_LOG_LEVEL`), `--log-type`, `--[no-]telemetry`.
+
+### Metros
+
+Most write operations take `--metro <m>`.
+List them with `unikraft metros list`:
+
+| Use (current)                     | Endpoint                             |
+| --------------------------------- | ------------------------------------ |
+| `fra`, `dal`, `sin`, `was`, `sfo` | `https://api.<metro>.unikraft.cloud` |
+
+`unikraft metros list` also shows **legacy** metros `fra0`, `dal0`, `sin0`, `was1` on `api.<metro>.kraft.cloud` — these are the old kraft.cloud endpoints.
+**Use the suffix-less names only**; treat any `<metro>0` as legacy.
+
+> [!IMPORTANT]
+> **Only the *create* verbs take `--metro`** — `unikraft run` and `unikraft services create`.
+> The read/manage verbs (`instances list`/`get`/`delete`/`logs`, `images list`, `services get`) **reject `--metro`** with `unknown flag --metro`; they take a **bare name** (the logged-in profile spans metros) or a `--filter 'metro==<m>'`.
+> This bites in CI: piping a failed `instances delete <name> --metro fra` through `|| true` silently skips the delete, and the next `run` then fails with "instance already exists".
+
+## Command tree
+
+```text
+Commands
+  unikraft run                 # Run an image as an instance (deploy)
+  unikraft build               # Build a Unikraft project into a container image
+  unikraft tui                 # Browse resources in a TUI
+
+Resources
+  unikraft metros              # List/inspect cloud metros
+  unikraft quotas              # Show quota usage
+  unikraft instances           # Manage instances  (aliases: instance, vm, vms)
+  unikraft services            # Manage service groups (svc, svcs)
+  unikraft volumes             # Manage persistent volumes (vol, vols)
+  unikraft certificates        # Manage TLS certificates (cert, certs)
+  unikraft images              # Manage images (image, img, imgs)
+
+Utilities
+  unikraft api <endpoint>      # Authenticated raw REST call (e.g. /v1/instances)
+  unikraft version             # Version info
+  unikraft upgrade             # Self-update the CLI
+  unikraft completion          # Shell completions
+
+Config
+  unikraft login / logout      # Authentication
+  unikraft profile             # get / list / use
+  unikraft config              # Manage CLI configuration
+```
+
+## Build (package an image)
 
 ```bash
-kraft pkg list              # List installed Unikraft component packages
-kraft pkg pull <pkg>        # Pull a unikernel and/or its dependencies
-kraft pkg push              # Push a unikernel package to registry
-kraft pkg update            # Retrieve new component/library/package lists
-kraft pkg info <pkg>        # Show information about a package
-kraft pkg export            # Export a package
-kraft pkg remove            # Remove selected local packages
+# Build the project in the current directory and PUBLISH to the registry.
+# The <org> prefix is your organization (see `unikraft profile list`).
+unikraft build . --output <org>/my-app:latest
+
+# Build and save to a LOCAL OCI archive (no publish):
+unikraft build . --output ./dist/my-app.oci.tar
+
+# Build-time inputs and secrets:
+unikraft build . --build-arg VERSION=1.2.3 --secret id=npm,src=$HOME/.npmrc
 ```
 
-## Local Runtime Commands
+Flags: `-o/--output`, `--build-arg`, `--no-cache`, `--secret`, `--ssh`, `--insecure`, plus the global `--timeout=<duration>`.
+The input path defaults to `.`.
+
+## Run (deploy an instance)
 
 ```bash
-kraft run                   # Run a unikernel
-kraft ps                    # List running unikernels
-kraft stop <name>           # Stop one or more running unikernels
-kraft start <name>          # Start one or more machines
-kraft pause <name>          # Pause one or more running unikernels
-kraft logs <name>           # Fetch the logs of a unikernel
-kraft remove <name>         # Remove one or more running unikernels
+# Deploy a new instance exposing an HTTPS service:
+unikraft run --metro fra --image <org>/my-app:latest \
+  -p 443:8080/http+tls -p 80:443/http+redirect \
+  -m 2048M --restart on-failure -e NODE_ENV=production
+
+# Preview without deploying:
+unikraft run --metro fra --image <org>/my-app:latest --dry-run
 ```
 
-## Local Networking Commands
+Common flags: `--metro`, `--image`, `-n/--name`, `-e/--env`, `-m/--memory` (binary units, e.g. `2048M`), `--vcpus`, `-p/--publish` (`<src>:<dest>[/<handlers>]`), `--domain`, `--service` (attach to an existing service group), `--restart` (`on-failure` …), `--scale-to-zero`, `-v/--volume`, `--replicas`, `--rm`, `--follow`, `--dry-run`.
+
+> Memory units changed from legacy kraftkit: `-M 2048` (MiB) → `-m 2048M`.
+
+## Instances, services, images
 
 ```bash
-kraft net create            # Create a new machine network
-kraft net list              # List machine networks
-kraft net inspect <name>    # Inspect a machine network
-kraft net up <name>         # Bring a network online
-kraft net down <name>       # Bring a network offline
-kraft net remove <name>     # Remove a network
+unikraft instances list                    # or: ls
+unikraft instances get <name>              # inspect
+unikraft instances logs <name>             # console output
+unikraft instances wait <filter>           # block until instances match (readiness gate)
+unikraft instances delete <name>           # remove
+unikraft instances start|stop|suspend|restart <name>
+
+unikraft services list                     # service groups (load balancers)
+unikraft services get <name>
+unikraft services create …                 # create a named service group
+unikraft services edit <name>              # change its config / instance set
+
+unikraft images list                       # image refs + digests (--filter 'ref~="my-app"')
+unikraft images build                      # same engine as `unikraft build`
+unikraft images delete <ref>
 ```
 
-## Local Volume Commands
+`volumes` (create/attach/detach/clone/import/…) and `certificates` (create/get/wait/…) follow the same verb pattern.
+
+> [!WARNING]
+> **Reading an instance dumps its secrets.**
+> `instances list -o json`/`-o yaml` and `instances get` (without `-f`) return the instance's full `runtime.env` — including secret values such as `DATABASE_URL` — in **cleartext**.
+> When you only need identifiers, field-limit the output: `unikraft instances list -f name -o quiet` (names only, no env).
+> Never pipe an un-limited instance read into shared logs, CI output, or an issue.
+
+## Rolling updates (zero-downtime)
+
+The new CLI has **no single `--rollout` flag** (kraftkit's `kraft cloud deploy --rollout remove_sequential`).
+A zero-downtime swap of an instance behind an existing service group is composed from primitives:
+
+1. `unikraft run --service=<group> --image <new-ref> …` — start a **new** instance and attach it to the service group that owns the domain/ports (do **not** re-pass `-p`/`--domain`; the group owns those).
+   Omit `--name` so the new instance gets a unique name and can run alongside the old one.
+1. `unikraft instances wait <filter>` — wait until the new instance is ready.
+1. `unikraft instances delete <old-name>` — remove the previous instance.
+
+Confirm the exact recommended sequence (and whether a built-in rollout exists in your CLI version) with `unikraft run --help` / the Unikraft team before relying on it for a production deploy.
+
+> [!IMPORTANT]
+> **Check quota headroom before a rolling update.**
+> The overlap briefly runs two instances, so it needs ~2× the instance's memory + vCPUs at once.
+> Run `unikraft quotas [--metro <m>]` first (optional `--metro`, no subcommand): if adding a second instance would exceed the memory or instance cap, fall back to delete-then-recreate (accepting a brief gap) or request a quota bump.
+> Near the cap, a rolling `run` fails with a quota error mid-deploy.
+
+## Kraftfile (spec v0.7)
+
+Keep the `Kraftfile` (and the `Dockerfile` it references) **at the build context root** — the rootfs path can't reach parent directories, and the Docker build needs the repo root as context to `COPY` sibling folders.
+
+```yaml
+spec: v0.7
+name: my-server
+# base-compat runs the node binary bundled in the image.
+runtime: base-compat:latest
+
+labels:
+  cloud.unikraft.v1.instances/scale_to_zero.policy: "off"
+
+rootfs:
+  source: ./Dockerfile
+  format: erofs
+cmd: ["/usr/local/bin/node", "/app/dist/main.mjs"]
+```
+
+## Deployment example (build once, deploy the image)
 
 ```bash
-kraft vol create            # Create a machine volume
-kraft vol ls                # List machine volumes
-kraft vol inspect <name>    # Inspect a machine volume
-kraft vol remove <name>     # Remove a volume
+# 1) Log in (once per environment).
+printf '%s' "$UKC_TOKEN" | unikraft login --token - --organization my-org
+
+# 2) Build + publish a versioned image.
+unikraft build . --output my-org/my-app:2026.7.9 --timeout 10m
+
+# 3) First deploy — create the service group, then run into it.
+unikraft services create --name my-app \
+  --domain my-app.example.com 443:8080/http+tls 80:443/http+redirect
+unikraft run --metro fra --service my-app --image my-org/my-app:2026.7.9 \
+  -m 2048M --restart on-failure -e NODE_ENV=production
+
+# 4) Subsequent deploys — see "Rolling updates" above.
+
+# Verify:
+unikraft instances list
+curl -sf https://my-app.example.com/health
+unikraft instances logs my-app-<suffix>
 ```
 
-## Compose Commands (Local)
+## Troubleshooting
 
-```bash
-kraft compose up            # Run a compose project
-kraft compose down          # Stop and remove a compose project
-kraft compose ps            # List running services of current project
-kraft compose logs          # Print the logs of services
-kraft compose build         # Build or rebuild services
-kraft compose create        # Create a compose project
-kraft compose start         # Start a compose project
-kraft compose stop          # Stop a compose project
-kraft compose pause         # Pause a compose project
-kraft compose unpause       # Unpause a compose project
-kraft compose pull          # Pull images of services
-kraft compose push          # Push images of services
-```
-
-## Cloud Deployment Commands
-
-```bash
-kraft cloud deploy          # Deploy your application to Unikraft Cloud
-kraft cloud quota           # View your resource quota
-kraft cloud tunnel          # Forward a local port to an unexposed instance
-```
-
-## Cloud Instance Commands
-
-```bash
-kraft cloud instance create   # Create an instance
-kraft cloud instance list     # List instances
-kraft cloud instance get      # Retrieve the state of instances
-kraft cloud instance logs     # Get console output of instances
-kraft cloud instance start    # Start instances
-kraft cloud instance stop     # Stop instances
-kraft cloud instance restart  # Restart instance(s)
-kraft cloud instance remove   # Remove instances
-```
-
-## Cloud Service Commands
-
-```bash
-kraft cloud service create  # Create a service
-kraft cloud service list    # List services
-kraft cloud service get     # Retrieve the state of services
-kraft cloud service logs    # Get console output for services
-kraft cloud service drain   # Drain instances in a service
-kraft cloud service remove  # Delete services
-```
-
-## Cloud Image Commands
-
-```bash
-kraft cloud image list      # List all images at a metro for your account
-kraft cloud image remove    # Remove an image
-```
-
-## Cloud Volume Commands
-
-```bash
-kraft cloud volume create   # Create a persistent volume
-kraft cloud volume list     # List persistent volumes
-kraft cloud volume get      # Retrieve the state of persistent volumes
-kraft cloud volume import   # Import local data to a persistent volume
-kraft cloud volume attach   # Attach a persistent volume to an instance
-kraft cloud volume detach   # Detach a persistent volume from an instance
-kraft cloud volume remove   # Permanently delete persistent volume(s)
-```
-
-## Cloud Volume Template Commands
-
-```bash
-kraft cloud volume template create  # Create volume template(s)
-kraft cloud volume template list    # List volume templates
-kraft cloud volume template get     # Retrieve the state of volume templates
-kraft cloud volume template remove  # Permanently delete volume template(s)
-```
-
-## Cloud Autoscale Commands
-
-```bash
-kraft cloud scale init      # Initialize autoscale configuration for a service
-kraft cloud scale add       # Add an autoscale configuration policy
-kraft cloud scale get       # Get an autoscale configuration or policy
-kraft cloud scale remove    # Delete an autoscale configuration policy
-kraft cloud scale reset     # Reset autoscale configuration of a service
-```
-
-## Cloud Certificate Commands
-
-```bash
-kraft cloud cert create     # Create a certificate
-kraft cloud cert list       # List certificates
-kraft cloud cert get        # Retrieve the status of a certificate
-kraft cloud cert remove     # Remove a certificate
-```
-
-## Cloud Compose Commands
-
-```bash
-kraft cloud compose up      # Deploy services in a compose project to Unikraft Cloud
-kraft cloud compose down    # Stop and remove services in a deployment
-kraft cloud compose ps      # List active services of a Compose project
-kraft cloud compose log     # View logs of services in a deployment
-kraft cloud compose build   # Build a compose project
-kraft cloud compose create  # Create a deployment from a Compose project
-kraft cloud compose start   # Start services in a deployment
-kraft cloud compose stop    # Stop services in a deployment
-kraft cloud compose push    # Push images to Unikraft Cloud from a Compose project
-kraft cloud compose ls      # List service deployments at a given path
-```
-
-## Useful Flags
-
-```bash
---no-prompt                 # Do not prompt for user interaction
---no-color                  # Disable color output
---log-level <level>         # Log level: panic, fatal, error, warn, info, debug, trace
---help                      # Help for any command
-```
+| Symptom                                   | Cause / fix                                                                                   |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `profile not setup`                       | Not logged in — run `unikraft login` (kraftkit's login/`UKC_TOKEN` doesn't count).            |
+| `unknown flag --metro` on `*/list`        | List/get subcommands scope by profile/`--filter`, not `--metro`.                              |
+| Image builds but instance won't boot      | Check `runtime`, the `cmd` path, and that env vars the app needs are passed with `-e`.        |
+| `504 Gateway Timeout`                     | Scale-to-zero cold start — set the scale-to-zero policy `off` for latency-sensitive services. |
+| rootfs / `COPY` build failures            | Keep the Kraftfile + Dockerfile at the build-context root; no `../` in the rootfs path.       |
+| Legacy `fra0`/`kraft.cloud` host in a ref | Replace with the suffix-less metro (`fra`, `api.fra.unikraft.cloud`).                         |
 
 ______________________________________________________________________
 
 ## Unikraft Cloud REST API (v1)
 
-`kraft cloud` wraps a REST API. Reach for it directly when the CLI doesn't
-cover what you need, or when building automation/CI.
+The CLI wraps a REST API.
+Reach for it via `unikraft api <endpoint>` (uses the logged-in profile), or call it directly with a bearer token for automation.
 
-- Base URLs are metro-scoped: `https://api.<metro>.unikraft.cloud/v1` for
-  `fra`, `dal`, `sin`, `was`, `sfo`. **Never use `fra0`** or any `<metro>0`
-  legacy host.
-- Auth: `Authorization: Bearer $UKC_TOKEN` (same token the CLI uses; export
-  it once per session).
-- Every response uses the `{status, message, data, errors, op_time_us}`
-  envelope; bulk endpoints return per-item `status`.
+```bash
+unikraft api /v1/instances                       # via the CLI (logged-in profile)
 
-Full endpoint tables, curl examples, and gotchas:
-[references/api-v1.md](references/api-v1.md).
+curl https://api.fra.unikraft.cloud/v1/instances \
+  -H "Authorization: Bearer $UKC_TOKEN"          # raw, any HTTP client
+```
+
+- Base URLs are metro-scoped: `https://api.<metro>.unikraft.cloud/v1` for `fra`, `dal`, `sin`, `was`, `sfo`.
+  **Never** use a `<metro>0` legacy host.
+- Every response uses the `{status, message, data, errors, op_time_us}` envelope; bulk endpoints return per-item `status`.
+
+Full endpoint tables, curl examples, and gotchas: [references/api-v1.md](references/api-v1.md).
 
 ______________________________________________________________________
 
-## Xiroi Server Deployment
+## Examples repository
 
-### Project Structure
-
-Both `Kraftfile` and `Dockerfile.server` **MUST be at repository root**:
-
-```
-/xiroi (repo root)
-├── Kraftfile              # Unikraft config (rootfs: ./Dockerfile.server)
-├── Dockerfile.server      # FROM scratch optimized image
-└── xiroi-apps/server/
-    ├── Dockerfile.local       # Alpine-based for local debugging
-    └── run_server_docker.sh   # Local Docker testing script
-```
-
-**Why at root?** Kraft CLI doesn't support parent directory references (`../`) in `rootfs` path, and Docker needs repo root as build context to COPY `xiroi-apps/`, `xiroi-packages/`, etc.
-
-### Kraftfile Configuration
-
-```yaml
-spec: v0.6
-name: xiroi-server
-runtime: base-compat:latest
-
-labels:
-  cloud.unikraft.v1.instances/scale_to_zero.policy: "on"
-  cloud.unikraft.v1.instances/scale_to_zero.stateful: "false"
-  cloud.unikraft.v1.instances/scale_to_zero.cooldown_time_ms: 1000
-
-rootfs: ./Dockerfile.server
-
-cmd: ["/usr/bin/node", "/app/dist/index.js"]
-```
-
-### Dockerfile.server Key Features
-
-The production Dockerfile uses `FROM scratch` for minimal Unikraft compatibility:
-
-1. **Multi-stage build** - Builder stage uses `node:24-alpine`
-1. **FROM scratch runtime** - Copies only required binaries/libraries
-1. **Manual library copying** - Must copy `ld-musl`, `libgcc_s`, `libstdc++`
-1. **SSL certificates** - Required for HTTPS connections (Neon DB, etc.)
-1. **Empty .env files** - Dotenv needs files to exist even if env vars come from `-e` flags
-
-### Deploy Commands
-
-**Manual deployment:**
-
-Make sure `UKC_TOKEN` is already exported in the current shell (see
-**Environment Setup** — set it once per session). If it isn't, source the env
-file first, then run the deploy without re-exporting before every command:
-
-```bash
-# Once per session, only if UKC_TOKEN isn't set yet:
-set -a; source .env.github; set +a
-export UKC_TOKEN="$KRAFTCLOUD_TOKEN"
-
-# Thereafter, just deploy:
-kraft cloud --metro fra deploy \
-  --name xiroi-server-prod \
-  -M 1024 \
-  -p 443:4000 \
-  --scale-to-zero off \
-  -e NODE_ENV=production \
-  -e SERVER_PORT=4000 \
-  -e ALLOWED_ORIGINS="${ALLOWED_ORIGINS}" \
-  # ... other env vars
-  .
-```
-
-**Delete and redeploy (if instance exists):**
-
-```bash
-kraft cloud --metro fra instance delete xiroi-server-prod
-# Then run deploy command again
-```
-
-### Rolling Updates (Zero-Downtime)
-
-After the first deployment, KraftCloud creates a **Service** (load balancer) that owns the domain and port. Subsequent deployments can use rolling updates for zero downtime.
-
-**Architecture:**
-
-```
-Service (load balancer)
-  └── Instance (old) ──┐
-  └── Instance (new) ──┘  ← Rolling update adds new, then removes old
-```
-
-**Key constraints for rolling updates:**
-
-1. `--service <name>` is **mutually exclusive** with `-p` and `-d` (service already owns these)
-1. `--name` must be **omitted** (kraft auto-generates unique names so new instance can spin up while old exists)
-
-**Rolling update command:**
-
-```bash
-kraft cloud --metro fra deploy \
-  --service <service-name> \
-  --rollout remove_sequential \
-  --rollout-wait 30s \
-  -M 1024 \
-  --scale-to-zero off \
-  -e NODE_ENV=production \
-  # ... other env vars
-  .
-```
-
-**Get service name after first deployment:**
-
-```bash
-kraft cloud --metro fra service list
-# Look for FQDN matching your domain (e.g., api.xiroi.cat)
-```
-
-**Rollout strategies:**
-
-| Strategy            | Behavior                                      |
-| ------------------- | --------------------------------------------- |
-| `remove_sequential` | Start new → wait → remove old (zero downtime) |
-| `remove`            | Remove old immediately after new starts       |
-| `stop`              | Stop old (don't remove) after new starts      |
-| `keep`              | Keep old running alongside new                |
-| `abort`             | Cancel if old exists                          |
-
-### Critical Flags
-
-| Flag              | Value      | Purpose                                     |
-| ----------------- | ---------- | ------------------------------------------- |
-| `--metro`         | `fra`      | Frankfurt region                            |
-| `-M`              | `1024`     | Memory in MiB                               |
-| `-p`              | `443:4000` | HTTPS → app port                            |
-| `--scale-to-zero` | `off`      | Keep always running (avoids wake-up issues) |
-
-### Scale-to-Zero Considerations
-
-**Why `--scale-to-zero off`?**
-
-- Node.js server has slow cold starts (267ms+)
-- Database connections need to stay alive
-- Wake-up mechanism can cause 504 timeouts
-
-**If you want scale-to-zero later:**
-
-```bash
---scale-to-zero on --scale-to-zero-cooldown 300000ms  # 5 min cooldown
-```
-
-### Troubleshooting
-
-| Error                                      | Cause                                  | Fix                                                |
-| ------------------------------------------ | -------------------------------------- | -------------------------------------------------- |
-| `ErrorDotenv`                              | `process.cwd()` returns `/` on scratch | Use `/app` as base dir in production               |
-| `instance already exists`                  | Previous deployment                    | Delete first: `kraft cloud instance delete <name>` |
-| `instance already exists` (rolling update) | `--name` specified with `--rollout`    | Omit `--name` flag for rolling updates             |
-| `cannot use --service and --port`          | Flags are mutually exclusive           | Use `--service` without `-p` or `-d`               |
-| `504 Gateway Timeout`                      | Scale-to-zero wake-up failing          | Use `--scale-to-zero off`                          |
-| `could not build initrd from: ../..`       | Relative path in rootfs                | Keep Kraftfile at repo root                        |
-
-### Verify Deployment
-
-```bash
-# List instances
-kraft cloud --metro fra instance list | grep xiroi
-
-# Check health
-curl -s https://<your-domain>.fra.unikraft.app/api/health
-# Returns: {"message":"OK"}
-
-# View logs
-kraft cloud --metro fra instance logs xiroi-server-prod
-```
-
-______________________________________________________________________
-
-## Examples Repository
-
-Reference examples: <https://github.com/unikraft-cloud/examples>
-
-### All Example Folders
-
-```
-bun                              # Bun JavaScript runtime
-caddy2.7-go1.21                  # Caddy web server with Go
-code-server                      # Browser-based VS Code
-database-redis7.2                # Redis in-memory store
-debian-ssh                       # SSH access environment
-dragonflydb                      # Modern Redis alternative
-duckdb-go1.21                    # DuckDB analytical database with Go
-expressjs4.18-node21             # Express.js framework
-flask-redis                      # Flask with Redis
-flask3.0-python3.12-sqlite3      # Flask with SQLite
-grafana                          # Monitoring and visualization
-haproxy                          # High availability proxy
-http-c-debug                     # C HTTP server (debug)
-http-elixir1.17                  # Elixir HTTP server
-http-java21                      # Java 21 HTTP server
-http-node25                      # Node.js 25 HTTP server
-http-perl5.42                    # Perl HTTP server
-http-python3.12-FastAPI-0.121.3  # FastAPI framework
-http-rust-1.79-axum-scale-to-zero # Rust Axum with autoscaling
-http-rust-trunkrs-leptos         # Rust Leptos full-stack
-http-rust1.91                    # Rust HTTP server
-httpserver-boost1.74-g++13.2     # C++ with Boost
-httpserver-dotnet10.0            # .NET 10.0
-httpserver-dotnet8.0             # .NET 8.0
-httpserver-elixir1.16            # Elixir 1.16
-httpserver-erlang26.2            # Erlang 26.2
-httpserver-g++13.2               # C++ with GCC
-httpserver-gcc13.2               # C with GCC
-httpserver-go1.21                # Go 1.21
-httpserver-go1.22-redis          # Go with Redis
-httpserver-java17                # Java 17
-httpserver-lua5.1                # Lua 5.1
-httpserver-nodejs21              # Node.js 21
-httpserver-perl5.38              # Perl 5.38
-httpserver-php8.2                # PHP 8.2
-httpserver-python3.12            # Python 3.12
-httpserver-python3.12-django5.0  # Django 5.0
-httpserver-python3.12-flask3.0   # Flask 3.0
-httpserver-ruby3.2               # Ruby 3.2
-httpserver-rust1.73              # Rust 1.73
-httpserver-rust1.75              # Rust 1.75
-httpserver-rust1.81-rocket0.5    # Rust Rocket framework
-httpserver-rust1.87-actix-web4   # Rust Actix-web
-hugo0.122                        # Hugo static site generator
-imaginary                        # Image processing service
-java17-spring-petclinic          # Spring Framework sample
-java17-springboot3.2.x           # Spring Boot
-mariadb                          # MariaDB database
-mariadb11.7-volumes              # MariaDB with volumes
-mcp-server-arxiv                 # MCP for arXiv
-mcp-server-simple                # Basic MCP server
-memcached1.6                     # Memcached
-minio                            # S3-compatible storage
-mongodb                          # MongoDB database
-nginx                            # Nginx web server
-nginx-flask-mongo                # Nginx + Flask + MongoDB
-nginx-vite-vanilla               # Nginx with Vite
-node-express-puppeteer           # Express with Puppeteer
-node-playwright-chromium         # Playwright (Chromium)
-node-playwright-firefox          # Playwright (Firefox)
-node-playwright-webkit           # Playwright (WebKit)
-node-vite-ssr-vanilla            # Vite SSR
-node-vite-vanilla                # Vite vanilla
-node18-agario                    # Agar.io game
-node18-wingsio                   # Wings.io game
-node21-nextjs                    # Next.js framework
-node21-remix                     # Remix framework
-node21-solid-start               # SolidJS framework
-node21-sveltekit                 # SvelteKit framework
-node21-websocket                 # WebSocket example
-node24-karaoke                   # Karaoke application
-opentelemetry-collector          # OpenTelemetry
-postgres                         # PostgreSQL database
-prisma-expressjs4.19-node18      # Prisma ORM with Express
-python-playwright-chromium       # Python Playwright
-python3.12-flask3.0-sqlite       # Flask with SQLite
-ruby3.2-rails                    # Ruby on Rails
-skipper0.18                      # HTTP router
-spin-wagi-http                   # WebAssembly Gateway Interface
-traefik                          # Traefik proxy
-tyk                              # API gateway
-vnc-browser                      # Browser-based VNC
-vsftpd                           # FTP server
-wazero-import-go                 # WebAssembly for Go
-webhook-github-node              # GitHub webhook handler
-wordpress-all-in-one             # WordPress single deploy
-wordpress-compose                # WordPress with Compose
-```
+Reference examples (Kraftfiles + Dockerfiles for many runtimes): <https://github.com/unikraft-cloud/examples>.
