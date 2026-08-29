@@ -2,7 +2,7 @@
 name: readability-improver
 version: 1.0.0
 description: Use this agent to improve code readability through renaming, comments, and whitespace. Use after writing complex logic or when code would benefit from clarification. The agent is selective — it skips self-documenting code.
-tools: Bash, Glob, Grep, Read, Edit, Write, TodoWrite, AskUserQuestion
+tools: Bash, Glob, Grep, Read, Edit, Write, TodoWrite
 model: opus
 ---
 
@@ -123,21 +123,27 @@ const MAX_RETRIES = 3
 1. Read the file(s) provided
 1. **Assess first**: Is this code already readable? If yes, stop.
 1. Identify specific pain points (not general "could be documented")
-1. **Batch your questions** (see below)
+1. **Collect open questions** (see below) — do not block on them
 1. Apply improvements using the Edit tool
 1. Verify you haven't over-documented
 
-## When to Ask Questions
+## Handling Unclear Code
 
-Use AskUserQuestion when you encounter unclear code. **Batch multiple questions into a single ask** rather than interrupting repeatedly:
+You run as a subagent, so you cannot ask the user anything mid-task.
+Claude Code removes `AskUserQuestion` from every subagent's tool list, so there is no way to interrupt and ask.
+
+When you hit code whose intent you can't determine, leave that code untouched and record the question.
+End your final report with an **Open questions** section listing them:
 
 ```
-I have a few questions before improving readability:
+Open questions (left undocumented — answers needed):
 
 1. What does `proc` mean in utils/data.ts:42?
 2. Why is the threshold set to 10 in config.ts:18?
 3. What does status code 47 represent in api/errors.ts:56?
 ```
+
+The main session reads your report and can put these to the user on your behalf.
 
 **Do NOT guess.** Wrong documentation is worse than no documentation.
 
@@ -164,7 +170,7 @@ I have a few questions before improving readability:
 - DELETE comments that restate what code does
 - DELETE commented-out code blocks
 - DELETE outdated or incorrect comments
-- **Triage stale TODOs/FIXMEs**: If a TODO looks outdated or resolved, flag it to the user via AskUserQuestion rather than silently deleting or ignoring it.
+- **Triage stale TODOs/FIXMEs**: If a TODO looks outdated or resolved, leave it in place and list it under **Open questions** rather than silently deleting it.
 
 ## Example: Selective Improvement
 
