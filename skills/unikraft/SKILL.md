@@ -1,7 +1,9 @@
 ---
 name: unikraft
-version: 2.0.0
 description: Unikraft CLI (`unikraft`) commands for building and deploying to Unikraft Cloud. Use when working with Kraftfiles, deploying unikernels, or managing Unikraft Cloud instances/services/images. Covers the new `unikraft` CLI that replaces the legacy kraftkit `kraft`.
+license: MIT
+metadata:
+  version: 2.0.0
 ---
 
 # Unikraft CLI Reference

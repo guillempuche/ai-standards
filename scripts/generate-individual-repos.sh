@@ -66,21 +66,25 @@ GITIGNORE
     has_requirements=false
   fi
 
-  # Extract description and version from SKILL.md frontmatter
+  # Extract description and version from SKILL.md frontmatter.
+  # Version lives under `metadata:` — the agentskills.io spec allows only
+  # name, description, license, compatibility, metadata, allowed-tools.
   description=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^description:' | sed 's/^description: *//' | head -1)
   [ -z "$description" ] && description="AI skill for $skill_name"
-  version=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^version:' | sed 's/^version: *//' | head -1)
+  version=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep -E '^[[:space:]]+version:' | sed -E 's/^[[:space:]]+version:[[:space:]]*//' | tr -d '"' | head -1)
   [ -z "$version" ] && version="1.0.0"
 
-  # Truncate description if too long (for JSON)
-  description=$(echo "$description" | cut -c1-200)
+  # Escape for JSON embedding. Descriptions are NOT truncated: plugin.json
+  # sets no length cap, and cutting mid-word is what users read in /plugin.
+  description_json=${description//\\/\\\\}
+  description_json=${description_json//\"/\\\"}
 
   # Generate plugin.json (plugin name is topic-only; repo slug stays ai-skill-*)
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
   "name": "$skill_name",
   "version": "$version",
-  "description": "$description",
+  "description": "$description_json",
   "author": {
     "name": "$AUTHOR",
     "url": "$AUTHOR_URL"
@@ -96,6 +100,7 @@ EOF
   cat > "$repo_dir/.claude-plugin/marketplace.json" << EOF
 {
   "name": "$repo_name",
+  "description": "$description_json",
   "owner": {
     "name": "$AUTHOR",
     "url": "$AUTHOR_URL"
@@ -103,7 +108,10 @@ EOF
   "plugins": [
     {
       "name": "$skill_name",
-      "source": "./"
+      "description": "$description_json",
+      "source": "./",
+      "license": "MIT",
+      "homepage": "https://github.com/$AUTHOR/$repo_name"
     }
   ]
 }
@@ -186,15 +194,17 @@ GITIGNORE
   version=$(sed -n '/^---$/,/^---$/p' "$agent_file" | grep '^version:' | sed 's/^version: *//' | head -1)
   [ -z "$version" ] && version="1.0.0"
 
-  # Truncate description if too long (for JSON)
-  description=$(echo "$description" | cut -c1-200)
+  # Escape for JSON embedding. Descriptions are NOT truncated: plugin.json
+  # sets no length cap, and cutting mid-word is what users read in /plugin.
+  description_json=${description//\\/\\\\}
+  description_json=${description_json//\"/\\\"}
 
   # Generate plugin.json (plugin name is topic-only; agents field requires explicit file paths)
   cat > "$repo_dir/.claude-plugin/plugin.json" << EOF
 {
   "name": "$agent_name",
   "version": "$version",
-  "description": "$description",
+  "description": "$description_json",
   "author": {
     "name": "$AUTHOR",
     "url": "$AUTHOR_URL"
@@ -210,6 +220,7 @@ EOF
   cat > "$repo_dir/.claude-plugin/marketplace.json" << EOF
 {
   "name": "$repo_name",
+  "description": "$description_json",
   "owner": {
     "name": "$AUTHOR",
     "url": "$AUTHOR_URL"
@@ -217,7 +228,10 @@ EOF
   "plugins": [
     {
       "name": "$agent_name",
-      "source": "./"
+      "description": "$description_json",
+      "source": "./",
+      "license": "MIT",
+      "homepage": "https://github.com/$AUTHOR/$repo_name"
     }
   ]
 }

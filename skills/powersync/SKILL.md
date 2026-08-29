@@ -1,9 +1,9 @@
 ---
 name: powersync
-version: 1.0.0
 description: Build local-first, offline-capable TypeScript apps with PowerSync. Use when implementing real-time sync between SQLite and backend databases (Postgres, MongoDB, MySQL, SQL Server). Covers schema definition, database setup, CRUD operations, React/Vue hooks, watch queries, and Kysely/Drizzle ORM integration.
 license: Apache-2.0
 metadata:
+  version: 1.0.0
   author: ai-standards
   language: typescript
   frameworks: react, react-native, vue, node

@@ -1,7 +1,9 @@
 ---
 name: test-bdd
-version: 1.2.0
 description: Generate BDD-style test files that document behavior with GIVEN/WHEN/THEN comments and test only public API and observable outcomes. Language and framework agnostic, with patterns and examples tuned for TypeScript + vitest + testing-library (hooks, components, utilities, constants).
+license: MIT
+metadata:
+  version: 1.2.0
 ---
 
 # BDD Test File Generator

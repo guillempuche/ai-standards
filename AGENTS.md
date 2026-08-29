@@ -53,10 +53,10 @@ ai-standards/
 ```yaml
 ---
 name: skill-name
-version: 1.0.0
 description: Description of what this skill does and when to use it (max 1024 chars)
 license: Apache-2.0
 metadata:
+  version: 1.0.0
   author: author-name
 ---
 ```
@@ -65,6 +65,10 @@ metadata:
 1. Optionally add `references/`, `scripts/`, or `assets/` directories
 1. Update `README.md` to add skill to the Skills Catalog
 1. Update `.claude-plugin/marketplace.json` to add the skill entry
+
+The spec allows exactly six frontmatter keys: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`.
+Anything else — including a top-level `version:` — is a hard error when the skill is uploaded to claude.ai, sent through the Skills API, or packaged with `package_skill.py`, so the version belongs under `metadata`.
+Always write a three-part semver there: `metadata` values must be strings, and `mdformat` strips the quotes, so a two-part `1.0` would parse as a YAML float.
 
 ## SKILL.md Requirements
 
@@ -81,7 +85,7 @@ metadata:
 | --------------- | ---------------------------------------- |
 | `license`       | License name or reference                |
 | `compatibility` | Environment requirements (max 500 chars) |
-| `metadata`      | Key-value pairs for additional info      |
+| `metadata`      | String key-value pairs; holds `version`  |
 | `allowed-tools` | Space-delimited pre-approved tools       |
 
 ### Body Content Guidelines
@@ -92,6 +96,38 @@ metadata:
 - Document common edge cases
 - Move detailed reference material to `references/` folder
 
+## Adding a New Agent
+
+Agents live at `agents/<agent-name>.md` and are picked up by auto-discovery.
+`.claude-plugin/plugin.json` deliberately omits the `agents` field: setting it *replaces* the default `agents/` scan, so a newly added agent would silently never load.
+
+Frontmatter follows the [Claude Code subagent reference](https://code.claude.com/docs/en/sub-agents), not the Agent Skills spec:
+
+```yaml
+---
+name: agent-name
+version: 1.0.0
+description: When Claude should delegate to this agent. Include "use proactively" to encourage automatic delegation.
+tools: Read, Grep, Glob
+model: opus
+color: yellow
+---
+```
+
+`version` is not part of the subagent reference either, but Claude Code ignores unknown agent keys and `/release` reads it.
+Unlike skills, agents never pass through the claude.ai packaging validator, so it causes no hard error here.
+`permissionMode`, `mcpServers`, and `hooks` are ignored for plugin subagents — use `tools` and `disallowedTools` to constrain what an agent can reach.
+
+### Tools a subagent cannot have
+
+Claude Code removes these from every subagent, even when the `tools` field lists them: `AskUserQuestion`, `EnterPlanMode`, `EndConversation`, `ScheduleWakeup`, `TaskOutput`, `WaitForMcpServers`, and `Workflow`.
+
+Never write an agent prompt that asks the user a question mid-task.
+Have the agent collect what it could not resolve and return it in its final report, which the main session can then put to the user.
+
+Background subagents lose more still.
+They keep only `Read`, `Grep`, `Glob`, `Bash`, `PowerShell`, `Edit`, `Write`, `NotebookEdit`, `WebFetch`, `WebSearch`, `TodoWrite`, `Skill`, `ToolSearch`, `EnterWorktree`, `ExitWorktree`, `Monitor`, `TaskStop`, `SendMessage`, and `Artifact`.
+
 ## Validation
 
 Before committing, verify:
@@ -99,13 +135,15 @@ Before committing, verify:
 - Folder name matches `name` field in frontmatter
 - Name uses only lowercase, numbers, hyphens (no consecutive hyphens, no leading/trailing hyphens)
 - Description is non-empty and under 1024 characters
+- Frontmatter uses only the six spec keys (no top-level `version`)
 - All file references use relative paths from skill root
+- `claude plugin validate . --strict` passes
 
 ## Code Style
 
 - Use 2-space indentation in YAML
 - Use standard markdown formatting
-- Keep lines under 100 characters where possible
+- Break prose lines at sentence boundaries, one sentence per line — never mid-sentence, and never wrapped at a column width (`mdformat` runs with the default `--wrap keep`, so it preserves these breaks)
 - Use fenced code blocks with language identifiers
 
 ## Testing Changes

@@ -54,14 +54,16 @@ For each changed repo, use AskUserQuestion to ask the user what kind of version 
 
 ## Step 4: Update source frontmatter
 
-For each repo that needs a bump, update the `version` field in the source file:
+For each repo that needs a bump, update the version in the source file.
+The two component types keep it in different places:
 
-- Skills: `skills/<name>/SKILL.md`
-- Agents: `agents/<name>.md`
+- Skills (`skills/<name>/SKILL.md`): under `metadata:` — `  version: 1.0.0`, always three-part semver so YAML keeps it a string.
+  The Agent Skills spec allows no top-level `version` key, and adding one breaks claude.ai upload and `package_skill.py` packaging.
+- Agents (`agents/<name>.md`): top-level `version: 1.0.0`, since agent frontmatter follows the Claude Code subagent reference and never passes through that validator.
 
 Use the Edit tool to change the `version:` line in the YAML frontmatter.
 
-Compute the new version by parsing the current `version: X.Y.Z` and incrementing the appropriate part:
+Compute the new version by parsing the current `X.Y.Z` and incrementing the appropriate part:
 
 - patch: increment Z
 - minor: increment Y, reset Z to 0
