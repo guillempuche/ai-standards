@@ -22,6 +22,11 @@ AUTHOR="guillempuche"
 SKILL_TOPICS="ai-skills claude-code cursor copilot ai-agents"
 AGENT_TOPICS="ai-agents claude-code cursor copilot ai-skills"
 
+# GitHub rejects an over-long repo description but documents no limit, so this
+# is a conservative cap, not a published figure. Only the GitHub "About" blurb
+# is trimmed, and only on a word boundary; plugin.json keeps the full text.
+GH_DESC_MAX=350
+
 mkdir -p "$TEMP_DIR"
 
 echo "Deploying repos from $DIST_DIR"
@@ -79,7 +84,17 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
     fi
   else
     echo "  Creating new repo..."
-    gh repo create "$AUTHOR/$repo_name" --public --description "$(cat "$repo_dir/.claude-plugin/plugin.json" | grep '"description"' | sed 's/.*: "\(.*\)",/\1/' | cut -c1-200)"
+
+    description=$(sed -n 's/^  "description": "\(.*\)",$/\1/p' "$repo_dir/.claude-plugin/plugin.json" | head -1)
+    # Undo the JSON escaping the generator applied (quotes before backslashes)
+    description=${description//\\\"/\"}
+    description=${description//\\\\/\\}
+    if [ ${#description} -gt "$GH_DESC_MAX" ]; then
+      description="${description:0:$((GH_DESC_MAX - 1))}"
+      description="${description% *}…"
+    fi
+
+    gh repo create "$AUTHOR/$repo_name" --public --description "$description"
 
     # Initialize and push
     rm -rf "$cache_dir"
