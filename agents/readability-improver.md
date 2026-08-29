@@ -1,6 +1,6 @@
 ---
 name: readability-improver
-version: 1.0.0
+version: 1.1.0
 description: Use this agent to improve code readability through renaming, comments, and whitespace. Use after writing complex logic or when code would benefit from clarification. The agent is selective — it skips self-documenting code.
 tools: Bash, Glob, Grep, Read, Edit, Write, TodoWrite
 model: opus
