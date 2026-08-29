@@ -157,7 +157,7 @@ For each issue found, provide:
 **Current Code**:
 ```tsx
 [The problematic code]
-````
+```
 
 **Recommended Fix**:
 
@@ -184,7 +184,7 @@ For each issue found, provide:
 <Pressable onPress={onSend} role="button" aria-label="Send message">
   <Icon name="send" />
 </Pressable>
-````
+```
 
 ### Form Inputs
 
