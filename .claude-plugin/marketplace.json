@@ -1,5 +1,6 @@
 {
   "name": "ai-standards",
+  "description": "AI coding skills and agents for TypeScript, React, Effect, local-first apps, unikernels, and accessibility. Install the full bundle or any skill or agent on its own.",
   "owner": {
     "name": "guillempuche",
     "url": "https://github.com/guillempuche"
@@ -7,10 +8,12 @@
   "plugins": [
     {
       "name": "ai-standards",
+      "description": "AI coding skills and agents for TypeScript, React, Effect, local-first apps, unikernels, and accessibility",
       "source": "./"
     },
     {
       "name": "powersync",
+      "description": "Build local-first, offline-capable TypeScript apps with PowerSync. Use when implementing real-time sync between SQLite and backend databases (Postgres, MongoDB, MySQL, SQL Server). Covers schema definition, database setup, CRUD operations, React/Vue hooks, watch queries, and Kysely/Drizzle ORM integration.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-powersync"
@@ -18,6 +21,7 @@
     },
     {
       "name": "effect-lookup",
+      "description": "Quick lookup for Effect TypeScript library APIs, patterns, and source code. Use when you need to find Effect functions, understand Effect patterns, or look up implementation details.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-effect-lookup"
@@ -25,6 +29,7 @@
     },
     {
       "name": "unikraft",
+      "description": "Unikraft CLI (`unikraft`) commands for building and deploying to Unikraft Cloud. Use when working with Kraftfiles, deploying unikernels, or managing Unikraft Cloud instances/services/images. Covers the new `unikraft` CLI that replaces the legacy kraftkit `kraft`.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-unikraft"
@@ -32,6 +37,7 @@
     },
     {
       "name": "tamagui",
+      "description": "Universal React + React Native UI library with optimizing compiler. Use when building cross-platform apps with shared styling, design tokens, themes, and accessible components.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-tamagui"
@@ -39,6 +45,7 @@
     },
     {
       "name": "test-bdd",
+      "description": "Generate BDD-style test files that document behavior with GIVEN/WHEN/THEN comments and test only public API and observable outcomes. Language and framework agnostic, with patterns and examples tuned for TypeScript + vitest + testing-library (hooks, components, utilities, constants).",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-test-bdd"
@@ -46,6 +53,7 @@
     },
     {
       "name": "readability-improver",
+      "description": "Use this agent to improve code readability through renaming, comments, and whitespace. Use after writing complex logic or when code would benefit from clarification. The agent is selective — it skips self-documenting code.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-agent-readability-improver"
@@ -53,6 +61,7 @@
     },
     {
       "name": "a11y-accessibility-reviewer",
+      "description": "Use this agent to review code for accessibility (a11y) compliance. Use after writing UI components, forms, navigation, or interactive elements. Evaluates WCAG 2.1/2.2, WAI-ARIA, VoiceOver, and TalkBack compliance for React and React Native.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-agent-a11y-accessibility-reviewer"

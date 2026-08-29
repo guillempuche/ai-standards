@@ -23,9 +23,5 @@
     "accessibility",
     "a11y"
   ],
-  "skills": "./skills/",
-  "agents": [
-    "./agents/readability-improver.md",
-    "./agents/a11y-accessibility-reviewer.md"
-  ]
+  "skills": "./skills/"
 }
