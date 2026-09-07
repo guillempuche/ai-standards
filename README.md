@@ -16,6 +16,8 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 /plugin marketplace add guillempuche/ai-skill-unikraft
 /plugin marketplace add guillempuche/ai-skill-tamagui
 /plugin marketplace add guillempuche/ai-skill-test-bdd
+/plugin marketplace add guillempuche/ai-skill-commit
+/plugin marketplace add guillempuche/ai-skill-pr
 /plugin marketplace add guillempuche/ai-agent-readability-improver
 /plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
@@ -92,6 +94,34 @@ ______________________________________________________________________
 | Focus   | Observable behavior over implementation details                            |
 
 [View skill](./skills/test-bdd/)
+
+______________________________________________________________________
+
+### commit
+
+**Write and validate commit messages in a Conventional-Commits house style**
+
+|          |                                                                          |
+| -------- | ------------------------------------------------------------------------ |
+| Format   | `type(scope): subject`, past-tense body bullets, issue-closing trailers  |
+| Portable | Scopes, extra types, and the formatter come from the repo, not the skill |
+| Focus    | Intent over mechanism; plain language a non-technical reader can follow  |
+
+[View skill](./skills/commit/)
+
+______________________________________________________________________
+
+### pr
+
+**Take a finished branch through verification, self-review, and merge**
+
+|          |                                                                         |
+| -------- | ----------------------------------------------------------------------- |
+| Covers   | Re-baseline, end-to-end verification, self-review, gates, body, merge   |
+| Portable | Gates, CI shape, worktrees, and companion skills are read from the repo |
+| Requires | git; the pull-request steps assume GitHub and the `gh` CLI              |
+
+[View skill](./skills/pr/)
 
 ______________________________________________________________________
 

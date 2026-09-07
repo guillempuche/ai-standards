@@ -52,8 +52,24 @@
       }
     },
     {
+      "name": "commit",
+      "description": "Write and validate git commit messages in a Conventional-Commits house style \u2014 type, scope, imperative subject, past-tense body bullets, issue-closing trailers. Use when committing changes, splitting work into several commits, or checking whether a proposed message follows the format. Portable across repositories: scope vocabulary, extra types, and the pre-commit formatter are read from the repo's own config or inferred from the repo, never hardcoded.",
+      "source": {
+        "source": "github",
+        "repo": "guillempuche/ai-skill-commit"
+      }
+    },
+    {
+      "name": "pr",
+      "description": "Turn a finished change into a reviewable, mergeable pull request. Use when asked to \"open a PR\", \"create a pull request\", \"raise a PR\", \"PR this\", or \"send it for review\". Drives the whole lifecycle \u2014 re-baseline on the default branch, verify end-to-end with visual proof for UI work, self-review for pattern drift and AI-code smells, commit, run the verification gates, write the PR body in a house style, work the review loop, and merge by rebase or squash. Portable across repositories: gates, CI shape, worktree handling, and companion skills are read from the repo's own config or inferred, never hardcoded. Stops at merge; deploying is a separate step.",
+      "source": {
+        "source": "github",
+        "repo": "guillempuche/ai-skill-pr"
+      }
+    },
+    {
       "name": "readability-improver",
-      "description": "Use this agent to improve code readability through renaming, comments, and whitespace. Use after writing complex logic or when code would benefit from clarification. The agent is selective — it skips self-documenting code.",
+      "description": "Use this agent to improve code readability through renaming, comments, and whitespace. Use after writing complex logic or when code would benefit from clarification. The agent is selective \u2014 it skips self-documenting code.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-agent-readability-improver"
