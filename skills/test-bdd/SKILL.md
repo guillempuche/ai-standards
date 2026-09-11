@@ -3,7 +3,7 @@ name: test-bdd
 description: Generate BDD-style test files that document behavior with GIVEN/WHEN/THEN comments and test only public API and observable outcomes. Language and framework agnostic, with patterns and examples tuned for TypeScript + vitest + testing-library (hooks, components, utilities, constants).
 license: MIT
 metadata:
-  version: 1.2.1
+  version: 1.2.2
 ---
 
 # BDD Test File Generator
@@ -50,7 +50,7 @@ Prefer spec style (matches vitest / jest / RSpec output):
 ```text
 describe <unit under test>
   context <condition, state, or collaborator setup>
-    it <expected observable behavior>
+    it should <expected observable behavior>
       GIVEN ...
       WHEN ...
       THEN ...
@@ -156,7 +156,11 @@ Test public API and observable behavior only, never internal implementation:
 
 ## Test Description Style
 
-Use BDD-style descriptions with flexible GIVEN/WHEN/THEN/AND comments:
+The `it(...)` string itself must read as `should <observable behavior>`, matching the THEN outcome.
+For example: `it('should redirect the user when the protected route is accessed unauthenticated')`.
+Avoid vague (`'works correctly'`) or implementation-focused (`'calls setState'`) descriptions — see `references/patterns.md` → **BDD Description Guidelines** for more good/bad examples.
+
+Inside the test body, use flexible GIVEN/WHEN/THEN/AND comments to document the scenario the description names:
 
 ```typescript
 // Full form
