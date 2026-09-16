@@ -18,6 +18,7 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 /plugin marketplace add guillempuche/ai-skill-test-bdd
 /plugin marketplace add guillempuche/ai-skill-commit
 /plugin marketplace add guillempuche/ai-skill-pr
+/plugin marketplace add guillempuche/ai-skill-issue
 /plugin marketplace add guillempuche/ai-agent-readability-improver
 /plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
@@ -122,6 +123,20 @@ ______________________________________________________________________
 | Requires | git; the pull-request steps assume GitHub and the `gh` CLI              |
 
 [View skill](./skills/pr/)
+
+______________________________________________________________________
+
+### issue
+
+**Turn a rough ask into a well-formed GitHub issue**
+
+|          |                                                                         |
+| -------- | ----------------------------------------------------------------------- |
+| Covers   | Interview, duplicate check, type-aware draft (bug/feature/task), labels |
+| Portable | Labels, areas, and attribution are read from the repo, not the skill    |
+| Requires | git; assumes GitHub and the `gh` CLI                                    |
+
+[View skill](./skills/issue/)
 
 ______________________________________________________________________
 
