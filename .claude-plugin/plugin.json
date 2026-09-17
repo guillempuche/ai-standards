@@ -1,6 +1,6 @@
 {
   "name": "ai-standards",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "AI coding skills and agents for TypeScript, React, Effect, local-first apps, unikernels, and accessibility",
   "author": {
     "name": "guillempuche",
