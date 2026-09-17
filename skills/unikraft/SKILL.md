@@ -14,8 +14,12 @@ Build and deploy unikernels with the `unikraft` CLI.
 - CLI source & releases: <https://github.com/unikraft-cloud/cli>
 - Platform: <https://unikraft.cloud>
 
-**Targets the new `unikraft` CLI `0.4.x`** (verified against `0.4.1`) and the Unikraft Cloud REST API `v1`.
+**Targets the new `unikraft` CLI `0.5.x`** (verified against `0.5.1`) and the Unikraft Cloud REST API `v1`.
 Run `unikraft version` to check; if the major or minor differs, re-verify flags/commands against `--help` before following this skill.
+
+`0.5` renamed the plural resource flags to singular — `--domains` → `--domain`, `--services` → `--service`, `--tags` → `--tag` — on `services create`/`edit`, `run` and `instances`.
+Each now repeats instead: `--service 443:8080/http+tls --service 80:443/http+redirect`.
+The error names the replacement (`unknown flag --tags, did you mean one of "--tag", "--args"?`), so an upgrade fails loudly rather than silently.
 
 ## New CLI vs legacy kraftkit — they are different tools
 
@@ -48,7 +52,7 @@ When working with `unikraft` commands:
   ```yaml
   - uses: unikraft/setup-action@v1
     with:
-      version: 0.4.1
+      version: 0.5.1
       token: ${{ secrets.KRAFTCLOUD_TOKEN }}
       organization: my-org
   ```
@@ -142,8 +146,9 @@ unikraft build . --output ./dist/my-app.oci.tar
 unikraft build . --build-arg VERSION=1.2.3 --secret id=npm,src=$HOME/.npmrc
 ```
 
-Flags: `-o/--output`, `--build-arg`, `--no-cache`, `--secret`, `--ssh`, `--insecure`, plus the global `--timeout=<duration>`.
+Flags: `-o/--output`, `--arch`, `--build-arg`, `--no-cache`, `--secret`, `--ssh`, `--insecure`, plus the global `--timeout=<duration>`.
 The input path defaults to `.`.
+`--arch` (`x86_64`, `arm64`) limits which of the Kraftfile's targets are built, and is **required when the Kraftfile declares none**.
 
 ## Run (deploy an instance)
 
@@ -160,6 +165,13 @@ unikraft run --metro fra --image <org>/my-app:latest --dry-run
 Common flags: `--metro`, `--image`, `-n/--name`, `-e/--env`, `-m/--memory` (binary units, e.g. `2048M`), `--vcpus`, `-p/--publish` (`<src>:<dest>[/<handlers>]`), `--domain`, `--service` (attach to an existing service group), `--restart` (`on-failure` …), `--scale-to-zero`, `-v/--volume`, `--replicas`, `--rm`, `--follow`, `--dry-run`.
 
 > Memory units changed from legacy kraftkit: `-M 2048` (MiB) → `-m 2048M`.
+
+> [!WARNING]
+> **A comma inside an `-e` value needs CLI `0.5`+.**
+> Below `0.5`, `-e` split its own value at every comma: `-e OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=KEY,x-honeycomb-dataset=my-app"` reached the instance as `OTEL_EXPORTER_OTLP_HEADERS=x-honeycomb-team=KEY` **plus a second variable named `x-honeycomb-dataset`** — and since both halves look like `key=value`, nothing errored.
+> It fails silently, at runtime, in whatever reads the truncated value; a check that greps the instance for the variable's *name* finds the stray half and reports success.
+> Escaping does not help (`\,` and quotes both still split). `0.5` keeps the value verbatim.
+> Any comma-bearing value is affected — OTLP headers, a multi-host Postgres URL, a CSV allow-list.
 
 ## Instances, services, images
 
@@ -236,8 +248,9 @@ printf '%s' "$UKC_TOKEN" | unikraft login --token - --organization my-org
 unikraft build . --output my-org/my-app:2026.7.9 --timeout 10m
 
 # 3) First deploy — create the service group, then run into it.
-unikraft services create --name my-app \
-  --domain my-app.example.com 443:8080/http+tls 80:443/http+redirect
+unikraft services create --name my-app --metro fra \
+  --domain my-app.example.com \
+  --service 443:8080/http+tls --service 80:443/http+redirect
 unikraft run --metro fra --service my-app --image my-org/my-app:2026.7.9 \
   -m 2048M --restart on-failure -e NODE_ENV=production
 
@@ -251,14 +264,16 @@ unikraft instances logs my-app-<suffix>
 
 ## Troubleshooting
 
-| Symptom                                   | Cause / fix                                                                                   |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `profile not setup`                       | Not logged in — run `unikraft login` (kraftkit's login/`UKC_TOKEN` doesn't count).            |
-| `unknown flag --metro` on `*/list`        | List/get subcommands scope by profile/`--filter`, not `--metro`.                              |
-| Image builds but instance won't boot      | Check `runtime`, the `cmd` path, and that env vars the app needs are passed with `-e`.        |
-| `504 Gateway Timeout`                     | Scale-to-zero cold start — set the scale-to-zero policy `off` for latency-sensitive services. |
-| rootfs / `COPY` build failures            | Keep the Kraftfile + Dockerfile at the build-context root; no `../` in the rootfs path.       |
-| Legacy `fra0`/`kraft.cloud` host in a ref | Replace with the suffix-less metro (`fra`, `api.fra.unikraft.cloud`).                         |
+| Symptom                                                                  | Cause / fix                                                                                   |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `profile not setup`                                                      | Not logged in — run `unikraft login` (kraftkit's login/`UKC_TOKEN` doesn't count).            |
+| `unknown flag --metro` on `*/list`                                       | List/get subcommands scope by profile/`--filter`, not `--metro`.                              |
+| Image builds but instance won't boot                                     | Check `runtime`, the `cmd` path, and that env vars the app needs are passed with `-e`.        |
+| Env var truncated at a comma, plus a stray variable named after its tail | CLI below `0.5` split `-e` values at commas — pin `0.5`+ (escaping doesn't work).             |
+| `unknown flag --domains` / `--services` / `--tags`                       | `0.5` made them singular — `--domain`, `--service`, `--tag`, repeated per value.              |
+| `504 Gateway Timeout`                                                    | Scale-to-zero cold start — set the scale-to-zero policy `off` for latency-sensitive services. |
+| rootfs / `COPY` build failures                                           | Keep the Kraftfile + Dockerfile at the build-context root; no `../` in the rootfs path.       |
+| Legacy `fra0`/`kraft.cloud` host in a ref                                | Replace with the suffix-less metro (`fra`, `api.fra.unikraft.cloud`).                         |
 
 ______________________________________________________________________
 
