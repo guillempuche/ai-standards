@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Take a finished branch through to a merged GitHub pull request — verify, self-review, open, work the review, merge. Use when asked to open, update, or merge a PR.
+description: Take a finished branch through to a merged GitHub pull request — verify, self-review, open, work the review, merge. Use when asked to "open a PR", "raise a PR", "PR this", "send it for review", or to update or merge a PR.
 license: MIT
 compatibility: Requires git. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
 metadata:
