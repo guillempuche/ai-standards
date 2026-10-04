@@ -3,7 +3,7 @@ name: powersync
 description: PowerSync TypeScript SDKs (web, React Native, Node) and sync rules for local-first apps. Use when adding PowerSync to a project, or writing or debugging code that uses @powersync/* packages or sync rules.
 license: Apache-2.0
 metadata:
-  version: 1.0.1
+  version: 1.0.2
   author: ai-standards
   language: typescript
   frameworks: react, react-native, vue, node

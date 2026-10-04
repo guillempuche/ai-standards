@@ -3,7 +3,7 @@ name: tamagui
 description: Tamagui styling, themes, tokens, compiler, and UI kit for React and React Native. Use when the project uses or is adopting Tamagui and you are writing or debugging its components, config, or compiler setup.
 license: MIT
 metadata:
-  version: 1.0.1
+  version: 1.0.2
   author: ai-standards
   language: typescript
   frameworks: react, react-native, next, expo, vite

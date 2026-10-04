@@ -3,7 +3,7 @@ name: effect-lookup
 description: Find Effect TypeScript signatures, source, and idioms from the local Effect checkout and docs. Use when you need to confirm an Effect API's signature, behavior, or deprecation, or find how an Effect pattern is done idiomatically.
 license: MIT
 metadata:
-  version: 1.0.1
+  version: 1.0.2
 ---
 
 # Effect Library Lookup

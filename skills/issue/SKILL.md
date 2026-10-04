@@ -4,7 +4,7 @@ description: Draft and file one GitHub issue that follows the repo's conventions
 license: MIT
 compatibility: Requires git. Issue creation assumes GitHub and the `gh` CLI; on another host the same drafting logic applies but the commands need translating.
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   author: ai-standards
 allowed-tools: Bash(gh:*) Bash(rg:*) Bash(grep:*) Bash(mktemp:*) Bash(rm:*) Read Grep Glob Write AskUserQuestion
 ---

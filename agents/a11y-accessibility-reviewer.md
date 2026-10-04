@@ -1,6 +1,6 @@
 ---
 name: a11y-accessibility-reviewer
-version: 1.0.1
+version: 1.1.0
 description: Review React and React Native UI code for accessibility (WCAG 2.1/2.2, WAI-ARIA, VoiceOver, TalkBack), fix Critical and Major issues local to the reviewed code, and report the rest. Use after writing or changing UI components, forms, navigation, or interactive elements.
 tools: Bash, Glob, Grep, Read, Edit, Write, TodoWrite
 model: opus

@@ -3,7 +3,7 @@ name: commit
 description: Write and validate Conventional-Commits messages in a house style, matching the repo's own history. Use when committing, splitting work into commits, or checking a commit message.
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   author: ai-standards
 ---
 
