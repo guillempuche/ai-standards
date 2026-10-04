@@ -48,7 +48,7 @@ ______________________________________________________________________
 | -------- | ----------------------------------------------------- |
 | Coverage | Core Effect, Platform, CLI, RPC, SQL, AI packages     |
 | Features | Module reference, common patterns, source code lookup |
-| Includes | MCP server integration for indexed docs               |
+| Includes | Optional MCP server integration for indexed docs      |
 
 [View skill](./skills/effect-lookup/) | [Effect docs](https://effect.website/)
 
@@ -158,13 +158,13 @@ ______________________________________________________________________
 
 ### a11y-accessibility-reviewer
 
-**Review code for accessibility compliance (WCAG, VoiceOver, TalkBack)**
+**Review and fix accessibility issues (WCAG, VoiceOver, TalkBack)**
 
-|           |                                                       |
-| --------- | ----------------------------------------------------- |
-| Platforms | React, React Native, Web                              |
-| Standards | WCAG 2.1/2.2, WAI-ARIA, iOS/Android a11y APIs         |
-| Coverage  | Visual, motor, auditory, cognitive, vestibular issues |
+|           |                                                         |
+| --------- | ------------------------------------------------------- |
+| Platforms | React, React Native, Web                                |
+| Standards | WCAG 2.1/2.2, WAI-ARIA, iOS/Android a11y APIs           |
+| Coverage  | Visual, motor, auditory, cognitive, vestibular, seizure |
 
 [View agent](./agents/a11y-accessibility-reviewer.md)
 

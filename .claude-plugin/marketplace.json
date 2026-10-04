@@ -13,7 +13,7 @@
     },
     {
       "name": "powersync",
-      "description": "Build local-first, offline-capable TypeScript apps with PowerSync. Use when implementing real-time sync between SQLite and backend databases (Postgres, MongoDB, MySQL, SQL Server). Covers schema definition, database setup, CRUD operations, React/Vue hooks, watch queries, and Kysely/Drizzle ORM integration.",
+      "description": "PowerSync TypeScript SDKs (web, React Native, Node) and sync rules for local-first apps. Use when adding PowerSync to a project, or writing or debugging code that uses @powersync/* packages or sync rules.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-powersync"
@@ -21,7 +21,7 @@
     },
     {
       "name": "effect-lookup",
-      "description": "Quick lookup for Effect TypeScript library APIs, patterns, and source code. Use when you need to find Effect functions, understand Effect patterns, or look up implementation details.",
+      "description": "Find Effect TypeScript signatures, source, and idioms from the local Effect checkout and docs. Use when you need to confirm an Effect API's signature, behavior, or deprecation, or find how an Effect pattern is done idiomatically.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-effect-lookup"
@@ -37,7 +37,7 @@
     },
     {
       "name": "tamagui",
-      "description": "Universal React + React Native UI library with optimizing compiler. Use when building cross-platform apps with shared styling, design tokens, themes, and accessible components.",
+      "description": "Tamagui styling, themes, tokens, compiler, and UI kit for React and React Native. Use when the project uses or is adopting Tamagui and you are writing or debugging its components, config, or compiler setup.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-tamagui"
@@ -45,7 +45,7 @@
     },
     {
       "name": "test-bdd",
-      "description": "Generate BDD-style test files that document behavior with GIVEN/WHEN/THEN comments and test only public API and observable outcomes. Language and framework agnostic, with patterns and examples tuned for TypeScript + vitest + testing-library (hooks, components, utilities, constants).",
+      "description": "Generate BDD-style test files with GIVEN/WHEN/THEN comments that test only public API and observable outcomes; tuned for, but not limited to, TypeScript + vitest + testing-library. Use when asked to write or add tests for a specific file or module.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-test-bdd"
@@ -53,7 +53,7 @@
     },
     {
       "name": "commit",
-      "description": "Write and validate git commit messages in a Conventional-Commits house style \u2014 type, scope, imperative subject, past-tense body bullets, issue-closing trailers. Use when committing changes, splitting work into several commits, or checking whether a proposed message follows the format. Portable across repositories: scope vocabulary, extra types, and the pre-commit formatter are read from the repo's own config or inferred from the repo, never hardcoded.",
+      "description": "Write and validate Conventional-Commits messages in a house style, matching the repo's own history. Use when committing, splitting work into commits, or checking a commit message.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-commit"
@@ -61,7 +61,7 @@
     },
     {
       "name": "pr",
-      "description": "Turn a finished change into a reviewable, mergeable pull request. Use when asked to \"open a PR\", \"create a pull request\", \"raise a PR\", \"PR this\", or \"send it for review\". Drives the whole lifecycle \u2014 re-baseline on the default branch, verify end-to-end with visual proof for UI work, self-review for pattern drift and AI-code smells, commit, run the verification gates, write the PR body in a house style, work the review loop, and merge by rebase or squash. Portable across repositories: gates, CI shape, worktree handling, and companion skills are read from the repo's own config or inferred, never hardcoded. Stops at merge; deploying is a separate step.",
+      "description": "Take a finished branch through to a merged GitHub pull request \u2014 verify, self-review, open, work the review, merge. Use when asked to open, update, or merge a PR.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-pr"
@@ -69,7 +69,7 @@
     },
     {
       "name": "issue",
-      "description": "Turn a rough ask into a well-formed GitHub issue, following this repo's own conventions. Use when asked to \"create an issue\", \"open an issue\", \"file an issue\", \"raise an issue\", \"log a bug\", \"track this as an issue\", \"make a GitHub issue\", or when describing a bug / feature / task to capture in the tracker. Interviews for gaps, researches the repo for real references and duplicates, drafts a type-aware (bug / feature / task) issue, shows it for approval, then creates it via gh. Portable across repositories \u2014 labels, areas, and attribution are read from the repo's own config or inferred, never hardcoded.",
+      "description": "Draft and file one GitHub issue that follows the repo's conventions, after checking for duplicates. Use when asked to create, file, or log an issue or bug.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-issue"
@@ -85,7 +85,7 @@
     },
     {
       "name": "a11y-accessibility-reviewer",
-      "description": "Use this agent to review code for accessibility (a11y) compliance. Use after writing UI components, forms, navigation, or interactive elements. Evaluates WCAG 2.1/2.2, WAI-ARIA, VoiceOver, and TalkBack compliance for React and React Native.",
+      "description": "Review React and React Native UI code for accessibility (WCAG 2.1/2.2, WAI-ARIA, VoiceOver, TalkBack), fix Critical and Major issues local to the reviewed code, and report the rest. Use after writing or changing UI components, forms, navigation, or interactive elements.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-agent-a11y-accessibility-reviewer"
