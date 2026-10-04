@@ -132,6 +132,7 @@ Same condition as Step 4: only when there is something uncommitted to land.
 - **The commit preview is the approval gate.**
   When the `commit` skill shows its preview, add a plain-English explanation alongside it — which files, what the diff does, any risk — and that one OK covers the commit.
   One commit at a time; don't batch "here are the next three, OK?".
+  If the `commit` skill's preview proposes several commits, show the whole plan once, then get the OK and land each commit in turn.
 - One PR per slice, with focused commits.
   Never split a slice across PRs.
 
