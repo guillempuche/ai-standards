@@ -1,6 +1,6 @@
 ---
 name: test-bdd
-description: Generate BDD-style test files that document behavior with GIVEN/WHEN/THEN comments and test only public API and observable outcomes. Language and framework agnostic, with patterns and examples tuned for TypeScript + vitest + testing-library (hooks, components, utilities, constants).
+description: Generate BDD-style test files with GIVEN/WHEN/THEN comments that test only public API and observable outcomes; tuned for, but not limited to, TypeScript + vitest + testing-library. Use when asked to write or add tests for a specific file or module.
 license: MIT
 metadata:
   version: 1.2.2
@@ -15,21 +15,20 @@ Generate behavior-driven test files that focus on public API and observable beha
 1. **Read the source file** to understand what needs to be tested
 1. **Identify the public API** - all exported functions, constants, hooks, or component props
 1. **Check for existing test setup** - look for `setup.ts`, `vitest.config.ts`, or existing test files
-1. **Ask the user: unit, integration, or both?** (see below)
-1. **Delegate context + edge-case analysis to an agent** (see below) — do
-   not try to produce the full case list from the source file alone
-1. **Review the agent's list with the user**, prune/add cases, then
-   generate the test file using patterns from `references/patterns.md`
+1. **Pick unit, integration, or both** (see below) — ask only when the file kind is ambiguous
+1. **Gather context and draft the case list** — delegate to a subagent when the unit has callers, collaborators, or history worth surveying (see below)
+1. **Prune the case list**, resolving any open questions with the user, then generate the test file using patterns from `references/patterns.md`
+1. **Run the new tests** — fix failures caused by the test itself, and report any that reveal a real bug in the code instead of changing the assertion to match it
 
 ## Delegate Analysis to a Subagent
 
 A single file rarely tells the full story: callers pass specific shapes,
 sibling files encode invariants, existing tests hint at conventions, and the
-bug that prompted the test may live in the git log. Before writing cases,
-spawn a subagent to gather that context and draft the case list.
+bug that prompted the test may live in the git log. Before writing cases, gather that context and draft the case list — usually via a subagent.
+For a self-contained pure function or a constants file, reading it yourself is enough.
 
-Use the `Explore` agent (or `general-purpose` if deeper reasoning is needed)
-via the `Agent` tool. Give it a self-contained brief that includes:
+Use whatever subagent mechanism your environment offers (in Claude Code, the `Explore` or `general-purpose` agent via the `Agent` tool); without one, do the same survey yourself.
+Give it a self-contained brief that includes:
 
 - The exact source path(s) being tested
 - The testing level chosen in the previous step (unit / integration / both)
@@ -77,19 +76,17 @@ Notes for the agent's report:
   it. This annotation lives in the report, to be reviewed and discarded.
 - Cap report length (e.g. "under 400 lines") so it stays reviewable.
 
-When the report comes back:
+When the report (or your own survey) is done:
 
-1. Resolve the **Open Questions** with the user before generating code
+1. Resolve the **Open Questions** with the user before generating code, if there are any
 1. Drop any case the code doesn't actually distinguish
 1. Add anything the agent missed that you can justify from the source
 
 Only then move on to generating the test file.
 
-## Ask: Unit, Integration, or Both?
+## Choose: Unit, Integration, or Both?
 
-Before generating anything, ask the user which level(s) of tests they want —
-don't assume. Use `AskUserQuestion` (or a plain question if that tool isn't
-available) with these choices, explained in terms of *this* file:
+Decide which level(s) of tests to write for *this* file:
 
 - **Unit tests** — exercise the module in isolation; collaborators (network,
   DB, other modules, timers, the DOM beyond what a single hook/component
@@ -103,16 +100,18 @@ available) with these choices, explained in terms of *this* file:
 - **Both** — produce separate files (e.g. `foo.test.ts` and
   `foo.integration.test.ts`) so they can run under different configs.
 
-Recommend a default based on the file:
+Default level by file kind:
 
-| File kind                                      | Default recommendation |
-| ---------------------------------------------- | ---------------------- |
-| Pure function / utility / constants            | Unit                   |
-| Hook / component with mockable deps            | Unit                   |
-| Repository / DB query / HTTP client            | Integration            |
-| Router, workflow, or multi-module orchestrator | Both                   |
+| File kind                                      | Default level |
+| ---------------------------------------------- | ------------- |
+| Pure function / utility / constants            | Unit          |
+| Hook / component with mockable deps            | Unit          |
+| Repository / DB query / HTTP client            | Integration   |
+| Router, workflow, or multi-module orchestrator | Both          |
 
-State the recommendation and why, but defer to the user's answer.
+When the file kind matches a row, state the choice and why, and proceed — the user can redirect.
+When it is ambiguous (e.g. a hook that also talks to the network), ask the user before generating.
+If the user already said which level they want, use that.
 
 ## Edge Cases: Analyze from Context, Don't Use a Generic Checklist
 
