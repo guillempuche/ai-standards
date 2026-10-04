@@ -38,12 +38,12 @@ If you see `kraft`, `UKC_TOKEN`, `kraft cloud`, or `--rollout` in a config or ru
 
 When working with `unikraft` commands:
 
-1. **Show cloud-changing commands first** — for anything that creates, edits, deletes, or publishes, display the command in a copy-paste code block before running it.
+1. **Read-only and local commands can just run** — e.g. `list`, `get`, `logs`, `wait`, `quotas`, `metros list`, `run --dry-run`, `profile use`, `config`, `upgrade`.
+1. **Show cloud-changing commands first** — for anything that creates, edits, deletes, or publishes, display the command in a copy-paste code block.
    That includes, e.g., `run`, `services create`/`edit`, `instances delete`/`start`/`stop`/`suspend`/`restart`, `images build`/`delete`, a publishing `build`, volume and certificate mutations, and a POST/PATCH/DELETE through `unikraft api` or `curl`.
-   Read-only commands (e.g. `list`, `get`, `logs`, `wait`, `quotas`, `metros list`, `run --dry-run`) and local-only ones (`profile use`, `config`, `upgrade`) can just run.
-1. **Authenticated (cloud) commands need a login** — anything hitting Unikraft Cloud (`run`, `instances`, `services`, `images`, `metros`, `api`, a publishing `build`) fails with `profile not setup` until `unikraft login` has run in that environment.
-   The AI's shell may not be logged in; if a command returns `profile not setup`, hand it to the developer to run.
-1. **Let the developer run it** when a login or a real deploy is involved.
+   Run it yourself only when the user asked you to and it is not a production deploy; otherwise hand it to the developer to run.
+1. **Logins are always the developer's** — `unikraft login` takes a token, so never run it yourself.
+   Anything hitting Unikraft Cloud (`run`, `instances`, `services`, `images`, `metros`, `api`, a publishing `build`) fails with `profile not setup` until a login has run in that environment; the AI's shell may not have one, so on that error hand the command to the developer.
 
 ## Installation
 
