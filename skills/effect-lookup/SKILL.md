@@ -1,6 +1,6 @@
 ---
 name: effect-lookup
-description: Quick lookup for Effect TypeScript library APIs, patterns, and source code. Use when you need to find Effect functions, understand Effect patterns, or look up implementation details.
+description: Find Effect TypeScript signatures, source, and idioms from the local Effect checkout and docs. Use when you need to confirm an Effect API's signature, behavior, or deprecation, or find how an Effect pattern is done idiomatically.
 license: MIT
 metadata:
   version: 1.0.1
@@ -31,35 +31,15 @@ Use this skill when:
 
 ## How to Look Up Effect APIs
 
-### 1. Use the Effect Docs MCP Server (Fastest)
+### 1. Use the Effect Docs MCP Server, if available
 
-The `effect-docs` MCP server provides indexed documentation:
-
-```
-mcp__effect-docs__effect_docs_search: Search for Effect concepts
-mcp__effect-docs__get_effect_doc: Get specific documentation by ID
-```
+If the `effect-docs` MCP server is connected, `mcp__effect-docs__effect_docs_search` (search concepts) and `mcp__effect-docs__get_effect_doc` (fetch a doc by ID) are the fastest route for conceptual questions.
+Otherwise use the local source or the website.
 
 ### 2. Search the Local Source
 
-For implementation details, search the local source at `opensrc/repos/github.com/effect-ts/effect/`:
-
-```bash
-# Find a specific function
-grep -r "export const myFunction" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/
-
-# Find usage patterns
-grep -rn "Effect.gen" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/
-
-# Find type definitions
-grep -rn "interface MyType" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/
-```
-
-### 3. Read Source Files Directly
-
-Core modules are at: `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/<Module>.ts`
-
-Example: To understand `Effect.map`, read `opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts`
+For signatures and implementation details, search `opensrc/repos/github.com/effect-ts/effect/packages/` (or the GitHub repo if there is no local checkout).
+Ready-made grep recipes are under **Lookup Commands** in [`references/patterns.md`](references/patterns.md).
 
 ## Quick Reference
 
@@ -89,119 +69,17 @@ opensrc/repos/github.com/effect-ts/effect/
 │   └── ai/                   # AI integrations (OpenAI, Anthropic, etc.)
 ```
 
-## Core Modules Quick Lookup
+## Finding the Right Module
 
-### Effect System
-
-| Module  | File         | Purpose                          |
-| ------- | ------------ | -------------------------------- |
-| Effect  | `Effect.ts`  | Core effect type and combinators |
-| Layer   | `Layer.ts`   | Dependency injection layers      |
-| Context | `Context.ts` | Type-safe service context        |
-| Scope   | `Scope.ts`   | Resource management              |
-| Runtime | `Runtime.ts` | Effect execution                 |
-
-### Data Types
-
-| Module  | File         | Purpose                |
-| ------- | ------------ | ---------------------- |
-| Option  | `Option.ts`  | Optional values        |
-| Either  | `Either.ts`  | Success/failure values |
-| Chunk   | `Chunk.ts`   | Immutable arrays       |
-| HashMap | `HashMap.ts` | Immutable hash maps    |
-| HashSet | `HashSet.ts` | Immutable hash sets    |
-| List    | `List.ts`    | Immutable linked lists |
-
-### Concurrency
-
-| Module    | File           | Purpose              |
-| --------- | -------------- | -------------------- |
-| Fiber     | `Fiber.ts`     | Lightweight threads  |
-| Queue     | `Queue.ts`     | Concurrent queues    |
-| Ref       | `Ref.ts`       | Mutable references   |
-| Semaphore | `Semaphore.ts` | Concurrency limiting |
-| PubSub    | `PubSub.ts`    | Publish/subscribe    |
-
-### Schema & Validation
-
-| Module      | File             | Purpose                    |
-| ----------- | ---------------- | -------------------------- |
-| Schema      | `Schema.ts`      | Data validation & encoding |
-| ParseResult | `ParseResult.ts` | Parsing results            |
-| Arbitrary   | `Arbitrary.ts`   | Property-based testing     |
-
-### Streaming
-
-| Module  | File         | Purpose                 |
-| ------- | ------------ | ----------------------- |
-| Stream  | `Stream.ts`  | Effectful streams       |
-| Sink    | `Sink.ts`    | Stream consumers        |
-| Channel | `Channel.ts` | Bidirectional streaming |
-
-### Scheduling & Time
-
-| Module   | File          | Purpose                |
-| -------- | ------------- | ---------------------- |
-| Schedule | `Schedule.ts` | Retry/repeat schedules |
-| Duration | `Duration.ts` | Time durations         |
-| DateTime | `DateTime.ts` | Date/time handling     |
-| Clock    | `Clock.ts`    | Time service           |
-| Cron     | `Cron.ts`     | Cron expressions       |
-
-### Configuration
-
-| Module         | File                | Purpose                 |
-| -------------- | ------------------- | ----------------------- |
-| Config         | `Config.ts`         | Type-safe configuration |
-| ConfigProvider | `ConfigProvider.ts` | Configuration sources   |
-
-## Common Lookup Patterns
-
-### Find Function Signature
-
-```bash
-# In Effect.ts, functions are well-documented with JSDoc
-grep -A 20 "export const map" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts
-```
-
-### Find Type Definition
-
-```bash
-# Look for interface or type alias
-grep -n "interface Effect<" opensrc/repos/github.com/effect-ts/effect/packages/effect/src/Effect.ts
-```
-
-### Find Examples in Tests
-
-```bash
-# Tests often have practical examples
-grep -rn "Effect.gen" opensrc/repos/github.com/effect-ts/effect/packages/effect/test/
-```
-
-### Check Platform APIs
-
-```bash
-# HTTP client/server
-ls opensrc/repos/github.com/effect-ts/effect/packages/platform/src/Http*.ts
-
-# FileSystem
-cat opensrc/repos/github.com/effect-ts/effect/packages/platform/src/FileSystem.ts
-```
+Core modules live at `packages/effect/src/<Module>.ts` (e.g. `Effect.ts`, `Layer.ts`, `Schema.ts`, `Stream.ts`); platform, SQL, RPC, CLI, and AI integrations are separate packages.
+For the full categorized list, read [`references/modules.md`](references/modules.md).
+Tests under `packages/*/test/` show real usage, and the JSDoc in each source file is the most reliable signature reference.
 
 ## EffectPatterns Knowledge Base
 
 Community-driven patterns and architectural guides at `opensrc/repos/github.com/PaulJPhilp/EffectPatterns/`.
 
-```bash
-# Browse pattern categories
-ls opensrc/repos/github.com/PaulJPhilp/EffectPatterns/content/
-
-# Search for a specific pattern
-grep -rn "Layer" opensrc/repos/github.com/PaulJPhilp/EffectPatterns/content/
-
-# Read docs
-ls opensrc/repos/github.com/PaulJPhilp/EffectPatterns/docs/
-```
+Pattern write-ups are under `content/`, longer guides under `docs/`.
 
 Covers: getting started, core concepts, error management, resource management, concurrency, streams, scheduling, domain modeling, schema, platform, HTTP APIs, data pipelines, testing, and observability.
 
@@ -210,12 +88,3 @@ Covers: getting started, core concepts, error management, resource management, c
 - [Effect Website](https://effect.website/) - Official documentation
 - [Effect API Reference](https://effect-ts.github.io/effect/) - Full API docs
 - [Effect Discord](https://discord.gg/hdt7t7jpvn) - Community support
-
-## Tips for Effective Lookups
-
-1. **Start with MCP search** - Use `effect_docs_search` for conceptual questions
-1. **Read JSDoc comments** - Effect source has excellent inline documentation
-1. **Check tests for examples** - Test files show real usage patterns
-1. **Use module tables above** - Quickly navigate to the right source file
-1. **Platform packages** - HTTP, FileSystem, etc. are in `@effect/platform`
-1. **EffectPatterns** - Use for architectural patterns and best practices
