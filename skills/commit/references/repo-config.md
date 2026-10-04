@@ -100,14 +100,14 @@ Write only the keys whose values differ from the defaults — a short config is 
 
 An unfilled role is **never a silent skip**.
 
-| Empty role      | Fallback                                                                            |
-| --------------- | ----------------------------------------------------------------------------------- |
-| `stack-bringup` | Bring the stack up with the repo's documented commands, or say it could not be run. |
-| `readability`   | Do the readability pass inline against the self-review checklist.                   |
-| `a11y`          | Check the changed components against the checklist by hand.                         |
-| `security`      | Self-read the sensitive surface and say in the review guide that no scanner ran.    |
-| `ui-capture`    | Ask the user whether to skip screenshots; never drop them silently.                 |
-| `media-upload`  | Use the host's manual attachment path and leave a placeholder line in the body.     |
+| Empty role      | Fallback                                                                             |
+| --------------- | ------------------------------------------------------------------------------------ |
+| `stack-bringup` | Bring the stack up with the repo's documented commands, or say it could not be run.  |
+| `readability`   | Do the readability pass inline against the self-review checklist.                    |
+| `a11y`          | Check the changed components against the checklist by hand.                          |
+| `security`      | Self-read the sensitive surface and say in the review guide that no scanner ran.     |
+| `ui-capture`    | Capture by hand if possible; skip only a self-evident change, stating why; else ask. |
+| `media-upload`  | Use the host's manual attachment path and leave a placeholder line in the body.      |
 
 Whatever could not be done is stated in the pull request's `## Review guide`.
 That is what stops a portable skill from being quietly weaker than a repo-specific one.
