@@ -61,7 +61,7 @@
     },
     {
       "name": "pr",
-      "description": "Take a finished branch through to a merged GitHub pull request \u2014 verify, self-review, open, work the review, merge. Use when asked to open, update, or merge a PR.",
+      "description": "Take a finished branch through to a merged GitHub pull request \u2014 verify, self-review, open, work the review, merge. Use when asked to \"open a PR\", \"raise a PR\", \"PR this\", \"send it for review\", or to update or merge a PR.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-pr"
@@ -69,7 +69,7 @@
     },
     {
       "name": "issue",
-      "description": "Draft and file one GitHub issue that follows the repo's conventions, after checking for duplicates. Use when asked to create, file, or log an issue or bug.",
+      "description": "Draft and file one GitHub issue that follows the repo's conventions, after checking for duplicates. Use when asked to \"create\", \"open\", \"file\", or \"raise\" an issue, \"log a bug\", or \"track this as an issue\".",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-issue"

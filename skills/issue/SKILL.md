@@ -1,6 +1,6 @@
 ---
 name: issue
-description: Draft and file one GitHub issue that follows the repo's conventions, after checking for duplicates. Use when asked to create, file, or log an issue or bug.
+description: Draft and file one GitHub issue that follows the repo's conventions, after checking for duplicates. Use when asked to "create", "open", "file", or "raise" an issue, "log a bug", or "track this as an issue".
 license: MIT
 compatibility: Requires git. Issue creation assumes GitHub and the `gh` CLI; on another host the same drafting logic applies but the commands need translating.
 metadata:
