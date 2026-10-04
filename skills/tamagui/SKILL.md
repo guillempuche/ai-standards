@@ -1,6 +1,6 @@
 ---
 name: tamagui
-description: Universal React + React Native UI library with optimizing compiler. Use when building cross-platform apps with shared styling, design tokens, themes, and accessible components.
+description: Tamagui styling, themes, tokens, compiler, and UI kit for React and React Native. Use when the project uses or is adopting Tamagui and you are writing or debugging its components, config, or compiler setup.
 license: MIT
 metadata:
   version: 1.0.1

@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Write and validate git commit messages in a Conventional-Commits house style — type, scope, imperative subject, past-tense body bullets, issue-closing trailers. Use when committing changes, splitting work into several commits, or checking whether a proposed message follows the format. Portable across repositories — scope vocabulary, extra types, and the pre-commit formatter are read from the repo's own config or inferred from the repo, never hardcoded.
+description: Write and validate Conventional-Commits messages in a house style, matching the repo's own history. Use when committing, splitting work into commits, or checking a commit message.
 license: MIT
 metadata:
   version: 1.0.0
@@ -185,16 +185,11 @@ When AI files are mixed with non-AI files, split them into separate commits.
 1. **AI-only changes**: when every changed file configures AI (see the `ai` type), use `ai`.
 1. **No mechanical cleanup or implementation narration**: don't mention consequences obvious from the primary change (removed unused imports, unwrapped single-child fragments, re-indentation), and don't describe how the diff achieves the change ("added a helper that maps X to Y" when the diff *is* the helper).
    Focus on intent and why, not mechanism.
-1. **Plain language for everyone**: write the subject and body so a non-technical reader and a brand-new contributor can follow the change without prior context.
-   Lead with the everyday-terms "what changed and why it matters", spell out an acronym or internal name (a table, a service, a flag) the first time it appears, and don't lean on unstated background.
-   Keep the precise technical terms — add the plain-language point on top, don't trade it away.
-   Commit messages outlive their context: they are read in `git blame`, changelogs, and release notes long after the surrounding work is forgotten.
-   **Plain first, exact term right after, in the same sentence.**
-   Not a plain paragraph followed by a technical one, and not a technical sentence with a glossary at the end — the reader should never have to hold an unexplained term while waiting for its meaning.
-   Write "nothing touching which organisation can see what (row-level security)", not "no RLS changes".
-   **The failure mode to watch for is the invented compound noun.**
-   "Id-keyed profile pages", "wire-shape change", "boot-time provider selection" all read as established terms to the person who just wrote them and as nothing at all to everybody else.
-   When you catch yourself coining one, say it as a sentence instead and give an example.
+1. **Plain language for everyone**: write so a non-technical reader or a new contributor can follow the change without prior context — commit messages are read in `git blame` and changelogs long after the work is forgotten.
+   **Plain first, exact term right after, in the same sentence**: "nothing touching which organisation can see what (row-level security)", not "no RLS changes".
+   Not a plain paragraph followed by a technical one, and not a glossary at the end — the reader should never hold an unexplained term while waiting for its meaning.
+   Spell out acronyms and internal names on first use, and keep the precise terms rather than trading them away.
+   Watch for invented compound nouns ("id-keyed profile pages", "wire-shape change"); say it as a sentence with an example instead.
 1. **No tautology**: the subject must not repeat the type as a verb.
    The type already conveys the action — `fix: fix the login` becomes `fix: resolve login failure`; `refactor: refactor auth` becomes `refactor: simplify auth flow`.
 1. **No bare `#` tokens in the body**: on GitHub, and in any changelog generated from commit messages, `#<token>` renders as an issue reference — so a hex colour or a fragment id becomes a broken issue link.

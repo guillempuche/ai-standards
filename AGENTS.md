@@ -14,8 +14,7 @@ All skills in this repo MUST follow the official Agent Skills guidelines at
 Treat that site as the source of truth — when it disagrees with this file,
 the official guidelines win, and this file should be updated to match.
 
-Before adding or modifying a skill, check the official guidelines for the
-current rules on:
+When adding a skill, changing frontmatter, restructuring a skill's files, or growing a `SKILL.md` body, check the official guidelines for the current rules on:
 
 - `SKILL.md` structure and required frontmatter fields
 - `name` / `description` / `version` / `license` / `metadata` / `allowed-tools`
@@ -79,6 +78,11 @@ Always write a three-part semver there: `metadata` values must be strings, and `
 | `name`        | Max 64 chars, lowercase letters/numbers/hyphens, must match folder name |
 | `description` | Max 1024 chars, describes what skill does AND when to use it            |
 
+Keep descriptions far below the 1024-char limit — aim for one or two sentences, around 250 characters.
+Agents may truncate descriptions when many skills are installed, and a long or broad description makes the skill fire where it doesn't help.
+Say *what* the skill does and the narrowest *when* that still covers its real uses, keeping the trigger words people actually type: "Use when the project depends on Tamagui", not "Use when building cross-platform UI".
+Workflow steps belong in the body, not the description.
+
 ### Frontmatter (Optional Fields)
 
 | Field           | Purpose                                  |
@@ -129,6 +133,8 @@ Background subagents lose more still.
 They keep only `Read`, `Grep`, `Glob`, `Bash`, `PowerShell`, `Edit`, `Write`, `NotebookEdit`, `WebFetch`, `WebSearch`, `TodoWrite`, `Skill`, `ToolSearch`, `EnterWorktree`, `ExitWorktree`, `Monitor`, `TaskStop`, `SendMessage`, and `Artifact`.
 
 ## Validation
+
+Running `mdformat` and `claude plugin validate . --strict` is safe: fix failures they report and rerun without asking for approval at each step.
 
 Before committing, verify:
 
