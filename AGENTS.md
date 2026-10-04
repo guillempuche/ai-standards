@@ -4,25 +4,22 @@ Instructions for AI coding agents working on this repository.
 
 ## Project Overview
 
-This repository contains AI skills. Each skill is a self-contained folder with
-a `SKILL.md` file and optional supporting resources.
+This repository contains AI skills.
+Each skill is a self-contained folder with a `SKILL.md` file and optional supporting resources.
 
 ### Follow the official Agent Skills guidelines
 
-All skills in this repo MUST follow the official Agent Skills guidelines at
-<https://agentskills.io/> (full spec: <https://agentskills.io/specification>).
-Treat that site as the source of truth — when it disagrees with this file,
-the official guidelines win, and this file should be updated to match.
+All skills in this repo MUST follow the official Agent Skills guidelines at <https://agentskills.io/> (full spec: <https://agentskills.io/specification>).
+Treat that site as the source of truth — when it disagrees with this file, the official guidelines win, and this file should be updated to match.
 
 When adding a skill, changing frontmatter, restructuring a skill's files, or growing a `SKILL.md` body, check the official guidelines for the current rules on:
 
 - `SKILL.md` structure and required frontmatter fields
-- `name` / `description` / `version` / `license` / `metadata` / `allowed-tools`
+- `name` / `description` / `license` / `compatibility` / `metadata` (which holds `version`) / `allowed-tools`
 - Progressive disclosure (when to split into `references/`, `assets/`, `scripts/`)
 - File-size and line-count limits
 
-If a PR introduces a skill that doesn't comply with agentskills.io, reject it
-or fix it before merging.
+If a PR introduces a skill that doesn't comply with agentskills.io, reject it or fix it before merging.
 
 ## Repository Structure
 

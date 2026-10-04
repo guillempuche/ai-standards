@@ -195,7 +195,7 @@ description: What it does and when to use it (max 1024 chars)
 license: MIT
 metadata:
   author: your-name
-  version: "1.0"
+  version: 1.0.0
 ---
 
 # Your Skill
