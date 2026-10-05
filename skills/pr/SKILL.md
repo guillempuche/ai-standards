@@ -4,7 +4,7 @@ description: Take a finished branch through to a merged GitHub pull request — 
 license: MIT
 compatibility: Requires git. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
 metadata:
-  version: 1.1.1
+  version: 1.1.2
   author: ai-standards
 allowed-tools: Bash Read Glob Grep AskUserQuestion Skill
 ---
