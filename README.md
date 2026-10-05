@@ -1,10 +1,25 @@
 # AI Standards
 
-**Open-source AI coding skills for Claude Code, Cursor, Copilot, and AI agents**
+**Open-source AI coding skills for Claude Code, Codex, Gemini CLI, OpenCode, Mastra Code, Cursor, Copilot, and any agent that reads Agent Skills**
 
 Skills for TypeScript, React, React Native, local-first apps, offline sync, and modern web development.
 
 ## Quick Install
+
+### Any agent
+
+The [`skills`](https://github.com/vercel-labs/skills) CLI installs into Codex, OpenCode, Gemini CLI, Cursor, Copilot, Claude Code, and 70+ other agents.
+It detects which agents you have installed and asks which skills to add.
+
+```bash
+# Pick skills interactively
+npx skills add guillempuche/ai-standards
+
+# One skill, into specific agents
+npx skills add guillempuche/ai-standards --skill powersync -a codex -a opencode
+```
+
+### Claude Code
 
 ```bash
 # Full bundle (all skills + agents)
@@ -22,6 +37,17 @@ Skills for TypeScript, React, React Native, local-first apps, offline sync, and 
 /plugin marketplace add guillempuche/ai-agent-readability-improver
 /plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
+
+### Gemini CLI
+
+```bash
+gemini skills install https://github.com/guillempuche/ai-standards.git --path skills/powersync
+```
+
+### Manual
+
+Copy a folder from `skills/` into the directory your agent reads, see [Compatibility](#compatibility).
+`.agents/skills/` covers most agents; Claude Code needs `.claude/skills/`.
 
 ## Skills Catalog
 
@@ -172,16 +198,21 @@ ______________________________________________________________________
 
 ## Compatibility
 
-Skills follow the [Agent Skills specification](https://agentskills.io/specification) and work with:
+Skills follow the [Agent Skills specification](https://agentskills.io/specification), so the same `SKILL.md` folders work in every agent below.
 
-| Agent           | Support                 |
-| --------------- | ----------------------- |
-| Claude Code     | Native plugin support   |
-| Cursor          | Via SKILL.md loading    |
-| VS Code Copilot | Via context files       |
-| Windsurf        | Via context files       |
-| Gemini CLI      | Via skill loading       |
-| Custom agents   | Via agentskills.io spec |
+| Agent                                                                          | Project skills                                                                             | User skills                                                            |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| [Claude Code](https://code.claude.com/docs/en/skills)                          | `.claude/skills/`                                                                          | `~/.claude/skills/`, or install as a plugin                            |
+| [Codex](https://developers.openai.com/codex/skills)                            | `.agents/skills/`                                                                          | `~/.agents/skills/`                                                    |
+| [Gemini CLI](https://geminicli.com/docs/cli/skills/)                           | `.agents/skills/`, `.gemini/skills/`                                                       | `~/.agents/skills/`, `~/.gemini/skills/`                               |
+| [OpenCode](https://opencode.ai/docs/skills/)                                   | `.agents/skills/`, `.opencode/skills/`, `.claude/skills/`                                  | `~/.agents/skills/`, `~/.config/opencode/skills/`, `~/.claude/skills/` |
+| [Mastra Code](https://code.mastra.ai/configuration)                            | `.mastracode/skills/`, `.claude/skills/`, `.agents/skills/`                                | `~/.mastracode/skills/`, `~/.claude/skills/`, `~/.agents/skills/`      |
+| Cursor, GitHub Copilot, Antigravity, and [others](https://agentskills.io/home) | see the [`skills` CLI agent table](https://github.com/vercel-labs/skills#supported-agents) |                                                                        |
+
+`allowed-tools` is experimental in the spec: Claude Code uses it to pre-approve tools, and agents that don't support it ignore it.
+
+Agents in `agents/` use the [Claude Code subagent format](https://code.claude.com/docs/en/sub-agents) and only load in Claude Code.
+Other tools define subagents differently (Codex, for example, uses TOML files), so copy the prompt body if you want one elsewhere.
 
 ## Creating Skills
 
