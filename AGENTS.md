@@ -97,6 +97,19 @@ Workflow steps belong in the body, not the description.
 - Document common edge cases
 - Move detailed reference material to `references/` folder
 
+### Portability across agents
+
+Skills ship to Claude Code, Codex, Gemini CLI, OpenCode, Mastra Code, and any other agent that reads Agent Skills, so a skill must work without Claude-only features.
+
+- When a skill body names a Claude Code tool (`AskUserQuestion`, `Agent`, `Skill`, `TodoWrite`), give the generic action in the same sentence: "ask the user (`AskUserQuestion` in Claude Code, or a plain message)".
+- Refer to other skills by name ("use the `commit` skill"), not by a Claude-only invocation.
+- Reference bundled files by relative path from the skill root, never `${CLAUDE_PLUGIN_ROOT}` or another agent's install path.
+- Don't make a skill depend on Claude-only frontmatter or features such as `context: fork` or hooks.
+- Keep `allowed-tools` with Claude Code tool names: it is an experimental spec field, Claude Code uses it to pre-approve tools, and agents that don't support it ignore it.
+
+Agents in `agents/` are Claude Code subagents only; the README says so, and that note must stay accurate.
+The README **Compatibility** table lists each agent's skill directories; re-check those agents' official docs before changing it.
+
 ## Adding a New Agent
 
 Agents live at `agents/<agent-name>.md` and are picked up by auto-discovery.
