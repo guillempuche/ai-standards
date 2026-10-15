@@ -120,11 +120,12 @@ EOF
 }
 EOF
 
-  # Generate portable plugin.json (Codex, Antigravity); version stays in .claude-plugin/plugin.json, which Codex reads
+  # Generate portable plugin.json (Codex, Antigravity); Codex prefers it and defaults to 1.0.0 without a version
   cat > "$repo_dir/plugin.json" << EOF
 {
   "\$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "$skill_name",
+  "version": "$version",
   "description": "$description_json",
   "author": {
     "name": "$AUTHOR",

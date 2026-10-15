@@ -186,7 +186,8 @@ Docs: <https://developers.openai.com/plugins/build/plugins>
 
 The root `plugin.json` follows the [agent-plugins.org](https://agent-plugins.org/) schema.
 Antigravity requires it (with `name`) to install a repo as a plugin; Codex prefers it over its legacy fallback.
-It deliberately has no `version`: Codex reads that from `.claude-plugin/plugin.json`, so a second copy could only drift.
+Codex prefers it over `.claude-plugin/plugin.json` and reports `1.0.0` when it has no `version`, so the script copies the version across.
+After bumping `.claude-plugin/plugin.json`, run the script and commit `plugin.json` with the bump.
 
 ```bash
 agy plugin install https://github.com/guillempuche/ai-skill-powersync
