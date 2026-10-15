@@ -1,6 +1,8 @@
 ---
 name: commit
 description: Commit workflow for ai-standards repo. Formats all markdown files and previews changes before committing.
+metadata:
+  internal: true
 ---
 
 # Commit Workflow
