@@ -117,6 +117,32 @@ EOF
 }
 EOF
 
+  # Generate Codex marketplace (Codex reads .claude-plugin/marketplace.json only as a legacy fallback)
+  mkdir -p "$repo_dir/.agents/plugins"
+  cat > "$repo_dir/.agents/plugins/marketplace.json" << EOF
+{
+  "name": "$repo_name",
+  "interface": {
+    "displayName": "$repo_name"
+  },
+  "plugins": [
+    {
+      "name": "$skill_name",
+      "description": "$description_json",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    }
+  ]
+}
+EOF
+
   # Generate README
   if [ "$has_requirements" = true ]; then
     requirements_section="
@@ -141,6 +167,13 @@ The [\`skills\`](https://github.com/vercel-labs/skills) CLI installs into Codex,
 
 \`\`\`bash
 npx skills add $AUTHOR/$repo_name
+\`\`\`
+
+### Codex CLI
+
+\`\`\`bash
+codex plugin marketplace add $AUTHOR/$repo_name
+codex plugin add $skill_name@$repo_name
 \`\`\`
 
 ### Claude Code

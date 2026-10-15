@@ -19,6 +19,19 @@ npx skills add guillempuche/ai-standards
 npx skills add guillempuche/ai-standards --skill powersync -a codex -a opencode
 ```
 
+### Codex CLI
+
+```bash
+codex plugin marketplace add guillempuche/ai-standards
+
+# Full bundle (all skills), or any single skill
+codex plugin add ai-standards@ai-standards
+codex plugin add powersync@ai-standards
+```
+
+Codex lists the skills from [`.agents/plugins/marketplace.json`](./.agents/plugins/marketplace.json).
+The agents in `agents/` are Claude Code-only, so Codex doesn't list them.
+
 ### Claude Code
 
 ```bash
@@ -203,7 +216,7 @@ Skills follow the [Agent Skills specification](https://agentskills.io/specificat
 | Agent                                                                          | Project skills                                                                             | User skills                                                            |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
 | [Claude Code](https://code.claude.com/docs/en/skills)                          | `.claude/skills/`                                                                          | `~/.claude/skills/`, or install as a plugin                            |
-| [Codex](https://developers.openai.com/codex/skills)                            | `.agents/skills/`                                                                          | `~/.agents/skills/`                                                    |
+| [Codex](https://developers.openai.com/codex/skills)                            | `.agents/skills/`                                                                          | `~/.agents/skills/`, or install as a plugin                            |
 | [Gemini CLI](https://geminicli.com/docs/cli/skills/)                           | `.agents/skills/`, `.gemini/skills/`                                                       | `~/.agents/skills/`, `~/.gemini/skills/`                               |
 | [OpenCode](https://opencode.ai/docs/skills/)                                   | `.agents/skills/`, `.opencode/skills/`, `.claude/skills/`                                  | `~/.agents/skills/`, `~/.config/opencode/skills/`, `~/.claude/skills/` |
 | [Mastra Code](https://code.mastra.ai/configuration)                            | `.mastracode/skills/`, `.claude/skills/`, `.agents/skills/`                                | `~/.mastracode/skills/`, `~/.claude/skills/`, `~/.agents/skills/`      |

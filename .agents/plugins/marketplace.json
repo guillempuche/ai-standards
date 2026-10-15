@@ -1,0 +1,125 @@
+{
+  "name": "ai-standards",
+  "interface": {
+    "displayName": "AI Standards"
+  },
+  "plugins": [
+    {
+      "name": "ai-standards",
+      "description": "AI coding skills and agents for TypeScript, React, Effect, local-first apps, unikernels, and accessibility",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "powersync",
+      "description": "PowerSync TypeScript SDKs (web, React Native, Node) and sync rules for local-first apps. Use when adding PowerSync to a project, or writing or debugging code that uses @powersync/* packages or sync rules.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-powersync.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "effect-lookup",
+      "description": "Find Effect TypeScript signatures, source, and idioms from the local Effect checkout and docs. Use when you need to confirm an Effect API's signature, behavior, or deprecation, or find how an Effect pattern is done idiomatically.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-effect-lookup.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "unikraft",
+      "description": "Unikraft CLI (`unikraft`) commands for building and deploying to Unikraft Cloud. Use when working with Kraftfiles, deploying unikernels, or managing Unikraft Cloud instances/services/images. Covers the new `unikraft` CLI that replaces the legacy kraftkit `kraft`.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-unikraft.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "tamagui",
+      "description": "Tamagui styling, themes, tokens, compiler, and UI kit for React and React Native. Use when the project uses or is adopting Tamagui and you are writing or debugging its components, config, or compiler setup.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-tamagui.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "test-bdd",
+      "description": "Generate BDD-style test files with GIVEN/WHEN/THEN comments that test only public API and observable outcomes; tuned for, but not limited to, TypeScript + vitest + testing-library. Use when asked to write or add tests for a specific file or module.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-test-bdd.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "commit",
+      "description": "Write and validate Conventional-Commits messages in a house style, matching the repo's own history. Use when committing, splitting work into commits, or checking a commit message.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-commit.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "pr",
+      "description": "Take a finished branch through to a merged GitHub pull request \u2014 verify, self-review, open, work the review, merge. Use when asked to \"open a PR\", \"raise a PR\", \"PR this\", \"send it for review\", or to update or merge a PR.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-pr.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    },
+    {
+      "name": "issue",
+      "description": "Draft and file one GitHub issue that follows the repo's conventions, after checking for duplicates. Use when asked to \"create\", \"open\", \"file\", or \"raise\" an issue, \"log a bug\", or \"track this as an issue\".",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/guillempuche/ai-skill-issue.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    }
+  ]
+}

@@ -61,6 +61,7 @@ metadata:
 1. Optionally add `references/`, `scripts/`, or `assets/` directories
 1. Update `README.md` to add skill to the Skills Catalog
 1. Update `.claude-plugin/marketplace.json` to add the skill entry
+1. Update `.agents/plugins/marketplace.json` (the Codex marketplace) with a matching entry: `"source": {"source": "url", "url": "https://github.com/<author>/ai-skill-<name>.git"}`, plus the `policy` and `category` fields Codex requires
 
 The spec allows exactly six frontmatter keys: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`.
 Anything else — including a top-level `version:` — is a hard error when the skill is uploaded to claude.ai, sent through the Skills API, or packaged with `package_skill.py`, so the version belongs under `metadata`.
