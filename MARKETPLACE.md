@@ -160,7 +160,8 @@ permissionMode: default          # Optional: permission handling
 ## Codex and Antigravity
 
 The Claude manifests are the source of truth.
-`scripts/sync-manifests.sh` generates the other two from them, and `generate-individual-repos.sh` runs it, so `/release` keeps them in step:
+`scripts/sync-manifests.sh` generates the other two from them, for the repo root and, through `generate-individual-repos.sh`, for each skill repo.
+A Claude source it can't map to Codex makes it fail rather than drop the plugin, and CI runs `--check` on every push and pull request:
 
 | File                               | Read by            | Generated from                    |
 | ---------------------------------- | ------------------ | --------------------------------- |
@@ -185,7 +186,7 @@ Docs: <https://developers.openai.com/plugins/build/plugins>
 ### Portable plugin.json
 
 The root `plugin.json` follows the [agent-plugins.org](https://agent-plugins.org/) schema.
-Antigravity requires it (with `name`) to install a repo as a plugin; Codex prefers it over its legacy fallback.
+Antigravity requires it (with `name`) to install a repo as a plugin.
 Codex prefers it over `.claude-plugin/plugin.json` and reports `1.0.0` when it has no `version`, so the script copies the version across.
 After bumping `.claude-plugin/plugin.json`, run the script and commit `plugin.json` with the bump.
 

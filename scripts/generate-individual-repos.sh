@@ -73,6 +73,11 @@ GITIGNORE
   # Version lives under `metadata:` — the agentskills.io spec allows only
   # name, description, license, compatibility, metadata, allowed-tools.
   description=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep '^description:' | sed 's/^description: *//' | head -1)
+  case "$description" in
+    '>'*|'|'*) echo "ERROR: $skill_name/SKILL.md uses a multi-line YAML description; write it on one line" >&2; exit 1 ;;
+    \"*\") description=${description#\"}; description=${description%\"}; description=${description//\\\"/\"} ;;
+    \'*\') description=${description#\'}; description=${description%\'}; description=${description//\'\'/\'} ;;
+  esac
   [ -z "$description" ] && description="AI skill for $skill_name"
   version=$(sed -n '/^---$/,/^---$/p' "$skill_dir/SKILL.md" | grep -E '^[[:space:]]+version:' | sed -E 's/^[[:space:]]+version:[[:space:]]*//' | tr -d '"' | head -1)
   [ -z "$version" ] && version="1.0.0"
@@ -120,48 +125,8 @@ EOF
 }
 EOF
 
-  # Generate portable plugin.json (Codex, Antigravity); Codex prefers it and defaults to 1.0.0 without a version
-  cat > "$repo_dir/plugin.json" << EOF
-{
-  "\$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "$skill_name",
-  "version": "$version",
-  "description": "$description_json",
-  "author": {
-    "name": "$AUTHOR",
-    "url": "$AUTHOR_URL"
-  },
-  "homepage": "https://github.com/$AUTHOR/$repo_name",
-  "repository": "https://github.com/$AUTHOR/$repo_name",
-  "license": "MIT"
-}
-EOF
-
-  # Generate Codex marketplace (Codex reads .claude-plugin/marketplace.json only as a legacy fallback)
-  mkdir -p "$repo_dir/.agents/plugins"
-  cat > "$repo_dir/.agents/plugins/marketplace.json" << EOF
-{
-  "name": "$repo_name",
-  "interface": {
-    "displayName": "$repo_name"
-  },
-  "plugins": [
-    {
-      "name": "$skill_name",
-      "description": "$description_json",
-      "source": {
-        "source": "local",
-        "path": "./"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    }
-  ]
-}
-EOF
+  # Portable plugin.json and Codex marketplace, derived from the Claude manifests above
+  "$SCRIPT_DIR/sync-manifests.sh" "$repo_dir" > /dev/null
 
   # Generate README
   if [ "$has_requirements" = true ]; then

@@ -17,6 +17,7 @@
             nodejs_24
             nodePackages.pnpm
             git
+            python3 # scripts/sync-manifests.sh
 
             # Markdown formatter with YAML frontmatter support
             (mdformat.withPlugins (p: [
