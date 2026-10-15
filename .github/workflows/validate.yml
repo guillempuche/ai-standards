@@ -1,0 +1,14 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Codex and portable manifests match the Claude ones
+        run: ./scripts/sync-manifests.sh --check
