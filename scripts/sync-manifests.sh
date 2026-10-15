@@ -18,10 +18,11 @@ root, mode = sys.argv[1], sys.argv[2]
 claude_plugin = json.load(open(os.path.join(root, ".claude-plugin/plugin.json")))
 claude_market = json.load(open(os.path.join(root, ".claude-plugin/marketplace.json")))
 
-# No version: Codex reads it from .claude-plugin/plugin.json, so a second copy could only drift.
+# Codex prefers this file over .claude-plugin/plugin.json and defaults to 1.0.0 without a version, so copy it.
 portable = {
     "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
     "name": claude_plugin["name"],
+    "version": claude_plugin["version"],
     "description": claude_plugin["description"],
 }
 for key in ("author", "homepage", "repository", "license", "keywords"):
