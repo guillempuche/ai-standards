@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ai-standards",
+  "description": "AI coding skills and agents for TypeScript, React, Effect, local-first apps, unikernels, and accessibility",
+  "author": {
+    "name": "guillempuche",
+    "url": "https://github.com/guillempuche"
+  },
+  "homepage": "https://github.com/guillempuche/ai-standards",
+  "repository": "https://github.com/guillempuche/ai-standards",
+  "license": "MIT",
+  "keywords": [
+    "ai-skills",
+    "ai-agents",
+    "claude-code",
+    "typescript",
+    "react",
+    "effect",
+    "local-first",
+    "offline-first",
+    "powersync",
+    "unikraft",
+    "accessibility",
+    "a11y"
+  ]
+}

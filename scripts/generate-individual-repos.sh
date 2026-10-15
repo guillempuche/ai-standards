@@ -23,6 +23,9 @@ mkdir -p "$OUTPUT_DIR"
 TARGETS=("$@")
 GENERATED=()
 
+# Keep the Codex and portable manifests in step with the Claude ones
+"$SCRIPT_DIR/sync-manifests.sh"
+
 echo "Generating repos in $OUTPUT_DIR"
 
 # Generate skill repos
@@ -117,6 +120,22 @@ EOF
 }
 EOF
 
+  # Generate portable plugin.json (Codex, Antigravity); version stays in .claude-plugin/plugin.json, which Codex reads
+  cat > "$repo_dir/plugin.json" << EOF
+{
+  "\$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "$skill_name",
+  "description": "$description_json",
+  "author": {
+    "name": "$AUTHOR",
+    "url": "$AUTHOR_URL"
+  },
+  "homepage": "https://github.com/$AUTHOR/$repo_name",
+  "repository": "https://github.com/$AUTHOR/$repo_name",
+  "license": "MIT"
+}
+EOF
+
   # Generate Codex marketplace (Codex reads .claude-plugin/marketplace.json only as a legacy fallback)
   mkdir -p "$repo_dir/.agents/plugins"
   cat > "$repo_dir/.agents/plugins/marketplace.json" << EOF
@@ -137,7 +156,7 @@ EOF
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Coding"
+      "category": "Productivity"
     }
   ]
 }
@@ -190,6 +209,12 @@ codex plugin add $skill_name@$repo_name
 
 \`\`\`bash
 gemini skills install https://github.com/$AUTHOR/$repo_name.git --path skills/$skill_name
+\`\`\`
+
+### Antigravity
+
+\`\`\`bash
+agy plugin install https://github.com/$AUTHOR/$repo_name
 \`\`\`
 
 ### Manual

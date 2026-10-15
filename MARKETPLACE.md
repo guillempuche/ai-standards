@@ -1,6 +1,6 @@
-# Claude Code Marketplace Resources
+# Marketplace Resources
 
-Quick reference for maintaining this plugin for the Claude Code marketplace.
+Quick reference for maintaining this plugin for the Claude Code and Codex marketplaces, and as an Antigravity plugin.
 
 ## Official Documentation
 
@@ -157,9 +157,47 @@ permissionMode: default          # Optional: permission handling
 }
 ```
 
+## Codex and Antigravity
+
+The Claude manifests are the source of truth.
+`scripts/sync-manifests.sh` generates the other two from them, and `generate-individual-repos.sh` runs it, so `/release` keeps them in step:
+
+| File                               | Read by            | Generated from                    |
+| ---------------------------------- | ------------------ | --------------------------------- |
+| `.agents/plugins/marketplace.json` | Codex              | `.claude-plugin/marketplace.json` |
+| `plugin.json`                      | Codex, Antigravity | `.claude-plugin/plugin.json`      |
+
+Run `./scripts/sync-manifests.sh --check` to confirm they are current.
+
+### Codex marketplace
+
+Codex reads `.claude-plugin/marketplace.json` only as a legacy fallback, and drops entries with Claude's `"source": "github"`, so it needs its own file.
+Each entry uses a `local` source for the bundle or a `url` source for a skill repo, and Codex requires `policy` and `category` on every entry.
+Agents are left out because Codex can't load them.
+
+```bash
+codex plugin marketplace add guillempuche/ai-standards
+codex plugin add powersync@ai-standards
+```
+
+Docs: <https://developers.openai.com/plugins/build/plugins>
+
+### Portable plugin.json
+
+The root `plugin.json` follows the [agent-plugins.org](https://agent-plugins.org/) schema.
+Antigravity requires it (with `name`) to install a repo as a plugin; Codex prefers it over its legacy fallback.
+It deliberately has no `version`: Codex reads that from `.claude-plugin/plugin.json`, so a second copy could only drift.
+
+```bash
+agy plugin install https://github.com/guillempuche/ai-skill-powersync
+```
+
+Docs: <https://antigravity.google/docs/plugins>
+
 ## Checklist for Updates
 
 - [ ] Update version in `.claude-plugin/plugin.json`
+- [ ] Run `./scripts/sync-manifests.sh` after changing a Claude manifest
 - [ ] Update `CHANGELOG.md` with changes
 - [ ] Run `claude plugin validate .`
 - [ ] Commit and push to GitHub

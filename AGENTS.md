@@ -34,7 +34,11 @@ ai-standards/
 │       └── assets/         # Optional: schemas, examples
 ├── agents/
 │   └── <agent-name>.md     # Agent with YAML frontmatter
+├── plugin.json             # Portable manifest (Codex, Antigravity), generated
+├── .claude-plugin/          # Claude Code plugin and marketplace manifests
+├── .agents/plugins/         # Codex marketplace, generated
 ├── scripts/
+│   ├── sync-manifests.sh             # Generate plugin.json and the Codex marketplace
 │   ├── generate-individual-repos.sh  # Generate dist-repos/
 │   └── deploy-individual-repos.sh    # Push to GitHub
 ├── .claude/skills/          # Local skills (/commit, /release)
@@ -61,7 +65,7 @@ metadata:
 1. Optionally add `references/`, `scripts/`, or `assets/` directories
 1. Update `README.md` to add skill to the Skills Catalog
 1. Update `.claude-plugin/marketplace.json` to add the skill entry
-1. Update `.agents/plugins/marketplace.json` (the Codex marketplace) with a matching entry: `"source": {"source": "url", "url": "https://github.com/<author>/ai-skill-<name>.git"}`, plus the `policy` and `category` fields Codex requires
+1. Run `./scripts/sync-manifests.sh` to regenerate the Codex marketplace (`.agents/plugins/marketplace.json`) and the portable `plugin.json` from the Claude manifests; never edit those two by hand
 
 The spec allows exactly six frontmatter keys: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`.
 Anything else — including a top-level `version:` — is a hard error when the skill is uploaded to claude.ai, sent through the Skills API, or packaged with `package_skill.py`, so the version belongs under `metadata`.
@@ -106,7 +110,7 @@ Skills ship to Claude Code, Codex, Gemini CLI, OpenCode, Mastra Code, and any ot
 - Refer to other skills by name ("use the `commit` skill"), not by a Claude-only invocation.
 - Reference bundled files by relative path from the skill root, never `${CLAUDE_PLUGIN_ROOT}` or another agent's install path.
 - Don't make a skill depend on Claude-only frontmatter or features such as `context: fork` or hooks.
-- Keep `allowed-tools` with Claude Code tool names: it is an experimental spec field, Claude Code uses it to pre-approve tools, and agents that don't support it ignore it.
+- Keep `allowed-tools` with Claude Code tool names: it is an experimental spec field that Claude Code uses to pre-approve tools, and other agents' support varies, so never rely on it to restrict or grant a tool.
 
 Agents in `agents/` are Claude Code subagents only; the README says so, and that note must stay accurate.
 The README **Compatibility** table lists each agent's skill directories; re-check those agents' official docs before changing it.
@@ -155,6 +159,7 @@ Before committing, verify:
 - Frontmatter uses only the six spec keys (no top-level `version`)
 - All file references use relative paths from skill root
 - `claude plugin validate . --strict` passes
+- `./scripts/sync-manifests.sh --check` passes
 
 ## Code Style
 
