@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.0] - 2026-10-21
+
+### Added
+
+- `commit`, `pr`: optional ticket IDs from Linear, Jira, GitHub or GitLab. The ID leads the commit subject and PR title (`PROJ-12/feat(api): …`), comes from the request or branch name, and is never guessed.
+- `commit`, `pr`: a `tickets.md` reference on what each tracker reads in branches, commits, PR titles and bodies, keeping link words apart from close words.
+- `repo-config.md`: a `tickets` key (tracker, ID pattern, close policy) inferred from history when unset.
+
 ## [1.9.0] - 2026-10-15
 
 ### Added
