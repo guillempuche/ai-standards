@@ -21,7 +21,7 @@ The notes are read too — anything the skills should know that has no key of it
 
 ## Keys
 
-`commit` reads `format`, `scopes`, `types`, and `attribution`.
+`commit` reads `format`, `scopes`, `types`, `attribution`, and `tickets`.
 `pr` reads all of them.
 
 ```yaml
@@ -36,6 +36,12 @@ types: [cicd, ai]                   # house additions in use here; omit to infer
 scopes:                             # omit to infer from workspace layout, then from git log
   apps/api: api
   packages/core: core
+
+# /commit and /pr — ticket IDs; see tickets.md
+tickets:
+  tracker: linear                   # linear | jira | github | gitlab | none
+  pattern: '[A-Z][A-Z0-9]+-[0-9]+'  # the ID's shape; '#[0-9]+' for GitHub and GitLab issues
+  close: pr                         # commit | pr | last-pr | never — where closing words may go
 
 # /pr — verification gates, in run order
 gates:
@@ -91,7 +97,17 @@ grep -rA5 '^on:' .github/workflows/*.y*ml 2>/dev/null | grep -A3 pull_request
 
 # Does this repo provision worktrees, or is a worktree just a checkout?
 git worktree list
+
+# Ticket IDs: their shape, which tracker, and whether commits ever close
+git log --pretty='%s %b' -300 | grep -oE '\b[A-Z][A-Z0-9]+-[0-9]+\b|#[0-9]+' | sed -E 's/[0-9]+$//' | sort | uniq -c | sort -rn
+git branch -a --format='%(refname:short)' | grep -iE '[a-z]+-[0-9]+' | head
+git log --pretty=%b -300 | grep -oiE 'linear\.app|atlassian\.net|#(done|close|resolve)\b' | sort | uniq -c
+git log --pretty=%b -300 | grep -ciE '^(close[sd]?|fix(e[sd])?|resolve[sd]?) '
 ```
+
+For tickets: a `linear.app` link or lowercase IDs in branch names point to Linear, `atlassian.net` or smart-commit commands to Jira, and only `#12` references to the host's own issues.
+Commits that never carry a closing word suggest `close: pr`.
+When there are no signals, leave `tickets` unset; when they disagree, ask.
 
 Fill `roles` from the skills and agents available in the session, and leave a slot empty when nothing fills it.
 Write only the keys whose values differ from the defaults — a short config is easier to keep true than a complete one.
