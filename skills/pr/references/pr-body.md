@@ -1,6 +1,6 @@
 # PR body
 
-The house style for the pull request description, the issue-closing keyword, the blast-radius checklist, and how to embed media.
+The house style for the pull request description, the ticket link or close line, the blast-radius checklist, and how to embed media.
 Read this from Step 7 of the `pr` skill when writing or refreshing the body.
 
 ## House style
@@ -44,17 +44,19 @@ Include only the sections that apply, in this order:
 Voice: first-person singular, never "we".
 No AI attribution.
 
-## Linking the issue — pick the keyword deliberately
+## Linking the ticket — link or close, deliberately
 
-If the PR resolves a tracked issue, end the body with a reference — but the **word matters**, because only `Closes` / `Fixes` / `Resolves` auto-close the issue on merge.
-`Addresses` and a bare `#N` link without closing.
+If the PR belongs to a ticket, end the body with one line the tracker reads — but the **word matters**, because a closing word moves the ticket to done on merge and a link word only ties the PR to it.
+The words differ by tracker (`Fixes ENG-12` / `Part of ENG-12` in Linear, `Closes #12` / `Refs #12` on GitHub); Jira reads no body words, so the title's key is the link.
+See [`tickets.md`](tickets.md).
 
-Default to **`Closes #N`**: merging the fix is what resolves the issue, the release is a separate delivery step, and the issue can be reopened if verification later fails.
+Default to **closing** when the PR finishes the ticket and `tickets.close` allows it (`commit` or `pr`; under `last-pr`, only the final PR): merging the fix is what resolves the ticket, the release is a separate delivery step, and the ticket can be reopened if verification later fails.
 This is the common case; don't overthink it.
 
-Use a non-closing link **only** when merge genuinely does not resolve the issue and something outside this PR must land first — a coordinated deploy, a follow-up slice, a migration someone runs by hand.
-When you choose non-closing, say so in one line and **ask the user** whether they'd rather close on merge.
-A merged fix that leaves its issue open, with nobody told why, reads as unfinished work.
+**Link** without closing when merge genuinely does not finish the ticket — a follow-up slice, a coordinated deploy, a migration someone runs by hand — or when the policy is `never`.
+In Linear a branch or title link alone closes on merge, so a PR that should not close leaves the ID out of its title and links with `Part of ENG-12` in the body.
+When you choose to link only and the policy would allow closing, say so in one line and **ask the user** whether they'd rather close on merge.
+A merged fix that leaves its ticket open, with nobody told why, reads as unfinished work.
 
 ## Blast radius — what to surface
 

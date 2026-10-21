@@ -3,7 +3,7 @@ name: commit
 description: Write and validate Conventional-Commits messages in a house style, matching the repo's own history. Use when committing, splitting work into commits, or checking a commit message.
 license: MIT
 metadata:
-  version: 1.0.1
+  version: 1.1.0
   author: ai-standards
 ---
 
@@ -13,11 +13,12 @@ Draft well-formed commit messages that follow the conventions of whatever reposi
 
 This file holds the decision logic.
 Everything that varies between repositories — scope names, the formatter to run first, which extra types are in use — is read from `.claude/git-workflow.md` or inferred from the repo, never written into the skill.
-See [`references/repo-config.md`](references/repo-config.md) for the config keys and the one-time bootstrap.
+See [`references/repo-config.md`](references/repo-config.md) for the config keys and the one-time bootstrap, and [`references/tickets.md`](references/tickets.md) for how each tracker reads a ticket ID.
 
 ## Workflow
 
 1. **Adapt to the repo** (next section) — read the config if there is one, otherwise infer.
+1. Find the ticket ID, if the work belongs to one — from the user's request or the branch name, never guessed. It is optional; with none, skip it without asking.
 1. Run the repo's formatter if one is configured, so formatting noise lands with the change instead of in a follow-up commit.
 1. Run `git status` and `git diff --staged`, or `git diff` when nothing is staged.
 1. Work out what actually changed — which files, what was added or removed, and why.
@@ -37,6 +38,7 @@ Resolve every repo-specific value in this order: the config file, then inference
 | Scopes      | `scopes`      | workspace layout, then the scope vocabulary already in `git log` | omit the scope |
 | Extra types | `types`       | presence of CI / AI-config files in the repo                     | base types     |
 | Attribution | `attribution` | —                                                                | none           |
+| Tickets     | `tickets`     | IDs in branch names and `git log`, tracker URLs in bodies        | no ticket      |
 
 **Never invent a formatter.**
 Run one only when the config names it.
@@ -52,7 +54,7 @@ Matching what the repo has done for 300 commits beats a scope you derived correc
 
 **If the repo does not use this format at all**, the repo wins.
 A history of sentence-style subjects, a `[component] Subject` prefix, or any other consistent convention is a decision someone made, and a lone Conventional-Commits message in the middle of it is the odd one out — not an improvement.
-Follow what the history shows, apply the parts of this skill that still hold (imperative subject, body that explains why, no attribution, issue trailers), and say in one line that you matched the existing style.
+Follow what the history shows, apply the parts of this skill that still hold (imperative subject, body that explains why, no attribution, ticket links), and say in one line that you matched the existing style.
 Switching a repo's convention is the user's call; offer it, don't do it.
 
 ## Output format
@@ -82,15 +84,15 @@ Rules for previews:
 ## Message format
 
 ```
-type(scope): subject in imperative mood
+PROJ-12/type(scope): subject in imperative mood
 
 - Body bullet in past tense with period.
 - Another change description.
 
-Closes #123
+Refs PROJ-12
 ```
 
-The `Closes #123` trailer is optional — include it only when this single commit is the complete fix for a tracked issue (Rule 9).
+The `PROJ-12/` prefix and the trailer appear only when the work belongs to a ticket (Rule 9).
 
 ## Types
 
@@ -194,10 +196,13 @@ When AI files are mixed with non-AI files, split them into separate commits.
    The type already conveys the action — `fix: fix the login` becomes `fix: resolve login failure`; `refactor: refactor auth` becomes `refactor: simplify auth flow`.
 1. **No bare `#` tokens in the body**: on GitHub, and in any changelog generated from commit messages, `#<token>` renders as an issue reference — so a hex colour or a fragment id becomes a broken issue link.
    Write `b05220 → 95400f`, not `#b05220 → #95400f`.
-1. **Issue-closing trailer**: when one commit is the *complete* fix for a tracked issue, add a `Closes #<issue>` line as the last line, after a blank line, and the host auto-closes the issue when the commit lands on the default branch (`Fixes` and `Resolves` are equivalent keywords).
-   This deliberate reference is the one sanctioned exception to Rule 8.
-   Only tag the commit that finishes the issue: if the fix spans several commits, leave the trailer off each partial commit and put `Closes #<issue>` in the pull request description instead, so the issue closes once on merge rather than on the first partial commit.
-   Skip it entirely for a commit that touches no tracked issue.
+1. **Ticket ID**: when the work belongs to a ticket, lead the subject with its ID, `PROJ-12/feat(api): …`, and add a trailer the tracker reads as the last line, after a blank line.
+   Take the ID from the user's request or the branch name; never guess one or ask for one, and with no ID write neither.
+   A `#12`-style ID goes in the trailer only, never the subject, and is the one sanctioned exception to Rule 8.
+   The trailer **links** (`Refs PROJ-12`, `Refs #12`) by default; it **closes** (`Fixes PROJ-12`, `Closes #12`) only when this one commit finishes the ticket and `tickets.close` is `commit`.
+   If the fix spans several commits, every commit links and the pull request closes.
+   Jira links on the subject's key alone, so it needs a trailer only to transition by smart commit.
+   The per-tracker words and rules are in [`references/tickets.md`](references/tickets.md).
 
 ## Body sizing
 
@@ -235,14 +240,14 @@ Each bullet earns its place by carrying information the diff doesn't.
 
 Run this on every message **before** returning the preview.
 
-1. **Length** — count the subject; reject anything over 72 characters.
+1. **Length** — count the subject, ticket prefix included; reject anything over 72 characters.
 1. **Scope** — confirm the scope matches the package the files live in, or is omitted for root-level and mixed changes, and that it matches the vocabulary the repo already uses.
 1. **Tautology** — the subject does not repeat the type word.
 1. **Mood** — the subject is imperative ("add", "fix", "migrate"), not past tense ("added", "fixed").
 1. **Body** — every bullet starts with a capital, uses past tense, and ends with a period.
 1. **Body wrapping** — each bullet is a single physical line, with no hard wrap mid-sentence.
 1. **Attribution** — no attribution trailers unless the repo's config asks for them.
-1. **Issue trailer** — if this one commit fully closes a tracked issue, a `Closes #<issue>` trailer sits alone on the last line; if the fix spans commits, the trailer is absent.
+1. **Ticket** — only when there is one: the ID came from the request or the branch, not a guess; it leads the subject unless it is `#12`-style; the trailer links, and closes only when this commit finishes the ticket and the close policy allows it.
 
 ## Examples
 
@@ -292,4 +297,10 @@ ai(skills): add a portable commit-message skill
 fix(auth): stop expired sessions from silently renewing
 
 Closes #412
+```
+
+```
+ENG-87/feat(billing): add a usage cap per workspace
+
+Refs ENG-87
 ```

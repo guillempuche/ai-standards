@@ -4,7 +4,7 @@ description: Take a finished branch through to a merged GitHub pull request — 
 license: MIT
 compatibility: Requires git. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
 metadata:
-  version: 1.1.2
+  version: 1.2.0
   author: ai-standards
 allowed-tools: Bash Read Glob Grep AskUserQuestion Skill
 ---
@@ -33,6 +33,8 @@ Read the config if there is one; otherwise infer and, on first run, offer to wri
   Never assume a PR gets checks; confirm the trigger matches this PR's base.
 - **Worktrees** — `git rev-parse --git-common-dir` differing from `.git` means this is a worktree.
   `worktrees.provision` says whether one needs its own stack brought up or is just a checkout.
+- **Tickets** — `tickets:` gives the tracker, the ID pattern, and the close policy, else infer them from branch names and `git log`.
+  A ticket is optional: take the ID from the user's request or the branch name, never guess or ask for one, and with none leave the title and body without it; how each tracker reads it is in [`references/tickets.md`](references/tickets.md).
 - **Roles** — `roles:` maps each slot (stack bring-up, readability, a11y, security, UI capture, media upload) to whatever this repo has.
   Where the config is silent, look for a skill or agent in this session that fills the slot.
   Where nothing does, use the fallback in the reference — an empty slot is never a silent skip.
@@ -41,6 +43,8 @@ Read the config if there is one; otherwise infer and, on first run, offer to wri
 
 Branches drift while a session runs, especially when other PRs are merging in parallel.
 Before doing anything, confirm you're on a feature branch, fetch the default branch, and check what landed under you.
+When you create the branch for a ticket, put the ID in the tracker's shape — `eng-12-slug` for Linear, `PROJ-12-slug` (uppercase) for Jira, `12-slug` for GitLab — so the tracker links it from the first push.
+Don't rename an existing branch to add an ID; the title and body link it instead.
 If the base moved, rebase onto it before continuing, then **re-read the actual files in the touched area** — don't trust an earlier read or a subagent's generalization.
 
 Then take stock of uncommitted changes, the commits that will form the PR, and whether a PR already exists; the rest of the flow branches on this:
@@ -164,14 +168,15 @@ gh pr view --json number,state,isDraft 2>/dev/null \
   Protect the reviewer by working CI to green before handing off, not by parking finished work in draft.
 - **Ask the user only about decisions that are theirs** — a scope ambiguity, a trade-off only the user can settle.
   Anything you couldn't verify goes in `## Review guide`, stated plainly, rather than guessed or buried.
-- The title mirrors the lead commit's subject, under the same type and scope rules as the `commit` skill.
+- The title mirrors the lead commit's subject, under the same type and scope rules as the `commit` skill, ticket prefix included: `PROJ-12/feat(api): …`.
+  A `#12`-style ID stays out of the title and goes in the body, and so does a Linear ID on a PR that must not close the ticket.
 - **Stacked PR:** if this branch depends on another unmerged branch, set `--base <dep-branch>` so the diff shows only this slice, and retarget to the default branch once the dependency merges.
   Check `ci.checked-bases` first — where CI only runs for PRs onto the default branch, a stacked PR gets *no checks at all*, and a base change alone won't fire them, so push a fresh commit to trigger the run.
 
 ### PR body
 
 The body carries what the diff can't show: the intent, and the blast radius across the system.
-Write it per [`references/pr-body.md`](references/pr-body.md) — section order, the plain-language rule, which issue-closing keyword to use, the blast-radius checklist, and how to embed media.
+Write it per [`references/pr-body.md`](references/pr-body.md) — section order, the plain-language rule, whether to link or close the ticket, the blast-radius checklist, and how to embed media.
 
 ## Step 8 — Review loop
 
@@ -220,6 +225,7 @@ The decision rules, the per-commit build check, and how to land a stack are in [
 - One approval per commit: the explained preview.
 - Tests ride with their logic in one commit.
 - Gates in order, build last, no invented commands.
+- A ticket ID taken from the request or the branch, never guessed, placed where the tracker links it on its own; link and close kept apart.
 - A PR body that carries what the diff cannot: intent, blast radius, a review guide, and verification claims that are true.
 - Plain wording first with the exact term right after it, in the same sentence.
 - Open ready by default, watch CI to green, and put review fixes through the same gates.
