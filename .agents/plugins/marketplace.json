@@ -71,7 +71,7 @@
     },
     {
       "name": "test-bdd",
-      "description": "Generate BDD-style test files with GIVEN/WHEN/THEN comments that test only public API and observable outcomes; tuned for, but not limited to, TypeScript + vitest + testing-library. Use when asked to write or add tests for a specific file or module.",
+      "description": "Generate BDD-style tests with GIVEN/WHEN/THEN comments that check behavior through inputs and observable outputs, never implementation details — unit, integration, or visual, for frontend, backend, or scripts. Use when asked to write or add tests for a file, module, endpoint, or script.",
       "source": {
         "source": "url",
         "url": "https://github.com/guillempuche/ai-skill-test-bdd.git"

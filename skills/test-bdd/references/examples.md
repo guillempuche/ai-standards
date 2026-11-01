@@ -1,5 +1,11 @@
 # Complete Test File Examples
 
+> The code samples show the shape of a test, not a current API reference.
+> Take exact calls from the docs of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs between releases.
+
+These examples are TypeScript unit tests.
+For backend, script, and visual examples see `backend-and-scripts.md` and `visual.md`.
+
 ## Example 1: Shopping Cart Component
 
 Tests a component with state management, user interactions, and conditional rendering.
@@ -52,7 +58,7 @@ describe('ShoppingCart', () => {
 
         // THEN total should reflect quantities
         // (25 * 2) + (89.99 * 1) = 139.99
-        expect(screen.getByTestId('cart-total')).toHaveTextContent('$139.99')
+        expect(screen.getByText(/total/i)).toHaveTextContent('$139.99')
     })
 
     it('should call onRemove when delete button is clicked', () => {
@@ -94,7 +100,7 @@ Tests a hook with async operations, loading states, and error handling.
 
 ```typescript
 import { renderHook, waitFor } from '@testing-library/react'
-import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useProducts } from './useProducts'
 import { fetchProducts } from '~/services/api'
@@ -103,7 +109,7 @@ vi.mock('~/services/api', () => ({
     fetchProducts: vi.fn(),
 }))
 
-const fetchProductsMock = fetchProducts as Mock
+const fetchProductsMock = vi.mocked(fetchProducts)
 
 describe('useProducts', () => {
     beforeEach(() => {
@@ -158,7 +164,7 @@ describe('useProducts', () => {
         expect(result.current.products).toEqual([])
     })
 
-    it('should filter products by category', async () => {
+    it('should request only the given category from the API', async () => {
         // GIVEN the API returns products
         const mockProducts = [
             { id: '1', name: 'Laptop', category: 'electronics' },
@@ -169,7 +175,8 @@ describe('useProducts', () => {
         // WHEN filtering by category
         const { result } = renderHook(() => useProducts({ category: 'electronics' }))
 
-        // THEN API should be called with filter
+        // THEN the request should ask for that category only
+        // (the outgoing request is the observable output here)
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
         })

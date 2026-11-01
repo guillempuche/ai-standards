@@ -1,9 +1,15 @@
-# BDD Test Patterns
+# BDD Test Patterns (TypeScript)
+
+> The code samples show the shape of a test, not a current API reference.
+> Take exact calls from the docs of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs between releases.
+
+These patterns use vitest and testing-library.
+For backend handlers, databases, and scripts see `backend-and-scripts.md`; for screenshots see `visual.md`.
 
 ## Test File Structure
 
 ```typescript
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, renderHook, act, waitFor, fireEvent } from '@testing-library/react'
 
 // Mocks - DO NOT re-declare mocks already in setup.ts
@@ -64,16 +70,22 @@ it('should save draft after editing', () => {
 
 ## Mock Handling
 
+Mock only the boundary — network, third-party APIs, clock, randomness — never the unit's own internal modules.
+Assert on a mock's calls only when the call is itself the output a caller cares about.
+
 ### Module Mocks
 
 ```typescript
+import { fetchUser, updateUser } from '~/services/api'
+
 vi.mock('~/services/api', () => ({
     fetchUser: vi.fn(),
     updateUser: vi.fn(),
 }))
 
-const fetchUserMock = fetchUser as Mock
-const updateUserMock = updateUser as Mock
+// vi.mocked adds the mock's types without a manual cast
+const fetchUserMock = vi.mocked(fetchUser)
+const updateUserMock = vi.mocked(updateUser)
 ```
 
 ### Reset in beforeEach
@@ -106,6 +118,12 @@ fetchUserMock.mockImplementation((id) => {
 ```
 
 ## React Testing Patterns
+
+### Find Elements the Way Users Do
+
+Query by what a user perceives, in this order: `getByRole` (with `name`), `getByLabelText`, `getByText`, then `getByTestId` as a last resort.
+A test ID couples the test to markup the user never sees.
+Prefer `@testing-library/user-event` over `fireEvent` when the project has it, because it fires the full event sequence a real user triggers.
 
 ### Test Wrapper for Providers
 
@@ -151,6 +169,7 @@ it('should increment quantity when plus button is clicked', () => {
     fireEvent.click(screen.getByRole('button', { name: '+' }))
 
     // THEN onChange should be called with incremented value
+    // (the callback prop is the component's output here)
     expect(onChange).toHaveBeenCalledWith(2)
 })
 ```

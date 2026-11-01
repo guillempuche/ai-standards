@@ -136,14 +136,15 @@ ______________________________________________________________________
 
 ### test-bdd
 
-**Generate BDD-style tests that document behavior and test public API only**
+**Generate BDD-style tests that check behavior through inputs and outputs, not implementation**
 
-|         |                                                                            |
-| ------- | -------------------------------------------------------------------------- |
-| Style   | GIVEN / WHEN / THEN / AND comments (flexible combinations)                 |
-| Tooling | Vitest + testing-library (TypeScript-first, framework-agnostic principles) |
-| Covers  | Components, hooks, utilities, constants                                    |
-| Focus   | Observable behavior over implementation details                            |
+|         |                                                                                   |
+| ------- | --------------------------------------------------------------------------------- |
+| Style   | GIVEN / WHEN / THEN / AND comments (flexible combinations)                        |
+| Levels  | Unit, integration, visual (screenshots against reviewed baselines)                |
+| Tooling | The project's own runner; examples in vitest, testing-library, Playwright, pytest |
+| Covers  | Components, hooks, utilities, constants, HTTP handlers, databases, jobs, scripts  |
+| Focus   | Observable behavior over implementation details                                   |
 
 [View skill](./skills/test-bdd/)
 
