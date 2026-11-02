@@ -3,7 +3,7 @@ name: test-bdd
 description: Generate BDD-style tests with GIVEN/WHEN/THEN comments that check behavior through inputs and observable outputs, never implementation details — unit, integration, or visual, for frontend, backend, or scripts. Use when asked to write or add tests for a file, module, endpoint, or script.
 license: MIT
 metadata:
-  version: 1.3.1
+  version: 1.4.0
 ---
 
 # BDD Test File Generator

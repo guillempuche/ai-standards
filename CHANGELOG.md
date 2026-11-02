@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.11.0] - 2026-11-02
+
+### Added
+
+- `test-bdd`: visual tests (screenshots against reviewed baselines) alongside unit and integration, and coverage for HTTP handlers, databases, jobs and scripts.
+- `test-bdd`: a table of what to drive and what to assert for each kind of code.
+- `test-bdd`: `backend-and-scripts.md` and `visual.md` references, with TypeScript and Python samples.
+
+### Changed
+
+- `test-bdd`: tests check behavior through inputs and observable outputs, never implementation details; mocks stay at the boundary, elements are found the way users find them, and each new test is checked to fail when the behavior breaks.
+- `test-bdd`: API calls come from the installed library versions' docs, preferring their newest APIs (experimental ones included) and never deprecated ones.
+
 ## [1.10.0] - 2026-10-21
 
 ### Added
