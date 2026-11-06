@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `pr`: before-and-after captures for changes to existing UI, joined side by side with `ffmpeg hstack`, with `agent-browser diff screenshot` / `diff url` for a pixel diff. The before comes from an existing capture, visual-test baseline or deployed base first, then from switching the PR's own checkout (worktree or not) to the base; a second stack is never brought up for it.
+- `pr`: a need-to-tool table in `ui-capture.md`, so with no `ui-capture` role the agent picks Playwright's CLI for flows a reviewer must follow and agent-browser for before/after diffs and plain state changes.
+- `pr`: reviewer aids in the recorder references: Playwright action callouts and chapters, agent-browser contact sheets, and dark-mode / reduced-motion emulation when the change touches them.
+
+### Fixed
+
+- `pr`: the agent-browser example records with `--cursor`, as the defaults ask, and drops `--bail`, which skipped `record stop` on a failed step and left an unplayable file; the Playwright example stops the video even when a step fails.
+
 ## [1.12.0] - 2026-11-06
 
 ### Added
