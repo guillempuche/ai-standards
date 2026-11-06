@@ -4,7 +4,7 @@ description: Take a finished branch through to a merged GitHub pull request — 
 license: MIT
 compatibility: Requires git. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   author: ai-standards
 allowed-tools: Bash Read Glob Grep AskUserQuestion Skill
 ---
@@ -74,7 +74,8 @@ In a worktree that needs provisioning, use `worktrees.provision` and target the 
 
 When the change touches a user interface, capture screenshots or a short recording with the `ui-capture` role, without asking.
 Skip only when the visual result is self-evident from the diff — a token value, a one-word copy edit, a renamed label — and say why in one line under `## Screenshots`.
-What to capture and at which screen sizes: [`references/ui-capture.md`](references/ui-capture.md).
+What to capture, at which screen sizes, and how to record: [`references/ui-capture.md`](references/ui-capture.md).
+When recording, also read the quick reference for the recorder in use, and only that one: [`references/record-agent-browser.md`](references/record-agent-browser.md) or [`references/record-playwright-cli.md`](references/record-playwright-cli.md).
 
 If the repo localizes its interface, confirm every new user-facing string goes through the translation mechanism and that any extraction step has been run.
 

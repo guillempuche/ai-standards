@@ -1,7 +1,7 @@
 # Ticket IDs
 
 How the `commit` and `pr` skills tie work to a ticket so the tracker links it by itself.
-The per-repo values (`tickets.tracker`, `tickets.pattern`, `tickets.close`) are in [`repo-config.md`](repo-config.md).
+The per-repo values (`tickets.tracker`, `tickets.pattern`, `tickets.close`) are in [`references/repo-config.md`](repo-config.md).
 
 ## Find the ID
 

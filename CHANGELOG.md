@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `pr`: UI PRs can carry a screen recording, not only screenshots — `ui-capture.md` says how to record (tool, setup, raw output, seeded data only), and recordings embed as inline video, shrunk rather than dropped when over the host's limit.
+- `pr`: quick recording references for `agent-browser` and Playwright's CLI (`playwright-cli` or `npx playwright cli`), each read only when that tool is the recorder and deferring to the installed version's `--help`.
+- `pr`: a naming rule for captures (`<screen>-<state-or-flow>-<size>.<ext>`, kept out of commits) and reviewer-friendly recording defaults: one behavior, 5–15 seconds, viewport-sized, cursor on, `.mp4` when the tool can write it.
+- `pr`: recordings run start, steps and stop in one call (`agent-browser batch`, a chained or scripted `playwright-cli`) so agent think time leaves no frozen gaps; with no `media-upload` role, leftover gaps are trimmed with `ffmpeg mpdecimate`, and video stays at real speed unless asked.
+
+### Changed
+
+- `repo-config.md`: the `ui-capture` role may name a recorder, and with no role the fallback uses a recording-capable browser tool before capturing by hand.
+- `pr`: with no `media-upload` role, captures attach with `gh … --attach` (2.99+) instead of a drag-in placeholder, which stays only for an older `gh` or another host.
+
 ## [1.11.0] - 2026-11-02
 
 ### Added

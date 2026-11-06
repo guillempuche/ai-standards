@@ -48,7 +48,7 @@ No AI attribution.
 
 If the PR belongs to a ticket, end the body with one line the tracker reads — but the **word matters**, because a closing word moves the ticket to done on merge and a link word only ties the PR to it.
 The words differ by tracker (`Fixes ENG-12` / `Part of ENG-12` in Linear, `Closes #12` / `Refs #12` on GitHub); Jira reads no body words, so the title's key is the link.
-See [`tickets.md`](tickets.md).
+See [`references/tickets.md`](tickets.md).
 
 Default to **closing** when the PR finishes the ticket and `tickets.close` allows it (`commit` or `pr`; under `last-pr`, only the final PR): merging the fix is what resolves the ticket, the release is a separate delivery step, and the ticket can be reopened if verification later fails.
 This is the common case; don't overthink it.
@@ -83,5 +83,19 @@ Media goes **with the PR**.
 Never create a media branch — it clutters the repo with a branch nobody asked for, and surprises like that erode trust even when they work.
 
 - **If the repo has a `media-upload` role**, run it: it uploads the captures somewhere public, compacts them, and prints the markdown to paste into the body.
-- **Otherwise**, use the host's own attachment path — on GitHub, dragging the file into the description in the web UI mints an attachment URL bound to the PR, and a video becomes an inline player.
+- **Otherwise, on GitHub**, attach with `gh` 2.99+: `--attach <file>` works on `gh pr create`, `gh pr edit` and `gh pr comment`, for images and `.mp4` / `.mov` / `.webm` video, up to 50 files per command.
+  Reference an image in the body (`![Settings saved](./settings-saved-large.png)`) and `gh` rewrites it to the uploaded asset; an unreferenced attachment is appended to the body, and a video renders as a player.
+  If it exits non-zero, some uploads failed but the PR may already exist: check before re-running, and add the missing files with `gh pr edit --attach`.
+  Check `gh <command> --help` for the installed version's behavior.
+- **With an older `gh` or another host**, use the host's web attachment path — on GitHub, dragging the file into the description mints an attachment URL bound to the PR.
   Leave a `> _Drag the recording in here._` placeholder so the spot is obvious.
+
+Embed a recording as an inline video — the `media-upload` output, or the host's attachment — and prefer it to a GIF.
+If there is no `media-upload` role and a recording still has frozen gaps, drop the repeated frames, which keeps real motion at real speed:
+
+```bash
+ffmpeg -i in.webm -vf mpdecimate,setpts=N/FRAME_RATE/TB -pix_fmt yuv420p out.mp4
+```
+
+It also collapses deliberate holds and static loading states, so skip it when how long something takes is part of the change, and keep the end-state still.
+If there is no `media-upload` role and the file is over the host's attachment limit (on GitHub, 10 MB, or 100 MB for video on a paid plan), shrink it first (with `ffmpeg`, if it is available) instead of dropping it.

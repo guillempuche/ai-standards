@@ -66,7 +66,7 @@ roles:                              # skill / agent / script that fills each slo
   readability: readability-improver:readability-improver
   a11y: a11y-accessibility-reviewer:a11y-accessibility-reviewer
   security: security-review
-  ui-capture: agent-browser
+  ui-capture: agent-browser         # may name a recorder, for UI PRs that need a recording
   media-upload: scripts/gh-pr-media.sh
   release: release
 
@@ -116,14 +116,14 @@ Write only the keys whose values differ from the defaults — a short config is 
 
 An unfilled role is **never a silent skip**.
 
-| Empty role      | Fallback                                                                             |
-| --------------- | ------------------------------------------------------------------------------------ |
-| `stack-bringup` | Bring the stack up with the repo's documented commands, or say it could not be run.  |
-| `readability`   | Do the readability pass inline against the self-review checklist.                    |
-| `a11y`          | Check the changed components against the checklist by hand.                          |
-| `security`      | Self-read the sensitive surface and say in the review guide that no scanner ran.     |
-| `ui-capture`    | Capture by hand if possible; skip only a self-evident change, stating why; else ask. |
-| `media-upload`  | Use the host's manual attachment path and leave a placeholder line in the body.      |
+| Empty role      | Fallback                                                                                                                              |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `stack-bringup` | Bring the stack up with the repo's documented commands, or say it could not be run.                                                   |
+| `readability`   | Do the readability pass inline against the self-review checklist.                                                                     |
+| `a11y`          | Check the changed components against the checklist by hand.                                                                           |
+| `security`      | Self-read the sensitive surface and say in the review guide that no scanner ran.                                                      |
+| `ui-capture`    | Use a recording-capable browser tool if one is present; else capture by hand; skip only a self-evident change, stating why; else ask. |
+| `media-upload`  | Attach with the host's CLI (`gh … --attach` on GitHub); else the web attachment path, with a placeholder line in the body.            |
 
 Whatever could not be done is stated in the pull request's `## Review guide`.
 That is what stops a portable skill from being quietly weaker than a repo-specific one.
