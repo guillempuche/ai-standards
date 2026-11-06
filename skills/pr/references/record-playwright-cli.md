@@ -22,8 +22,8 @@ playwright-cli goto http://localhost:3000/settings
 # Look up refs first, then record in one shell call so no idle time lands in the video
 playwright-cli snapshot                            # find the ref, e.g. e3
 playwright-cli video-start pr-media/settings-save-small.webm --size=390x844 --cursor \
-  && playwright-cli click e3 \
-  && playwright-cli video-stop
+  && playwright-cli video-show-actions \
+  && { playwright-cli click e3; playwright-cli video-stop; }   # stop runs even if the click fails; redo the take then
 ```
 
 For a longer flow, put the steps in one script and run it between `video-start` and `video-stop`:
@@ -36,5 +36,7 @@ playwright-cli run-code --filename steps.js        # steps.js: async page => { a
 - Pass `--size` to `video-start` matching the viewport; without it the video is fitted to 800×800.
 - `--cursor` paces each action by about 800 ms so the pointer can travel; keep the take short.
 - Run the second size in its own session (`-s=large`) so the small one's state is untouched.
-- `video-chapter <title>` marks a step in a longer flow; `video-show-actions` adds a callout for each action.
+- `video-show-actions` puts a callout naming each action on the video and highlights its target, standing in for a voice-over.
+- `video-chapter <title>` marks each stage of a longer flow.
+- For dark mode or reduced motion, `run-code "async page => page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })"`, only when the change touches theming or animation.
 - `recording-start` / `recording-stop` record *actions as Playwright code*, not video; use `video-start` for the PR.
