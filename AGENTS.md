@@ -9,7 +9,7 @@ Each skill is a self-contained folder with a `SKILL.md` file and optional suppor
 
 ### Follow the official Agent Skills guidelines
 
-All skills in this repo MUST follow the official Agent Skills guidelines at <https://agentskills.io/> (full spec: <https://agentskills.io/specification>).
+All skills in this repo MUST follow the official Agent Skills guidelines at <https://agentskills.io/> (full spec: <https://agentskills.io/specification>; writing guidance: <https://agentskills.io/skill-creation/best-practices>).
 Treat that site as the source of truth — when it disagrees with this file, the official guidelines win, and this file should be updated to match.
 
 When adding a skill, changing frontmatter, restructuring a skill's files, or growing a `SKILL.md` body, check the official guidelines for the current rules on:
@@ -96,11 +96,14 @@ Workflow steps belong in the body, not the description.
 
 ### Body Content Guidelines
 
-- Keep main `SKILL.md` under 500 lines
+- Keep main `SKILL.md` under 500 lines and about 5,000 tokens: the whole body loads every time the skill fires
 - Include step-by-step instructions
 - Provide examples of inputs/outputs
 - Document common edge cases
 - Move detailed reference material to `references/` folder
+- Link every reference file from `SKILL.md`, one level deep, and say *when* to read it ("read `references/x.md` when …"); a file reachable only through another reference may never load
+- Write what the agent would get wrong without the skill, and cut what it already knows
+- Give one default and mention alternatives briefly, rather than a menu of equal options
 
 ### Portability across agents
 
@@ -158,6 +161,8 @@ Before committing, verify:
 - Description is non-empty and under 1024 characters
 - Frontmatter uses only the six spec keys (no top-level `version`)
 - All file references use relative paths from skill root
+- Every file under `references/`, `assets/`, or `scripts/` is linked from `SKILL.md`, not only from another reference
+- `uvx --from skills-ref skills-ref validate skills/<skill-name>` passes for each changed skill (the spec's reference validator)
 - `claude plugin validate . --strict` passes
 - `./scripts/sync-manifests.sh --check` passes
 
