@@ -141,7 +141,7 @@ ______________________________________________________________________
 |         |                                                                                   |
 | ------- | --------------------------------------------------------------------------------- |
 | Style   | GIVEN / WHEN / THEN / AND comments (flexible combinations)                        |
-| Levels  | Unit, integration, visual (screenshots against reviewed baselines)                |
+| Levels  | Unit, integration, browser (real focus and layout), visual (reviewed screenshots) |
 | Tooling | The project's own runner; examples in vitest, testing-library, Playwright, pytest |
 | Covers  | Components, hooks, utilities, constants, HTTP handlers, databases, jobs, scripts  |
 | Focus   | Observable behavior over implementation details                                   |

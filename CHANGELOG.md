@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.14.0] - 2026-11-18
+
+### Added
+
+- `test-bdd`: a browser level, separate from visual, for what only a real engine can answer: Tab order that CSS decides, layout and position, CSS that hides or shows, native controls and browser APIs. An ordered list picks simulated DOM (default), browser, visual or end-to-end, and says what a simulated DOM only imitates (jsdom vs. happy-dom).
+- `test-bdd`: one file suffix per level, with the default globs that match them all, Go build tags and pytest markers where the runner fixes the name, and tests next to their code unless the project keeps a `tests/` tree.
+- `test-bdd`: `browser.md`, with a browser test example, how to keep layout assertions repeatable, and gotchas from a containerised browser setup (Linux locale, CSS-in-JS pre-bundling, server-only imports, matcher types, collection checks).
+- `test-bdd`: choosing the quality of each visual capture — 1× or 2× density, exact, normal or tolerant strictness (with Playwright's and Vitest's option names), element, screen or full-page area, lossless PNG, one pinned rendering environment (container or hosted service) — with the reason for any raised setting in a comment.
+
+### Changed
+
+- `test-bdd`: visual tests compare looks only; they may interact to reach a state, but behavior checks move to browser tests.
+- `test-bdd`: React Native stays in its test renderer, with no browser level; without a browser runner, engine-only cases are reported as not covered instead of faked in a simulated DOM.
+- `test-bdd`: the first visual run fails on purpose while it writes baselines, which are reviewed before the fail check; the update flag never runs in CI.
+- `test-bdd`: the version check covers defaults and tool facts as well as calls, reads release notes (a releases page when there is no changelog) and the docs for the installed release rather than the latest, and searches the issues when a version behaves differently from its docs.
+- `test-bdd`: the case-list report format moves to `case-list.md`, and each case carries its level, keeping `SKILL.md` within its size budget.
+
+### Fixed
+
+- `test-bdd`: examples test both sides of each length limit, use user-event instead of `fireEvent`, fake the network and payment provider at the boundary, check the email recipient, and keep GIVEN/THEN on every test; the report template's sample anchor no longer uses the `file:line` form it warns against.
+
 ## [1.13.0] - 2026-11-06
 
 ### Added

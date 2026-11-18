@@ -45,7 +45,7 @@
     },
     {
       "name": "test-bdd",
-      "description": "Generate BDD-style tests with GIVEN/WHEN/THEN comments that check behavior through inputs and observable outputs, never implementation details — unit, integration, or visual, for frontend, backend, or scripts. Use when asked to write or add tests for a file, module, endpoint, or script.",
+      "description": "Generate BDD-style tests with GIVEN/WHEN/THEN comments that check behavior through inputs and observable outputs, never implementation details — unit, integration, browser, or visual, for frontend, backend, or scripts. Use when asked to write or add tests for a file, module, endpoint, or script.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-test-bdd"

@@ -1,17 +1,18 @@
 # Complete Test File Examples
 
 > The code samples show the shape of a test, not a current API reference.
-> Take exact calls from the docs of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs between releases.
+> Take exact calls and defaults from the docs and release notes of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs and change defaults between releases.
 
-These examples are TypeScript unit tests.
-For backend, script, and visual examples see `backend-and-scripts.md` and `visual.md`.
+These examples are TypeScript unit tests: a component and a hook in a simulated DOM, then pure validators and constants.
+For backend and script examples see `backend-and-scripts.md`; for a browser test (real focus and media queries) see `browser.md`; for visual tests, including a 2× exact capture, see `visual.md`.
 
 ## Example 1: Shopping Cart Component
 
 Tests a component with state management, user interactions, and conditional rendering.
 
 ```typescript
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ShoppingCart } from './ShoppingCart'
@@ -52,7 +53,7 @@ describe('ShoppingCart', () => {
         expect(screen.getByText('$89.99')).toBeInTheDocument()
     })
 
-    it('should calculate total price correctly', () => {
+    it('should total each price times its quantity', () => {
         // GIVEN a cart with multiple items
         render(<ShoppingCart items={mockItems} onRemove={onRemove} />)
 
@@ -61,21 +62,24 @@ describe('ShoppingCart', () => {
         expect(screen.getByText(/total/i)).toHaveTextContent('$139.99')
     })
 
-    it('should call onRemove when delete button is clicked', () => {
+    it('should call onRemove when delete button is clicked', async () => {
         // GIVEN a cart with items
+        const user = userEvent.setup()
         render(<ShoppingCart items={mockItems} onRemove={onRemove} />)
 
         // WHEN delete button for first item is clicked
         const deleteButtons = screen.getAllByRole('button', { name: /remove/i })
-        fireEvent.click(deleteButtons[0])
+        await user.click(deleteButtons[0])
 
         // THEN onRemove should be called with item id
+        // (the callback prop is the component's output here)
         expect(onRemove).toHaveBeenCalledWith('1')
         expect(onRemove).toHaveBeenCalledTimes(1)
     })
 
-    it('should update quantity when selector changes', () => {
+    it('should update quantity when selector changes', async () => {
         // GIVEN a cart with updateQuantity handler
+        const user = userEvent.setup()
         render(
             <ShoppingCart
                 items={mockItems}
@@ -86,10 +90,12 @@ describe('ShoppingCart', () => {
 
         // WHEN quantity is changed
         const quantityInputs = screen.getAllByRole('spinbutton')
-        fireEvent.change(quantityInputs[0], { target: { value: '5' } })
+        await user.clear(quantityInputs[0])
+        await user.type(quantityInputs[0], '5')
 
-        // THEN onUpdateQuantity should be called
-        expect(onUpdateQuantity).toHaveBeenCalledWith('1', 5)
+        // THEN onUpdateQuantity should end with the new quantity
+        // (the callback prop is the component's output here)
+        expect(onUpdateQuantity).toHaveBeenLastCalledWith('1', 5)
     })
 })
 ```
@@ -253,12 +259,18 @@ describe('Form Validators', () => {
         })
 
         it('should reject passwords shorter than minimum length', () => {
-            // GIVEN short password
+            // GIVEN a password one character below the minimum of 8
             // THEN should require minimum length
-            expect(validatePassword('Ab1!')).toEqual({
+            expect(validatePassword('Abcd1!x')).toEqual({
                 valid: false,
                 error: 'Password must be at least 8 characters',
             })
+        })
+
+        it('should accept a password of exactly the minimum length', () => {
+            // GIVEN a strong password of exactly 8 characters
+            // THEN validation should pass
+            expect(validatePassword('Abcd1!xy')).toEqual({ valid: true })
         })
 
         it('should reject passwords without special character', () => {
@@ -293,20 +305,24 @@ describe('Form Validators', () => {
             })
         })
 
-        it('should enforce length constraints', () => {
-            // GIVEN too short username
-            // THEN should require minimum length
+        it('should reject usernames just outside 3-20 characters', () => {
+            // GIVEN usernames of 2 and 21 characters
+            // THEN both should fail the length rule
             expect(validateUsername('ab')).toEqual({
                 valid: false,
                 error: 'Username must be 3-20 characters',
             })
-
-            // GIVEN too long username
-            // THEN should require maximum length
             expect(validateUsername('a'.repeat(21))).toEqual({
                 valid: false,
                 error: 'Username must be 3-20 characters',
             })
+        })
+
+        it('should accept usernames of exactly 3 and 20 characters', () => {
+            // GIVEN usernames at both ends of the allowed length
+            // THEN both should pass
+            expect(validateUsername('abc')).toEqual({ valid: true })
+            expect(validateUsername('a'.repeat(20))).toEqual({ valid: true })
         })
     })
 
@@ -365,6 +381,8 @@ import {
 describe('Application Constants', () => {
     describe('API_CONFIG', () => {
         it('should have required configuration properties', () => {
+            // GIVEN the API config
+            // THEN every setting the client reads should be present
             expect(API_CONFIG).toHaveProperty('BASE_URL')
             expect(API_CONFIG).toHaveProperty('TIMEOUT')
             expect(API_CONFIG).toHaveProperty('RETRY_ATTEMPTS')
@@ -386,6 +404,8 @@ describe('Application Constants', () => {
 
     describe('ROUTE_PATHS', () => {
         it('should define all main application routes', () => {
+            // GIVEN the route table
+            // THEN each main route should map to its path
             expect(ROUTE_PATHS).toMatchObject({
                 HOME: '/',
                 LOGIN: '/login',
@@ -423,7 +443,9 @@ describe('Application Constants', () => {
     })
 
     describe('DEFAULT_PAGINATION', () => {
-        it('should have sensible default values', () => {
+        it('should start on page 1 with 20 items and a cap of 100', () => {
+            // GIVEN the pagination defaults
+            // THEN they should match the documented values
             expect(DEFAULT_PAGINATION).toMatchObject({
                 PAGE: 1,
                 PAGE_SIZE: 20,

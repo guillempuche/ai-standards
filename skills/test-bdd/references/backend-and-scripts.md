@@ -1,7 +1,7 @@
 # Backend and Script Patterns
 
 > The code samples show the shape of a test, not a current API reference.
-> Take exact calls from the docs of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs between releases.
+> Take exact calls and defaults from the docs and release notes of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs and change defaults between releases.
 
 The examples use TypeScript (vitest, supertest) and Python (pytest).
 Use the same shape with whatever runner the project already has.
@@ -26,10 +26,10 @@ describe('POST /orders', () => {
     })
 
     it('should create the order and return its id', async () => {
-        // GIVEN a signed-in customer with one item in the cart
+        // GIVEN a signed-in customer
         const token = await signInAs('customer')
 
-        // WHEN the order is submitted
+        // WHEN an order for one item is submitted
         const res = await request(app)
             .post('/orders')
             .set('Authorization', `Bearer ${token}`)
@@ -101,16 +101,20 @@ When the behavior *is* a call to another system — an email, a webhook, a payme
 Prefer a fake server or recording fake over mocking an internal module.
 
 ```python
-def test_should_email_the_receipt_after_payment(client, fake_mailer):
+def test_should_email_the_receipt_after_payment(client, fake_payments, fake_mailer):
     # GIVEN a pending order
-    order = create_order(total=4200)
+    # AND a payment provider that approves the card
+    order = create_order(total=4200, email="buyer@example.com")
+    fake_payments.approve_next()
 
-    # WHEN the payment succeeds
+    # WHEN the customer pays
     client.post(f"/orders/{order.id}/pay", json={"card": "tok_test"})
 
     # THEN the customer should receive one receipt
     # (the sent email is the observable output here)
-    assert [m.subject for m in fake_mailer.sent] == ["Your receipt"]
+    assert [(m.to, m.subject) for m in fake_mailer.sent] == [
+        ("buyer@example.com", "Your receipt")
+    ]
 ```
 
 ## CLI / Script (Integration)

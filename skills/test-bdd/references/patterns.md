@@ -1,18 +1,20 @@
 # BDD Test Patterns (TypeScript)
 
 > The code samples show the shape of a test, not a current API reference.
-> Take exact calls from the docs of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs between releases.
+> Take exact calls and defaults from the docs and release notes of the installed library versions, preferring their newest APIs; libraries rename and deprecate APIs and change defaults between releases.
 
 These patterns use vitest and testing-library.
-For backend handlers, databases, and scripts see `backend-and-scripts.md`; for screenshots see `visual.md`.
+For backend handlers, databases, and scripts see `backend-and-scripts.md`; for tests in a real browser see `browser.md`; for screenshots see `visual.md`.
 
 ## Test File Structure
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, renderHook, act, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, renderHook, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
-// Mocks - DO NOT re-declare mocks already in setup.ts
+// Mocks: reuse the ones the project's test setup file already declares;
+// a second declaration here would silently replace them for this file only
 
 describe('FeatureName', () => {
     beforeEach(() => {
@@ -160,13 +162,14 @@ it('should display product name and price', () => {
 ### Testing User Interactions
 
 ```typescript
-it('should increment quantity when plus button is clicked', () => {
+it('should increment quantity when plus button is clicked', async () => {
     // GIVEN a quantity selector starting at 1
+    const user = userEvent.setup()
     const onChange = vi.fn()
     render(<QuantitySelector value={1} onChange={onChange} />)
 
     // WHEN the plus button is clicked
-    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    await user.click(screen.getByRole('button', { name: '+' }))
 
     // THEN onChange should be called with incremented value
     // (the callback prop is the component's output here)
@@ -178,18 +181,21 @@ it('should increment quantity when plus button is clicked', () => {
 
 ```typescript
 it('should display search results after typing', async () => {
-    // GIVEN a search input
+    // GIVEN the search API returns three laptops
+    // (a test server such as MSW fakes the network boundary, not the app's own modules)
+    server.use(
+        http.get('/api/search', () =>
+            HttpResponse.json({ results: ['Laptop A', 'Laptop B', 'Laptop C'] })
+        )
+    )
+    const user = userEvent.setup()
     render(<SearchBox />)
 
     // WHEN the user types a query
-    fireEvent.change(screen.getByRole('textbox'), {
-        target: { value: 'laptop' },
-    })
+    await user.type(screen.getByRole('textbox'), 'laptop')
 
-    // THEN results should appear after debounce
-    await waitFor(() => {
-        expect(screen.getByText('3 results found')).toBeInTheDocument()
-    })
+    // THEN results should appear after the debounce
+    expect(await screen.findByText('3 results found')).toBeInTheDocument()
 })
 ```
 
@@ -242,13 +248,17 @@ describe('formatCurrency', () => {
 
 ```typescript
 describe('Feature Flags', () => {
-    it('should have all required flags defined', () => {
+    it('should define every flag the app reads', () => {
+        // GIVEN the exported flags
+        // THEN each flag the app checks should be present
         expect(FEATURE_FLAGS).toHaveProperty('DARK_MODE')
         expect(FEATURE_FLAGS).toHaveProperty('BETA_FEATURES')
         expect(FEATURE_FLAGS).toHaveProperty('ANALYTICS')
     })
 
-    it('should have boolean values', () => {
+    it('should hold only on/off values', () => {
+        // GIVEN the exported flags
+        // THEN every value should be a boolean
         Object.values(FEATURE_FLAGS).forEach((value) => {
             expect(typeof value).toBe('boolean')
         })
