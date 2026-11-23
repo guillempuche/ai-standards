@@ -77,7 +77,7 @@
     },
     {
       "name": "plan-ship",
-      "description": "Plan a change in a fresh git worktree, audit the plan twice, and wait for approval before implementing, testing, reviewing, and opening one pull request. Use when asked to \"plan and ship\" a feature or fix, or to take a change from idea to PR.",
+      "description": "Plan a change from a description, issue, or spec in its own git worktree, audit the plan, and wait for approval before implementing, testing, reviewing, and opening one pull request. Use when asked to \"plan and ship\" a feature or fix, or to take a change from idea to PR.",
       "source": {
         "source": "github",
         "repo": "guillempuche/ai-skill-plan-ship"

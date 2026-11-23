@@ -198,6 +198,7 @@ ______________________________________________________________________
 
 |          |                                                                                        |
 | -------- | -------------------------------------------------------------------------------------- |
+| Input    | A description, issue, or spec; options for stop point, audits, review, tests, commits  |
 | Flow     | Worktree, plan, two audit rounds, approval, implement, tests, verified review, PR      |
 | Portable | direnv and Nix detected per repo; every Claude-only tool has a stated fallback         |
 | Requires | git; hands off to the `pr`, `commit`, and `test-bdd` skills, so install them alongside |
