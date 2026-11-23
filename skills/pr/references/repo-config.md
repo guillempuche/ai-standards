@@ -56,6 +56,8 @@ ci:
   required: [ci, e2e]
 
 worktrees:
+  supported: true                               # false when the setup breaks in a second checkout; /plan-ship then branches in place
+  create: pnpm cli worktree new <branch>        # the repo's own command that makes a worktree; omit to use `git worktree add`
   provision: pnpm cli worktree up && pnpm dev   # omit when a worktree is just a checkout
   host: https://<label>.example.localhost       # where the provisioned stack answers
   absent-when-worktree: [.env, .env.media]      # gitignored files a worktree will not have
