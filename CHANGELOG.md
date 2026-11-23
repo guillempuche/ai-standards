@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.15.0] - 2026-11-23
+
+### Added
+
+- `plan-ship`: a new skill that takes one change from a description, issue, or spec to an open pull request: a worktree on a fresh base, a plan with edge-case and claims tables, audit rounds (later ones by fresh reviewers with one lens each), an approval gate, evidence-first debugging, tests where they earn their place, each code-review finding checked against real callers, then a hand-off to `pr`.
+- `plan-ship`: options as flags or plain words (`--branch`, `--draft`, `--stop plan|impl|pr|ci`, `--audits 0-3`, `--review high|xhigh|max`, `--tests auto|none|thorough`, `--commits one|few`, `--no-approval`), repo defaults from a `plan-ship:` block in `.agents/git-workflow.md` or `.claude/git-workflow.md`, and resuming a run from the plan's `Status:` line.
+- `plan-ship`: picks where to work (the session's own worktree, the repo's worktree command, a branch in the main checkout when the repo does not support worktrees, or a plain git worktree) and runs project commands through `direnv exec` or `nix develop`.
+- `pr`: the config reference documents `worktrees.supported` and `worktrees.create`.
+
 ## [1.14.0] - 2026-11-18
 
 ### Added
