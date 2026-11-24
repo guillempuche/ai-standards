@@ -1,7 +1,7 @@
 # PR body
 
 The house style for the pull request description, the ticket link or close line, the blast-radius checklist, and how to embed media.
-Read this from Step 7 of the `pr` skill when writing or refreshing the body.
+Read this from the `pr` skill's **Open the PR** step when writing or refreshing the body.
 
 ## House style
 
@@ -33,7 +33,7 @@ Include only the sections that apply, in this order:
   Omit only if genuinely none apply.
 - `## Review guide` — how to review this fast: where to look first, the riskiest part and why, any decision you made that the reviewer might overrule, and anything you could not fully verify.
   Mark generated or mechanical parts as skippable.
-  This is where Step 3 (self-review) of the `pr` skill surfaces what it couldn't resolve.
+  This is where the `pr` skill's **Self-review** step surfaces what it couldn't resolve.
 - `## Screenshots` / `## Demo` — **mandatory for UI PRs**: embed the media, or — only for a change whose visual result is self-evident from the diff — one line `> Screenshots skipped: <reason>`.
   Neither present means an incomplete PR; there is no silent third option.
 - `## Tests` — what is covered, when notable.

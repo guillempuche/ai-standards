@@ -1,7 +1,7 @@
 # Recording with agent-browser
 
 Quick reference for recording a UI change with `agent-browser`.
-Read this from Step 2 of the `pr` skill, alongside `references/ui-capture.md`, only when `agent-browser` is the recorder.
+Read this from the `pr` skill's **Verify end to end** step, alongside `references/ui-capture.md`, only when `agent-browser` is the recorder.
 
 Written against 0.41.2.
 Use the newest version available, and trust the installed `agent-browser record --help` over this page when they differ.

@@ -65,17 +65,12 @@ If a worktree or branch for this task (same issue ID or branch name; `git worktr
 Each step below says how its option changes it.
 
 **Repo defaults.**
-Read `.agents/git-workflow.md`, else `.claude/git-workflow.md`, then the `.local.md` file next to it, which overrides it key by key.
-A `plan-ship:` block in the file's YAML frontmatter sets defaults for any option above, and options in the request override it:
+Read the repo's `git-workflow.md` config, found as [`references/repo-config.md`](references/repo-config.md) describes (`.agents/`, else `.claude/`).
+Its `plan-ship:` block sets defaults for any option above, and options in the request override it.
+Its `worktrees`, `gates`, and `roles` keys override the defaults in the steps below.
 
-```yaml
-plan-ship:
-  audits: 1
-  review: xhigh
-  tests: thorough
-```
-
-The same file's `worktrees`, `gates`, and `roles` keys override the defaults in the steps below; their format is in the `pr` skill's `references/repo-config.md`.
+**Agent tools.**
+Where a step below asks the user, briefs a fresh reviewer, or runs a review, use the row for this agent in [`references/agent-tools.md`](references/agent-tools.md).
 
 **Echo back.**
 When you inferred the task or read an option from plain words, say in one line how you read the request, then carry on.
@@ -100,7 +95,7 @@ base=$(git symbolic-ref --short "refs/remotes/$remote/HEAD")   # e.g. origin/mai
 Shell variables do not survive between commands in most agents, so recompute `$remote` and `$base` this way wherever a later step uses them.
 With no remote at all, plan and implement, then stop as `--stop impl` does: there is nowhere to open a PR.
 
-Use `--branch` when given; otherwise name the branch as the `pr` skill's Step 1 describes (the ticket ID in the tracker's shape when there is one, else a short slug of the task).
+Use `--branch` when given; otherwise name the branch as the `pr` skill's **Re-baseline** step describes (the ticket ID in the tracker's shape when there is one, else a short slug of the task).
 If that name is taken — locally, on the remote, or checked out in another worktree — and it is this task's earlier run, resume it (Step 0); otherwise pick a new name and tell the user.
 
 Then pick where the work happens — the first case that applies wins.
@@ -223,7 +218,7 @@ Probes must not change anything: read-only queries against a local or dev databa
 Delete them afterwards; nothing from them lands in the worktree.
 
 **Round 1** is your own audit.
-**Every later round** needs eyes not anchored on the earlier ones: brief fresh reviewers as the reference describes — new subagents via `Agent` in Claude Code, one lens each, run in parallel; otherwise re-read the plan cold, once per lens, as a skeptical reviewer.
+**Every later round** needs eyes not anchored on the earlier ones: brief fresh reviewers as the reference describes, one lens each and in parallel where the agent allows, using the fresh-reviewer row of `agent-tools.md`.
 Reviewers return findings; you decide and edit the plan file.
 Each later round also checks that the previous round's fixes did not introduce new problems.
 Stop early, and say so, when a fresh-eyes round finds nothing that changes the plan; round 1 never ends the audit on its own when more rounds were asked for.
@@ -291,21 +286,11 @@ Record each skip in the plan's Edge cases table with its reason.
 
 ## 7 — Code review, verified finding by finding
 
-Review the whole diff against `$base` for correctness bugs, at the `--review` level (default `high`):
+Review the whole diff against `$base` for correctness bugs with the review row of `agent-tools.md`, at the `--review` level (default `high`) or the closest setting the agent's command has.
+The work is still uncommitted here, so pick the form that covers staged, unstaged, and untracked changes (`codex review --uncommitted` in Codex).
 
-- Claude Code → the `code-review` skill at that level.
-- Codex → `codex review --uncommitted`, which covers staged, unstaged, and untracked changes.
-- Another agent with a built-in review command → that command, at its closest effort setting.
-- None of these → a fresh subagent given only the diff and the repo, or a cold self-review of the diff.
-
-A finding is a hypothesis, not a fact.
-For each one, decide whether it holds **in this codebase, for its real callers and inputs**:
-
-- Trace the path from the actual callers, or write a test or probe that triggers it.
-- Check whether the triggering input can occur here at all — a type, a validator, or an upstream guard may already rule it out.
-
-Fix only the findings you confirmed, add a regression test where Step 6's rules call for one, and re-run the tests.
-For each finding you dismissed, keep one line on why; the PR's review guide carries any you could not settle either way.
+Handle the findings as the `pr` skill's **Self-review** step does: verify each one against its real callers and inputs, sort what holds into `important`, `pre-existing`, and `nit`, and act on each as that step says.
+Add a regression test for each fix where Step 6's rules call for one, and re-run the tests.
 
 ## 8 — Hand off to `pr`, and stop
 
@@ -317,19 +302,16 @@ If the base moved, rebase now as [`references/worktree.md`](references/worktree.
 Then leave the work uncommitted, and run the `pr` skill on the worktree's branch.
 Tell it:
 
-- The code review already ran and its confirmed findings are fixed, so its Step 3 needs only the self-read checklist unless the code changed since.
-- Run its readability pass (the `readability-improver` agent where available).
-- Verify end to end before opening: use a verification command or skill if the session has one (such as `/verify` or `run` in Claude Code), otherwise run the changed path by hand as its Step 2 describes.
-- Land the commits through the `commit` skill: one with `--commits one`, otherwise a few focused ones.
-- Open exactly one pull request, as a draft only with `--draft`.
-- Link the issue, if the input named one.
-- Which config file you read, if it was `.agents/git-workflow.md`, so it and the `commit` skill read it too.
-- Carry the plan's unverified claims and dismissed-but-unsure review findings into the PR's `## Review guide`.
+- The code review already ran and its `important` findings are fixed, so its **Self-review** step needs only the self-read checklist unless the code changed since.
+- Land one commit with `--commits one`, otherwise a few focused ones.
+- Open the PR as a draft only with `--draft`.
+- The issue or ticket ID, if the input named one.
+- Carry the plan's unverified claims, and the review findings you could not settle or left as `pre-existing`, into the PR's `## Review guide`.
 
 The `pr` skill still shows each commit preview for the user's approval; `--no-approval` covers only the plan gate.
 
 Stop once the PR is open (`--stop pr`, the default): do not wait for CI, work the review, or merge.
-With `--stop ci`, watch the checks to green and fix failures the way the `pr` skill's Step 8 describes, then stop; never merge.
+With `--stop ci`, watch the checks to green and fix failures the way the `pr` skill's **Review loop** step describes, then stop; never merge.
 Report the PR URL, the branch and worktree path, and anything left unverified.
 Leave the worktree in place for follow-up fixes; the plan file stays in it, uncommitted.
 In case 3, tell the user their main checkout is still on the feature branch.

@@ -32,13 +32,15 @@ ai-standards/
 │       ├── SKILL.md        # Required: skill definition
 │       ├── references/     # Optional: detailed docs
 │       └── assets/         # Optional: schemas, examples
+├── shared/
+│   └── references/         # Source of references several skills ship; copied by sync-manifests.sh
 ├── agents/
 │   └── <agent-name>.md     # Agent with YAML frontmatter
 ├── plugin.json             # Portable manifest (Codex, Antigravity), generated
 ├── .claude-plugin/          # Claude Code plugin and marketplace manifests
 ├── .agents/plugins/         # Codex marketplace, generated
 ├── scripts/
-│   ├── sync-manifests.sh             # Generate plugin.json and the Codex marketplace
+│   ├── sync-manifests.sh             # Generate plugin.json, the Codex marketplace, and shared reference copies
 │   ├── generate-individual-repos.sh  # Generate dist-repos/
 │   └── deploy-individual-repos.sh    # Push to GitHub
 ├── .claude/skills/          # Local skills (/commit, /release)
@@ -115,6 +117,10 @@ Skills ship to Claude Code, Codex, Gemini CLI, OpenCode, Mastra Code, and any ot
 - Don't make a skill depend on Claude-only frontmatter or features such as `context: fork` or hooks.
 - Keep `allowed-tools` with Claude Code tool names: it is an experimental spec field that Claude Code uses to pre-approve tools, and other agents' support varies, so never rely on it to restrict or grant a tool.
 
+A reference that two or more skills need lives once under `shared/references/` and is copied into each skill by `./scripts/sync-manifests.sh`, because every skill also ships alone as its own repo and cannot link into another skill.
+Edit the source in `shared/references/`, never a copy, and list new shared files and the skills that get them in `SHARED` in that script.
+Skills read repo config from `.agents/git-workflow.md`, falling back to `.claude/git-workflow.md`; never add a lookup that only one agent's folder satisfies.
+
 Agents in `agents/` are Claude Code subagents only; the README says so, and that note must stay accurate.
 The README **Compatibility** table lists each agent's skill directories; re-check those agents' official docs before changing it.
 
@@ -162,9 +168,9 @@ Before committing, verify:
 - Frontmatter uses only the six spec keys (no top-level `version`)
 - All file references use relative paths from skill root
 - Every file under `references/`, `assets/`, or `scripts/` is linked from `SKILL.md`, not only from another reference
-- `uvx --from skills-ref skills-ref validate skills/<skill-name>` passes for each changed skill (the spec's reference validator)
+- `uvx --from skills-ref agentskills validate skills/<skill-name>` passes for each changed skill (the spec's reference validator)
 - `claude plugin validate . --strict` passes
-- `./scripts/sync-manifests.sh --check` passes
+- `./scripts/sync-manifests.sh --check` passes (manifests and shared reference copies)
 
 ## Code Style
 

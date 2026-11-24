@@ -1,7 +1,7 @@
 # Recording with Playwright's CLI
 
 Quick reference for recording a UI change with Playwright's agent CLI.
-Read this from Step 2 of the `pr` skill, alongside `references/ui-capture.md`, only when Playwright is the recorder.
+Read this from the `pr` skill's **Verify end to end** step, alongside `references/ui-capture.md`, only when Playwright is the recorder.
 
 The same commands ship two ways; use whichever the repo has:
 

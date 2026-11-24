@@ -1,7 +1,7 @@
 # UI capture
 
 How to capture visual proof for a pull request that changes a user interface.
-Read this from Step 2 of the `pr` skill when the change touches a UI.
+Read this from the `pr` skill's **Verify end to end** step when the change touches a UI.
 
 Attach proof so the reviewer sees the change without running the branch, using the `ui-capture` role's tool.
 

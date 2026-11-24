@@ -14,7 +14,7 @@ allowed-tools: Bash Read Glob Grep AskUserQuestion Skill
 Takes a finished change and turns it into a reviewed, mergeable pull request.
 
 By the time this runs the work is usually already committed on a local feature branch, so the default path is review → verify → push → open → review loop → merge.
-The readability and commit steps fire only when there are *new* changes to land — self-review fixes, or follow-ups from review.
+The **Land new changes** step fires only when there are *new* changes to land — self-review fixes, or follow-ups from review.
 The uncommitted case is handled too.
 
 Work from a feature branch, ideally a worktree, and never commit on the default branch.
@@ -22,7 +22,8 @@ Don't merge or hand the PR off until every gate is green.
 Stop at merge; deploying is a separate step.
 
 This file holds the decision logic.
-Everything that varies between repositories comes from `.claude/git-workflow.md` or is inferred from the repo — see [`references/repo-config.md`](references/repo-config.md).
+Everything that varies between repositories comes from the repo's `git-workflow.md` config (`.agents/`, else `.claude/`) or is inferred from the repo — see [`references/repo-config.md`](references/repo-config.md).
+Which tool runs each action in Claude Code, Codex, or another agent is in [`references/agent-tools.md`](references/agent-tools.md); read it when a step names a role, a review, or a question to the user.
 
 ## Step 0 — Adapt to the repo
 
@@ -35,9 +36,9 @@ Read the config if there is one; otherwise infer and, on first run, offer to wri
   `worktrees.provision` says whether one needs its own stack brought up or is just a checkout.
 - **Tickets** — `tickets:` gives the tracker, the ID pattern, and the close policy, else infer them from branch names and `git log`.
   A ticket is optional: take the ID from the user's request or the branch name, never guess or ask for one, and with none leave the title and body without it; how each tracker reads it is in [`references/tickets.md`](references/tickets.md).
-- **Roles** — `roles:` maps each slot (stack bring-up, readability, a11y, security, UI capture, media upload) to whatever this repo has.
+- **Roles** — `roles:` maps each slot (stack bring-up, code review, readability, a11y, security, UI capture, media upload) to whatever this repo has.
   Where the config is silent, look for a skill or agent in this session that fills the slot.
-  Where nothing does, use the fallback in the reference — an empty slot is never a silent skip.
+  Where nothing does, use the fallback in [`references/repo-config.md`](references/repo-config.md) or the matching row of [`references/agent-tools.md`](references/agent-tools.md) — an empty slot is never a silent skip.
 
 ## Step 1 — Re-baseline on the default branch
 
@@ -49,15 +50,15 @@ If the base moved, rebase onto it before continuing, then **re-read the actual f
 
 Then take stock of uncommitted changes, the commits that will form the PR, and whether a PR already exists; the rest of the flow branches on this:
 
-- **Already committed (common)** — Steps 2–3 review the whole branch; Steps 4–5 fire only if you make fixes.
-- **Uncommitted (rarer)** — the full readability and commit flow applies before the gates.
+- **Already committed (common)** — **Verify** and **Self-review** cover the whole branch; **Land new changes** fires only if you make fixes.
+- **Uncommitted (rarer)** — **Land new changes** runs in full before the gates.
 - **PR already exists** — you will update it, not open a duplicate.
 
 **In a worktree:** gitignored files do not exist here.
 `.env`, local credentials, and machine-specific config live only in the main checkout, so a script that reads them fails in a worktree for a reason that has nothing to do with the change.
 `worktrees.absent-when-worktree` lists the ones that bite in this repo; run those scripts from the main checkout rather than concluding the tool is unavailable.
 
-## Step 2 — Verify end-to-end (do not skip)
+## Step 2 — Verify end to end (do not skip)
 
 Type-checks and unit tests are **not** enough — they have passed on changes that produced wrong behavior at runtime.
 Run the changed path for real and confirm the user-visible behavior.
@@ -79,7 +80,7 @@ When recording, also read the quick reference for the recorder in use, and only 
 
 If the repo localizes its interface, confirm every new user-facing string goes through the translation mechanism and that any extraction step has been run.
 
-## Step 3 — Self-review: the review-readiness gate
+## Step 3 — Self-review
 
 The reviewer's time is for judgment calls, not for catching what a careful self-read or the repo's own tooling would.
 Review your own diff and fix what you find, so the PR that reaches a human is already pattern-conformant, on-direction, and free of AI-code smells.
@@ -108,26 +109,30 @@ Scale the depth to the change.
 - **UI change** → run the `a11y` role on the changed components; it may apply fixes itself, so review its diff and handle its open items.
 - **Trivial diff** — typo, copy, dependency bump, comment → the self-read alone is enough.
 
-Fix what these surface, re-verify (Step 2), and re-read the checklist on the fix.
-Carry anything you couldn't resolve into the `## Review guide` rather than leaving it silent.
+**Verify and classify every finding before acting on it.**
+A finding is a hypothesis, whether a tool, a subagent, a review bot, or you raised it.
+Try to break it: trace it from the real callers, or write a test or probe that triggers it, and check whether a type, a validator, or an upstream guard already rules the input out.
+Sort what holds:
 
-**Drift is bigger than one PR.**
-This step catches point-in-time deviations.
-The same small deviation repeated across many PRs is invisible at diff granularity, so a per-PR gate cannot catch it alone — that needs enforcement-as-code (lint rules, import-boundary checks in CI), generated or tested docs, and a scheduled repo-wide audit.
+- `important` — a bug this branch introduces or makes worse → fix it here.
+- `pre-existing` — a bug already on the default branch → leave it out of this PR (scope discipline), list it in the `## Review guide`, and offer the user an issue for it.
+- `nit` — a minor issue → fix it only when it is a small edit in a hunk you already touch; otherwise drop it.
 
-## Step 4 — Readability pass (only when committing new changes)
+Fix the `important` ones, re-verify (**Verify end to end**), and re-read the checklist on the fix.
+Keep one line on why for each finding you dismissed, and carry anything you couldn't settle either way into the `## Review guide` rather than leaving it silent.
 
-Steps 4 and 5 fire **only if there is something uncommitted to land** — the original work in the uncommitted case, or fixes from Steps 2–3 or from review.
-If the branch is already fully committed and self-review found nothing, skip to Step 6.
+## Step 4 — Land new changes
 
-Otherwise run the `readability` role on the files about to be committed.
+This step fires **only if there is something uncommitted to land** — the original work in the uncommitted case, or fixes from verifying, self-review, or review.
+If the branch is already fully committed and self-review found nothing, skip to **Gates**.
+
+**Readability.**
+Run the `readability` role on the files about to be committed.
 It is selective and skips self-documenting code, so the cost is low.
 Skip it only for a trivial commit — a single-line typo, a dependency bump, a rename with no body change.
 Re-run the type-check gate after it edits.
 
-## Step 5 — Commit
-
-Same condition as Step 4: only when there is something uncommitted to land.
+**Commit.**
 
 - Stage one logical group at a time.
   **Tests ride in the same commit as the logic they cover** — never a separate logic-then-tests split.
@@ -141,7 +146,7 @@ Same condition as Step 4: only when there is something uncommitted to land.
 - One PR per slice, with focused commits.
   Never split a slice across PRs.
 
-## Step 6 — Verification gates
+## Step 5 — Gates
 
 Run the repo's gates in order: install → type-check, lint, and test in parallel → build last.
 Every one must exit zero before the PR opens.
@@ -152,7 +157,7 @@ Fix and re-run until all are green; don't assume CI will catch it.
 
 If a gate does not exist in this repo, say so rather than inventing a command or quietly skipping the check.
 
-## Step 7 — Push and open (or update) the PR
+## Step 6 — Open the PR
 
 Push the branch, then create or update — never open a duplicate:
 
@@ -179,7 +184,7 @@ gh pr view --json number,state,isDraft 2>/dev/null \
 The body carries what the diff can't show: the intent, and the blast radius across the system.
 Write it per [`references/pr-body.md`](references/pr-body.md) — section order, the plain-language rule, whether to link or close the ticket, the blast-radius checklist, and how to embed media.
 
-## Step 8 — Review loop
+## Step 7 — Review loop
 
 Between opening and merging is where most of the work is; don't jump to merge.
 
@@ -199,14 +204,14 @@ If you opened as a draft and the work is now complete, `gh pr ready <N>`.
 gh pr view <N> --comments
 ```
 
-- Treat each fix as a normal change: self-review it (Step 3) → readability (Step 4) → commit (Step 5, through the preview gate) → push.
+- Treat each fix as a normal change: **Self-review** → **Land new changes** (readability, then the commit preview) → push.
   Don't bypass the gates for "small" review fixes; that is how regressions and drift slip in.
 - Reply to each thread with what you did and resolve it once pushed, then re-request review when all are addressed.
 - **Keep the PR body in sync** as commits land: if the scope grew, update `## What`, `## Changes`, and `## Impact`.
 
 Loop until CI is green and the review is approved.
 
-## Step 9 — Merge
+## Step 8 — Merge
 
 After approval and green checks.
 **Never use a merge commit** — it adds a noisy parent that breaks `git log --oneline` and `git bisect`.
@@ -216,19 +221,3 @@ A short trail of focused commits that each build on their own rebases; a long tr
 **Never `--delete-branch` a PR that another open PR is stacked on** — GitHub closes the child, and it cannot be reopened.
 
 The decision rules, the per-commit build check, and how to land a stack are in [`references/merge.md`](references/merge.md).
-
-## Conventions this skill encodes
-
-- Re-baseline on the default branch before editing or finalizing a long session.
-- The branch is usually already committed; readability and commit fire only for new fixes.
-- Verify end-to-end; visual proof for UI, captured by default and skipped only for self-evident changes, with the reason stated.
-- Self-review the whole branch — reuse not reinvent, pattern conformance against the repo's own docs, scope discipline, AI-code smells — and escalate to review tooling by risk.
-- One approval per commit: the explained preview.
-- Tests ride with their logic in one commit.
-- Gates in order, build last, no invented commands.
-- A ticket ID taken from the request or the branch, never guessed, placed where the tracker links it on its own; link and close kept apart.
-- A PR body that carries what the diff cannot: intent, blast radius, a review guide, and verification claims that are true.
-- Plain wording first with the exact term right after it, in the same sentence.
-- Open ready by default, watch CI to green, and put review fixes through the same gates.
-- Merge by rebase or squash after confirming, never a merge commit, and rebase only a trail whose commits each build on their own.
-- An unfilled role degrades to a stated fallback, never a silent skip.

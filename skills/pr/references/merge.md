@@ -1,7 +1,7 @@
 # Merge
 
 Choosing rebase or squash, checking that each commit builds, and landing stacked pull requests.
-Read this from Step 9 of the `pr` skill.
+Read this from the `pr` skill's **Merge** step.
 
 Decide using the size rule and the build check below, then post the commit trail with a one-line summary per commit, recommend squash or rebase with the reason, and confirm before merging:
 

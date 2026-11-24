@@ -1,8 +1,10 @@
 #!/bin/bash
-# Generate the non-Claude manifests from the Claude ones, so each agent's catalog lists the same skills.
+# Generate every file that is a copy of another, so no copy drifts from its source.
 #   plugin.json                       <- .claude-plugin/plugin.json      (portable manifest: Codex, Antigravity)
 #   .agents/plugins/marketplace.json  <- .claude-plugin/marketplace.json (Codex marketplace)
+#   skills/<skill>/references/<file>  <- shared/references/<file>        (see SHARED below)
 # Agents (ai-agent-* repos) are left out of the Codex marketplace: they only load in Claude Code.
+# Each skill ships alone as its own repo too, so a reference two skills share is copied into both, never linked across.
 # Usage: sync-manifests.sh [--check] [plugin-dir]
 #   plugin-dir defaults to the repo root; generate-individual-repos.sh passes each dist repo.
 #   --check exits 1 if the files are out of date instead of writing them.
@@ -89,13 +91,28 @@ codex_market = {
 }
 
 outputs = {
-    "plugin.json": portable,
-    ".agents/plugins/marketplace.json": codex_market,
+    "plugin.json": json.dumps(portable, indent=2, ensure_ascii=False) + "\n",
+    ".agents/plugins/marketplace.json": json.dumps(codex_market, indent=2, ensure_ascii=False) + "\n",
 }
+
+# Shared references: source file -> the skills that ship a copy of it.
+# Edit the source under shared/references/, never a copy. Dist repos have no shared/, so this is skipped there.
+SHARED = {
+    "repo-config.md": ["commit", "issue", "pr", "plan-ship"],
+    "tickets.md": ["commit", "pr"],
+    "agent-tools.md": ["pr", "plan-ship"],
+}
+shared_dir = os.path.join(root, "shared", "references")
+if os.path.isdir(shared_dir):
+    for name, skills in SHARED.items():
+        with open(os.path.join(shared_dir, name), encoding="utf-8") as f:
+            source = f.read()
+        for skill in skills:
+            outputs[f"skills/{skill}/references/{name}"] = source
+
 stale = []
-for rel, data in outputs.items():
+for rel, text in outputs.items():
     path = os.path.join(root, rel)
-    text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
     current = None
     if os.path.exists(path):
         with open(path, encoding="utf-8") as f:

@@ -16,7 +16,7 @@ The flow is **interview → research → draft → approve → create**.
 One issue per run, in the current repo, unassigned.
 
 This file holds the decision logic.
-Everything that varies between repositories — labels, area vocabulary, and attribution — is read from `.claude/git-workflow.md` or inferred from the repo, never hardcoded.
+Everything that varies between repositories — labels, area vocabulary, and attribution — is read from the repo's `git-workflow.md` config (`.agents/`, else `.claude/`) or inferred from the repo, never hardcoded.
 See [`references/repo-config.md`](references/repo-config.md) for the config keys and the one-time bootstrap.
 
 ## Conventions
@@ -39,7 +39,7 @@ See [`references/repo-config.md`](references/repo-config.md) for the config keys
 
 ### 0. Adapt to the repo
 
-Read `.claude/git-workflow.md` — the same file `commit` and `pr` read — if present; otherwise infer and fall back to the defaults below. See [`references/repo-config.md`](references/repo-config.md).
+Read the repo's `git-workflow.md` config — the same file `commit` and `pr` read, found as [`references/repo-config.md`](references/repo-config.md) describes — if present; otherwise infer and fall back to the defaults below.
 
 - **Labels** — `issue-labels` in config, else the defaults in the table above.
 - **Areas** — `areas` in config, else inferred per **Area detection**.
@@ -103,7 +103,7 @@ Print the issue URL plus a one-line recap: **title · type · priority · area(s
 
 Derive the area for the title bracket, in this order:
 
-1. `areas` in `.claude/git-workflow.md`, matched against the issue's touched paths.
+1. `areas` in the config, matched against the issue's touched paths.
 1. Otherwise, the deepest meaningful package directory the touched files live in — the directory owning a `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, or a workspace-member entry, named by the workspace globs (`pnpm-workspace.yaml`, `package.json` `workspaces`, `go.work`, Cargo workspace members). This is the same rule `commit` uses to derive a scope.
 1. Docs-only change → `docs`.
 1. Repo-wide, process, or no single area → `meta`.

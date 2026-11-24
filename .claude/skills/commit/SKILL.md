@@ -13,10 +13,10 @@ Standard commit workflow for the ai-standards repository.
 
 ### 1. Run Markdown Formatter
 
-Format project markdown files using mdformat (excludes opensrc/ which contains external source):
+Format project markdown files using mdformat (excludes opensrc/ which contains external source), then re-copy the shared references so the copies match their formatted source:
 
 ```bash
-nix develop -c mdformat skills/ .claude/ agents/ templates/ *.md
+nix develop -c mdformat shared/ skills/ .claude/ agents/ templates/ *.md && ./scripts/sync-manifests.sh
 ```
 
 ### 2. Preview Changes

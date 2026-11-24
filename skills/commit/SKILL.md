@@ -12,7 +12,7 @@ metadata:
 Draft well-formed commit messages that follow the conventions of whatever repository this runs in.
 
 This file holds the decision logic.
-Everything that varies between repositories — scope names, the formatter to run first, which extra types are in use — is read from `.claude/git-workflow.md` or inferred from the repo, never written into the skill.
+Everything that varies between repositories — scope names, the formatter to run first, which extra types are in use — is read from the repo's `git-workflow.md` config (`.agents/`, else `.claude/`) or inferred from the repo, never written into the skill.
 See [`references/repo-config.md`](references/repo-config.md) for the config keys and the one-time bootstrap, and [`references/tickets.md`](references/tickets.md) for how each tracker reads a ticket ID.
 
 ## Workflow
@@ -141,14 +141,14 @@ A single-package repo has no useful path scopes at all; omit the scope or use fu
 
 `ai` covers anything that **directly configures, instructs, or extends AI capabilities**.
 
-| Category         | Examples                                                            |
-| ---------------- | ------------------------------------------------------------------- |
-| Agent configs    | `.claude/`, `.cursor/`, `.github/copilot/`, `.aider/`, `.continue/` |
-| MCP servers      | `.mcp.json`, MCP server implementations                             |
-| Skills & prompts | Skills, system prompts, prompt templates                            |
-| AI rules         | `CLAUDE.md`, `AGENTS.md`, `COPILOT.md`, AI coding guidelines        |
-| Model configs    | Model selection, temperature, context window settings               |
-| AI tooling       | Repomix configs, AI-specific linting rules                          |
+| Category         | Examples                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| Agent configs    | `.agents/`, `.claude/`, `.codex/`, `.cursor/`, `.github/copilot/`, `.aider/`, `.continue/` |
+| MCP servers      | `.mcp.json`, MCP server implementations                                                    |
+| Skills & prompts | Skills, system prompts, prompt templates                                                   |
+| AI rules         | `CLAUDE.md`, `AGENTS.md`, `COPILOT.md`, AI coding guidelines                               |
+| Model configs    | Model selection, temperature, context window settings                                      |
+| AI tooling       | Repomix configs, AI-specific linting rules                                                 |
 
 Excluded — use another type instead:
 
@@ -160,15 +160,15 @@ Excluded — use another type instead:
 
 Check the changed paths against these patterns before choosing a type.
 
-| File pattern                                                        | Type   | Scope    |
-| ------------------------------------------------------------------- | ------ | -------- |
-| `.mcp.json`                                                         | `ai`   | `mcp`    |
-| `.claude/skills/**`, `skills/**`                                    | `ai`   | `skills` |
-| `.claude/agents/**`, `agents/**`                                    | `ai`   | `agents` |
-| `.claude/**`, `CLAUDE.md`, `AGENTS.md`, `COPILOT.md`                | `ai`   | —        |
-| `.cursor/**`, `.github/copilot/**`                                  | `ai`   | —        |
-| `.github/workflows/**`, `Dockerfile`, container and unikernel files | `cicd` | —        |
-| Git-hook and release-tool configs (lefthook, husky, release-it, …)  | `cicd` | —        |
+| File pattern                                                                    | Type   | Scope    |
+| ------------------------------------------------------------------------------- | ------ | -------- |
+| `.mcp.json`                                                                     | `ai`   | `mcp`    |
+| `.agents/skills/**`, `.claude/skills/**`, `skills/**`                           | `ai`   | `skills` |
+| `.claude/agents/**`, `agents/**`                                                | `ai`   | `agents` |
+| `.agents/**`, `.claude/**`, `.codex/**`, `CLAUDE.md`, `AGENTS.md`, `COPILOT.md` | `ai`   | —        |
+| `.cursor/**`, `.github/copilot/**`                                              | `ai`   | —        |
+| `.github/workflows/**`, `Dockerfile`, container and unikernel files             | `cicd` | —        |
+| Git-hook and release-tool configs (lefthook, husky, release-it, …)              | `cicd` | —        |
 
 If every changed file matches an `ai` pattern, use the `ai` type.
 When AI files are mixed with non-AI files, split them into separate commits.
