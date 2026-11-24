@@ -47,6 +47,7 @@ The agents in `agents/` are Claude Code-only, so Codex doesn't list them.
 /plugin marketplace add guillempuche/ai-skill-commit
 /plugin marketplace add guillempuche/ai-skill-pr
 /plugin marketplace add guillempuche/ai-skill-issue
+/plugin marketplace add guillempuche/ai-skill-plan-ship
 /plugin marketplace add guillempuche/ai-agent-readability-improver
 /plugin marketplace add guillempuche/ai-agent-a11y-accessibility-reviewer
 ```
