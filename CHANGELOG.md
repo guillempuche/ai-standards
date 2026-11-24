@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.16.0] - 2026-11-24
+
+### Added
+
+- `pr`: keeps an open PR green — fixes failing checks, rebases on conflicts or a moved base, and answers review comments from people and bots; posts what changed and how to undo it after every push; stops when told, after `ci.max-fix-tries` failed pushes on one check (default 3), or when only a person's review is left; never approves.
+- `pr`, `plan-ship`: `findings.md`, shared rules for review findings — verify each against real callers, then sort into `important`, `pre-existing`, or `nit`.
+- `pr`, `plan-ship`: `agent-tools.md`, mapping each action and each review depth to Claude Code, Codex, and other agents.
+- `plan-ship`: `--stop review`, which also works review comments after the PR opens; it never merges.
+- `pr`: without the `commit` skill, writes messages in the style of the last 20 commits and still shows each as a preview.
+  `plan-ship` without `pr` warns before planning and ends with the work uncommitted.
+- `pr`, `plan-ship`: `REQUIREMENTS.md` in the individual repos, listing companion skills and what happens without each.
+
+### Changed
+
+- `commit`, `issue`, `pr`, `plan-ship`: read `.agents/git-workflow.md` first, then `.claude/git-workflow.md`; first-run setup writes `.agents/`.
+- `plan-ship`: `--review` takes `quick|standard|deep` (default `standard`); `high`, `xhigh`, and `max` still work as `standard`, `deep`, `deep`.
+- `pr`: steps 4 and 5 merge into "Land new changes"; steps are referred to by name; the conventions recap is cut.
+- `plan-ship`: the hand-off to `pr` keeps only what differs from `pr`'s defaults; branch naming comes from its own copy of `tickets.md`.
+- `commit`: `.agents/` and `.codex/` count as AI config.
+- References several skills share live once in `shared/references/` and are copied by `scripts/sync-manifests.sh`, whose `--check` fails on a stale copy; `issue`'s config docs merge into the shared `repo-config.md`.
+
 ## [1.15.0] - 2026-11-23
 
 ### Added
