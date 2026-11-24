@@ -2,7 +2,7 @@
 name: plan-ship
 description: Plan a change from a description, issue, or spec in its own git worktree, audit the plan, and wait for approval before implementing, testing, reviewing, and opening one pull request. Use when asked to "plan and ship" a feature or fix, or to take a change from idea to PR.
 license: MIT
-compatibility: Requires git. Opening the PR goes through the `pr` skill, which assumes GitHub and the `gh` CLI. Uses the `pr`, `commit`, and `test-bdd` skills when installed.
+compatibility: Requires git, and the `pr` skill to open the PR (which assumes GitHub and the `gh` CLI); without `pr` the run ends with the work implemented and uncommitted. Uses the `commit` and `test-bdd` skills when installed.
 metadata:
   version: 1.0.0
   author: ai-standards
@@ -25,6 +25,7 @@ Takes one change from an idea to an open pull request, with one human checkpoint
 
 Every step that names a tool or skill has a fallback.
 A missing tool changes *how* a step runs, never *whether* it runs; say which fallback you used.
+The one exception is the `pr` skill: without it the run ends before Step 8, as **Companion skills** in Step 0 explains.
 
 ## 0 — Input and options
 
@@ -72,6 +73,13 @@ Its `worktrees`, `gates`, and `roles` keys override the defaults in the steps be
 **Agent tools.**
 Where a step below asks the user, briefs a fresh reviewer, or runs a review, use the row for this agent in [`references/agent-tools.md`](references/agent-tools.md).
 
+**Companion skills.**
+Check the session's skill list now, before any planning, so a missing skill never surfaces after an hour of work:
+
+- `pr` missing → tell the user that the run will end after the code review with the work uncommitted, as `--stop impl` does, and that installing it (`npx skills add guillempuche/ai-standards --skill pr`, or the agent's plugin manager) lets it open the PR.
+  Carry on unless they want to install it first.
+- `commit` or `test-bdd` missing → say so in one line; the `pr` skill and Step 6 have fallbacks for them.
+
 **Echo back.**
 When you inferred the task or read an option from plain words, say in one line how you read the request, then carry on.
 Stay silent when the user passed explicit flags.
@@ -95,7 +103,7 @@ base=$(git symbolic-ref --short "refs/remotes/$remote/HEAD")   # e.g. origin/mai
 Shell variables do not survive between commands in most agents, so recompute `$remote` and `$base` this way wherever a later step uses them.
 With no remote at all, plan and implement, then stop as `--stop impl` does: there is nowhere to open a PR.
 
-Use `--branch` when given; otherwise name the branch as the `pr` skill's **Re-baseline** step describes (the ticket ID in the tracker's shape when there is one, else a short slug of the task).
+Use `--branch` when given; otherwise name the branch in the tracker's shape that [`references/tickets.md`](references/tickets.md) shows when the input names a ticket, else as a short slug of the task.
 If that name is taken — locally, on the remote, or checked out in another worktree — and it is this task's earlier run, resume it (Step 0); otherwise pick a new name and tell the user.
 
 Then pick where the work happens — the first case that applies wins.
@@ -289,12 +297,13 @@ Record each skip in the plan's Edge cases table with its reason.
 Review the whole diff against `$base` for correctness bugs with the review row of `agent-tools.md`, at the `--review` level (default `high`) or the closest setting the agent's command has.
 The work is still uncommitted here, so pick the form that covers staged, unstaged, and untracked changes (`codex review --uncommitted` in Codex).
 
-Handle the findings as the `pr` skill's **Self-review** step does: verify each one against its real callers and inputs, sort what holds into `important`, `pre-existing`, and `nit`, and act on each as that step says.
+Handle the findings as [`references/findings.md`](references/findings.md) describes: verify each one against its real callers and inputs, sort what holds into `important`, `pre-existing`, and `nit`, and act on each as it says.
 Add a regression test for each fix where Step 6's rules call for one, and re-run the tests.
 
 ## 8 — Hand off to `pr`, and stop
 
-With `--stop impl`, end here instead: leave the work uncommitted and report the worktree path, the changes, and anything left unverified.
+With `--stop impl`, or when the `pr` skill is not installed, end here instead: leave the work uncommitted and report the worktree path, the changes, and anything left unverified.
+Without `pr`, also say that this is why the run stopped, and that the user can commit and open the PR once it is installed.
 
 Otherwise fetch again first.
 If the base moved, rebase now as [`references/worktree.md`](references/worktree.md) shows under "Rebasing uncommitted work": the `pr` skill's own rebase fails on uncommitted work.

@@ -2,7 +2,7 @@
 name: pr
 description: Take a finished branch through to a merged GitHub pull request — verify, self-review, open, work the review, merge. Use when asked to "open a PR", "raise a PR", "PR this", "send it for review", or to update or merge a PR.
 license: MIT
-compatibility: Requires git. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
+compatibility: Requires git. Uses the `commit` skill when installed, with a stated fallback without it. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
 metadata:
   version: 1.4.1
   author: ai-standards
@@ -39,6 +39,8 @@ Read the config if there is one; otherwise infer and, on first run, offer to wri
 - **Roles** — `roles:` maps each slot (stack bring-up, code review, readability, a11y, security, UI capture, media upload) to whatever this repo has.
   Where the config is silent, look for a skill or agent in this session that fills the slot.
   Where nothing does, use the fallback in [`references/repo-config.md`](references/repo-config.md) or the matching row of [`references/agent-tools.md`](references/agent-tools.md) — an empty slot is never a silent skip.
+- **The `commit` skill** — check the session's skill list for it now, not at the first commit.
+  Without it, tell the user once that commit messages will follow the fallback in **Land new changes**, and that installing it (`npx skills add guillempuche/ai-standards --skill commit`, or the agent's plugin manager) gives them the full house style.
 
 ## Step 1 — Re-baseline on the default branch
 
@@ -109,17 +111,8 @@ Scale the depth to the change.
 - **UI change** → run the `a11y` role on the changed components; it may apply fixes itself, so review its diff and handle its open items.
 - **Trivial diff** — typo, copy, dependency bump, comment → the self-read alone is enough.
 
-**Verify and classify every finding before acting on it.**
-A finding is a hypothesis, whether a tool, a subagent, a review bot, or you raised it.
-Try to break it: trace it from the real callers, or write a test or probe that triggers it, and check whether a type, a validator, or an upstream guard already rules the input out.
-Sort what holds:
-
-- `important` — a bug this branch introduces or makes worse → fix it here.
-- `pre-existing` — a bug already on the default branch → leave it out of this PR (scope discipline), list it in the `## Review guide`, and offer the user an issue for it.
-- `nit` — a minor issue → fix it only when it is a small edit in a hunk you already touch; otherwise drop it.
-
+**Verify and sort every finding before acting on it**, as [`references/findings.md`](references/findings.md) describes: a finding is a hypothesis until it holds for the real callers, and what holds is `important`, `pre-existing`, or `nit`.
 Fix the `important` ones, re-verify (**Verify end to end**), and re-read the checklist on the fix.
-Keep one line on why for each finding you dismissed, and carry anything you couldn't settle either way into the `## Review guide` rather than leaving it silent.
 
 ## Step 4 — Land new changes
 
@@ -138,11 +131,13 @@ Re-run the type-check gate after it edits.
   **Tests ride in the same commit as the logic they cover** — never a separate logic-then-tests split.
   A standalone `test:` commit is fine only when no logic changed.
 - Use the `commit` skill to draft and validate the message, and use the validated preview verbatim.
-  Never hand-roll a message and skip the skill.
+  Never hand-roll a message while the skill is available.
+- **Without the `commit` skill**, write the message yourself to match the repo: the subject style of the last 20 commits (`git log --pretty=%s -20`), imperative mood, under 72 characters, a body that says why, and the ticket ID placed as [`references/tickets.md`](references/tickets.md) shows.
+  Show it as a preview all the same.
 - **The commit preview is the approval gate.**
-  When the `commit` skill shows its preview, add a plain-English explanation alongside it — which files, what the diff does, any risk — and that one OK covers the commit.
+  When the preview is shown, add a plain-English explanation alongside it — which files, what the diff does, any risk — and that one OK covers the commit.
   One commit at a time; don't batch "here are the next three, OK?".
-  If the `commit` skill's preview proposes several commits, show the whole plan once, then get the OK and land each commit in turn.
+  If the preview proposes several commits, show the whole plan once, then get the OK and land each commit in turn.
 - One PR per slice, with focused commits.
   Never split a slice across PRs.
 
@@ -174,7 +169,7 @@ gh pr view --json number,state,isDraft 2>/dev/null \
   Protect the reviewer by working CI to green before handing off, not by parking finished work in draft.
 - **Ask the user only about decisions that are theirs** — a scope ambiguity, a trade-off only the user can settle.
   Anything you couldn't verify goes in `## Review guide`, stated plainly, rather than guessed or buried.
-- The title mirrors the lead commit's subject, under the same type and scope rules as the `commit` skill, ticket prefix included: `PROJ-12/feat(api): …`.
+- The title mirrors the lead commit's subject, under the same rules as the commit messages, ticket prefix included: `PROJ-12/feat(api): …`.
   A `#12`-style ID stays out of the title and goes in the body, and so does a Linear ID on a PR that must not close the ticket.
 - **Stacked PR:** if this branch depends on another unmerged branch, set `--base <dep-branch>` so the diff shows only this slice, and retarget to the default branch once the dependency merges.
   Check `ci.checked-bases` first — where CI only runs for PRs onto the default branch, a stacked PR gets *no checks at all*, and a base change alone won't fire them, so push a fresh commit to trigger the run.

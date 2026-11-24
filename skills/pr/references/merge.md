@@ -32,7 +32,7 @@ Splitting by area is the natural way to make a big PR readable, and it reliably 
 Regrouping is still worth doing — it buys readability, not bisectability.
 Do not offer bisect as its justification.
 
-If squashing, draft the squashed message through the `commit` skill first so it is reviewable.
+If squashing, draft the squashed message first so it is reviewable: through the `commit` skill, or without it the fallback in the `pr` skill's **Land new changes** step.
 
 ```bash
 gh pr merge <N> --rebase --delete-branch    # or --squash --delete-branch

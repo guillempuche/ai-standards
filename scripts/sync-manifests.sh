@@ -99,8 +99,9 @@ outputs = {
 # Edit the source under shared/references/, never a copy. Dist repos have no shared/, so this is skipped there.
 SHARED = {
     "repo-config.md": ["commit", "issue", "pr", "plan-ship"],
-    "tickets.md": ["commit", "pr"],
+    "tickets.md": ["commit", "pr", "plan-ship"],
     "agent-tools.md": ["pr", "plan-ship"],
+    "findings.md": ["pr", "plan-ship"],
 }
 shared_dir = os.path.join(root, "shared", "references")
 if os.path.isdir(shared_dir):

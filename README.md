@@ -168,11 +168,11 @@ ______________________________________________________________________
 
 **Take a finished branch through verification, self-review, and merge**
 
-|          |                                                                         |
-| -------- | ----------------------------------------------------------------------- |
-| Covers   | Re-baseline, end-to-end verification, self-review, gates, body, merge   |
-| Portable | Gates, CI shape, worktrees, and companion skills are read from the repo |
-| Requires | git; the pull-request steps assume GitHub and the `gh` CLI              |
+|          |                                                                                                    |
+| -------- | -------------------------------------------------------------------------------------------------- |
+| Covers   | Re-baseline, end-to-end verification, self-review, gates, body, merge                              |
+| Portable | Gates, CI shape, worktrees, and companion skills are read from the repo                            |
+| Requires | git; the pull-request steps assume GitHub and the `gh` CLI; uses the `commit` skill when installed |
 
 [View skill](./skills/pr/)
 
@@ -196,12 +196,12 @@ ______________________________________________________________________
 
 **Take one change from idea to an open PR, with the plan as the review checkpoint**
 
-|          |                                                                                        |
-| -------- | -------------------------------------------------------------------------------------- |
-| Input    | A description, issue, or spec; options for stop point, audits, review, tests, commits  |
-| Flow     | Worktree, plan, two audit rounds, approval, implement, tests, verified review, PR      |
-| Portable | direnv and Nix detected per repo; every Claude-only tool has a stated fallback         |
-| Requires | git; hands off to the `pr`, `commit`, and `test-bdd` skills, so install them alongside |
+|          |                                                                                       |
+| -------- | ------------------------------------------------------------------------------------- |
+| Input    | A description, issue, or spec; options for stop point, audits, review, tests, commits |
+| Flow     | Worktree, plan, two audit rounds, approval, implement, tests, verified review, PR     |
+| Portable | direnv and Nix detected per repo; every Claude-only tool has a stated fallback        |
+| Requires | git and the `pr` skill to open the PR; uses `commit` and `test-bdd` when installed    |
 
 [View skill](./skills/plan-ship/)
 
