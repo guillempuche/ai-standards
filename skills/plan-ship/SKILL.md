@@ -21,7 +21,7 @@ Takes one change from an idea to an open pull request, with one human checkpoint
 1. Implement, debugging your own work as you go.
 1. Add tests where they earn their place.
 1. Run a code review and fix only the findings that hold for this codebase.
-1. Hand off to the `pr` skill for readability, end-to-end verification, commits, and opening the PR — then stop.
+1. Hand off to the `pr` skill for readability, end-to-end verification, commits, and opening the PR — then stop, or keep the PR green as far as `--stop` says.
 
 Every step that names a tool or skill has a fallback.
 A missing tool changes *how* a step runs, never *whether* it runs; say which fallback you used.
@@ -52,18 +52,19 @@ If a worktree or branch for this task (same issue ID or branch name; `git worktr
 
 **Options** — accept each as a flag or in plain words ("just plan it" is `--stop plan`):
 
-| Option          | Values                     | Default                                     |
-| --------------- | -------------------------- | ------------------------------------------- |
-| `--branch`      | a branch name              | from the ticket ID, else a slug of the task |
-| `--draft`       | flag                       | the PR opens ready for review               |
-| `--stop`        | `plan`, `impl`, `pr`, `ci` | `pr`                                        |
-| `--audits`      | `0` to `3`                 | `2`                                         |
-| `--review`      | `high`, `xhigh`, `max`     | `high`                                      |
-| `--tests`       | `auto`, `none`, `thorough` | `auto`                                      |
-| `--commits`     | `one`, `few`               | `few`                                       |
-| `--no-approval` | flag                       | always stop for approval                    |
+| Option          | Values                               | Default                                     |
+| --------------- | ------------------------------------ | ------------------------------------------- |
+| `--branch`      | a branch name                        | from the ticket ID, else a slug of the task |
+| `--draft`       | flag                                 | the PR opens ready for review               |
+| `--stop`        | `plan`, `impl`, `pr`, `ci`, `review` | `pr`                                        |
+| `--audits`      | `0` to `3`                           | `2`                                         |
+| `--review`      | `quick`, `standard`, `deep`          | `standard`                                  |
+| `--tests`       | `auto`, `none`, `thorough`           | `auto`                                      |
+| `--commits`     | `one`, `few`                         | `few`                                       |
+| `--no-approval` | flag                                 | always stop for approval                    |
 
 Each step below says how its option changes it.
+The older `--review` values still work for now: `high` reads as `standard`, and `xhigh` and `max` as `deep`.
 
 **Repo defaults.**
 Read the repo's `git-workflow.md` config, found as [`references/repo-config.md`](references/repo-config.md) describes (`.agents/`, else `.claude/`).
@@ -294,7 +295,7 @@ Record each skip in the plan's Edge cases table with its reason.
 
 ## 7 — Code review, verified finding by finding
 
-Review the whole diff against `$base` for correctness bugs with the review row of `agent-tools.md`, at the `--review` level (default `high`) or the closest setting the agent's command has.
+Review the whole diff against `$base` for correctness bugs at the `--review` depth (default `standard`), using what the **Review depth** table in `agent-tools.md` lists for this agent.
 The work is still uncommitted here, so pick the form that covers staged, unstaged, and untracked changes (`codex review --uncommitted` in Codex).
 
 Handle the findings as [`references/findings.md`](references/findings.md) describes: verify each one against its real callers and inputs, sort what holds into `important`, `pre-existing`, and `nit`, and act on each as it says.
@@ -320,7 +321,12 @@ Tell it:
 The `pr` skill still shows each commit preview for the user's approval; `--no-approval` covers only the plan gate.
 
 Stop once the PR is open (`--stop pr`, the default): do not wait for CI, work the review, or merge.
-With `--stop ci`, watch the checks to green and fix failures the way the `pr` skill's **Review loop** step describes, then stop; never merge.
+Past that, the `pr` skill's **Keep the PR green** step does the work, and stops where the option says:
+
+- `--stop ci` — fix failing checks and conflicts until every required check is green.
+- `--stop review` — also answer review comments from people and bots, posting what changed and how to undo it after each push, until only a person's review is left or someone allowed to direct the agent says stop.
+
+Never merge, whatever `--stop` says.
 Report the PR URL, the branch and worktree path, and anything left unverified.
 Leave the worktree in place for follow-up fixes; the plan file stays in it, uncommitted.
 In case 3, tell the user their main checkout is still on the feature branch.

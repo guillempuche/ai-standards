@@ -170,7 +170,7 @@ ______________________________________________________________________
 
 |          |                                                                                                    |
 | -------- | -------------------------------------------------------------------------------------------------- |
-| Covers   | Re-baseline, end-to-end verification, self-review, gates, body, merge                              |
+| Covers   | Re-baseline, end-to-end verification, self-review, gates, body, keeping the PR green, merge        |
 | Portable | Gates, CI shape, worktrees, and companion skills are read from the repo                            |
 | Requires | git; the pull-request steps assume GitHub and the `gh` CLI; uses the `commit` skill when installed |
 

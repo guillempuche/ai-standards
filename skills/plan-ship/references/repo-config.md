@@ -74,6 +74,7 @@ gates:
 ci:
   checked-bases: [main]             # a PR onto any other base gets no checks
   required: [ci, e2e]
+  max-fix-tries: 3                  # pushes that fail to fix the same check before pr stops and reports
 
 worktrees:
   supported: true                               # false when the setup breaks in a second checkout; plan-ship then branches in place
@@ -102,7 +103,7 @@ review-audience: >
 # plan-ship — defaults for its options; options in the request override them
 plan-ship:
   audits: 1
-  review: xhigh
+  review: deep
   tests: thorough
 ---
 ```
