@@ -4,7 +4,7 @@ description: Take a finished branch through to a merged GitHub pull request — 
 license: MIT
 compatibility: Requires git. Uses the `commit` skill when installed, with a stated fallback without it. The pull-request steps assume GitHub and the `gh` CLI; on another host the same gates apply but the commands need translating.
 metadata:
-  version: 1.5.0
+  version: 1.6.0
   author: ai-standards
 allowed-tools: Bash Read Glob Grep AskUserQuestion Skill
 ---
@@ -36,9 +36,10 @@ Read the config if there is one; otherwise infer and, on first run, offer to wri
   `worktrees.provision` says whether one needs its own stack brought up or is just a checkout.
 - **Tickets** — `tickets:` gives the tracker, the ID pattern, and the close policy, else infer them from branch names and `git log`.
   A ticket is optional: take the ID from the user's request or the branch name, never guess or ask for one, and with none leave the title and body without it; how each tracker reads it is in [`references/tickets.md`](references/tickets.md).
-- **Roles** — `roles:` maps each slot (stack bring-up, code review, readability, a11y, security, UI capture, media upload) to whatever this repo has.
+- **Roles** — `roles:` maps each slot (verify, stack bring-up, code review, readability, a11y, security, UI capture, media upload) to whatever this repo has.
   Where the config is silent, look for a skill or agent in this session that fills the slot.
   Where nothing does, use the fallback in [`references/repo-config.md`](references/repo-config.md) or the matching row of [`references/agent-tools.md`](references/agent-tools.md) — an empty slot is never a silent skip.
+  `verify` is the exception: fill it only from `roles:` or a skill in this repo's own skill folders, never from a skill that merely has "verify" in its name, such as one that checks code against a spec.
 - **The `commit` skill** — check the session's skill list for it now, not at the first commit.
   Without it, tell the user once that commit messages will follow the fallback in **Land new changes**, and that installing it (`npx skills add guillempuche/ai-standards --skill commit`, or the agent's plugin manager) gives them the full house style.
 
@@ -65,6 +66,11 @@ Then take stock of uncommitted changes, the commits that will form the PR, and w
 Type-checks and unit tests are **not** enough — they have passed on changes that produced wrong behavior at runtime.
 Run the changed path for real and confirm the user-visible behavior.
 
+**If the repo has a `verify` role, run it in place of the checks below.**
+That skill knows this repo's flows, test data, and safety rules, which this generic step can't.
+Its output is the PR's `## Verification` section: use it as written, then add the gates from Step 6 to it.
+
+Most repos have no such skill; for them, this step is the checks below.
 Bring the stack up with the `stack-bringup` role if the repo has one.
 In a worktree that needs provisioning, use `worktrees.provision` and target the host it prints rather than the shared local host.
 
