@@ -84,6 +84,7 @@ worktrees:
   absent-when-worktree: [.env, .env.media]      # gitignored files a worktree will not have
 
 roles:                              # skill / agent / script that fills each slot; omit or ~ for none
+  verify: verify                    # the repo's own skill that tries the change and writes `## Verification`; most repos have none
   stack-bringup: debug-apps
   code-review: code-review
   readability: readability-improver:readability-improver
@@ -156,6 +157,7 @@ An unfilled role is **never a silent skip**.
 
 | Empty role      | Fallback                                                                                                                              |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify`        | Do Step 2's generic checks by hand and write `## Verification` from what was run.                                                     |
 | `stack-bringup` | Bring the stack up with the repo's documented commands, or say it could not be run.                                                   |
 | `code-review`   | The agent's own review command, else a fresh reviewer, else a cold self-review, as `agent-tools.md` lists.                            |
 | `readability`   | Do the readability pass inline against the self-review checklist.                                                                     |

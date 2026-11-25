@@ -38,6 +38,7 @@ Include only the sections that apply, in this order:
   Neither present means an incomplete PR; there is no silent third option.
 - `## Tests` — what is covered, when notable.
 - `## Verification` — only what you **actually ran**: the gates you executed and the live check you actually performed.
+  When the `verify` role wrote this section, keep its shape as it is, because a check may read it, and add only what it lacks.
   Never write "all tests pass" for a run you didn't do; an unverified claim here is worse than saying nothing.
 - `## Deferred` — follow-ups intentionally not in this PR.
 

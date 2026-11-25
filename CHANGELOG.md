@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `pr`: a `verify` role — when `roles.verify` is set or the repo has its own verify skill, Step 2 runs it and its output becomes the PR's `## Verification` section as written; repos without one keep the generic checks.
+  A skill that merely has "verify" in its name, such as a spec check, never fills the role.
+
 ## [1.16.0] - 2026-11-24
 
 ### Added
