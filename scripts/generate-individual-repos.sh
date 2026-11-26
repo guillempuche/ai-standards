@@ -219,8 +219,10 @@ for agent_file in "$ROOT_DIR"/agents/*.md; do
   mkdir -p "$repo_dir/.claude-plugin"
   mkdir -p "$repo_dir/agents"
 
-  # Copy agent
+  # Copy agent, and its Codex version for users to copy into .codex/agents/
   cp "$agent_file" "$repo_dir/agents/"
+  mkdir -p "$repo_dir/codex/agents"
+  cp "$ROOT_DIR/codex/agents/$agent_name.toml" "$repo_dir/codex/agents/"
 
   # Copy LICENSE
   cp "$ROOT_DIR/LICENSE" "$repo_dir/"
@@ -296,6 +298,8 @@ $description
 # Install plugin (plugin name is topic-only)
 /plugin install $agent_name@$AUTHOR-$repo_name
 \`\`\`
+
+In Codex, copy [\`codex/agents/$agent_name.toml\`](codex/agents/$agent_name.toml) into \`.codex/agents/\` (project) or \`~/.codex/agents/\` (personal); Codex plugins cannot install agents.
 
 ## Part of AI Standards
 

@@ -3,7 +3,8 @@
 #   plugin.json                       <- .claude-plugin/plugin.json      (portable manifest: Codex, Antigravity)
 #   .agents/plugins/marketplace.json  <- .claude-plugin/marketplace.json (Codex marketplace)
 #   skills/<skill>/references/<file>  <- shared/references/<file>        (see SHARED below)
-# Agents (ai-agent-* repos) are left out of the Codex marketplace: they only load in Claude Code.
+#   codex/agents/<name>.toml          <- agents/<name>.md                (Codex custom agent, copied in by hand)
+# Agents (ai-agent-* repos) are left out of the Codex marketplace: Codex plugins cannot ship agents.
 # Each skill ships alone as its own repo too, so a reference two skills share is copied into both, never linked across.
 # Usage: sync-manifests.sh [--check] [plugin-dir]
 #   plugin-dir defaults to the repo root; generate-individual-repos.sh passes each dist repo.
@@ -110,6 +111,29 @@ if os.path.isdir(shared_dir):
             source = f.read()
         for skill in skills:
             outputs[f"skills/{skill}/references/{name}"] = source
+
+# Codex custom agents: agents/<name>.md -> codex/agents/<name>.toml, for users to copy into .codex/agents/.
+# Codex plugins cannot ship agents, so this is a file to copy, not something an install puts in place.
+# Only name, description, and the prompt carry over: Codex has no `tools` list, and `model` names a Claude model.
+agents_dir = os.path.join(root, "agents")
+if os.path.isdir(agents_dir):
+    for fname in sorted(os.listdir(agents_dir)):
+        if not fname.endswith(".md"):
+            continue
+        with open(os.path.join(agents_dir, fname), encoding="utf-8") as f:
+            text = f.read()
+        _, front, body = text.split("---\n", 2)
+        meta = dict(line.split(": ", 1) for line in front.splitlines() if ": " in line and not line.startswith(" "))
+        body = body.strip("\n") + "\n"
+        if "'''" in body:
+            sys.exit(f"agents/{fname}: body contains ''', which a TOML literal string cannot hold")
+        outputs[f"codex/agents/{meta['name']}.toml"] = (
+            f"# Generated from agents/{fname} by scripts/sync-manifests.sh; edit the source, not this file.\n"
+            f"# Copy into .codex/agents/ (project) or ~/.codex/agents/ (personal).\n"
+            f"name = {json.dumps(meta['name'])}\n"
+            f"description = {json.dumps(meta['description'], ensure_ascii=False)}\n"
+            f"developer_instructions = '''\n{body}'''\n"
+        )
 
 stale = []
 for rel, text in outputs.items():
