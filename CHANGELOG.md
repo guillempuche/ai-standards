@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.18.0] - 2026-11-26
+
+### Added
+
+- `readability-improver`, `a11y-accessibility-reviewer`: Codex custom-agent versions in `codex/agents/<name>.toml`, generated from `agents/` by `scripts/sync-manifests.sh`; copy one into `.codex/agents/` or `~/.codex/agents/`, since Codex plugins cannot install agents.
+
+### Changed
+
+- `pr`, `plan-ship`: in Codex, the readability pass uses `readability-improver` when it is in `.codex/agents/` or `~/.codex/agents/`, else the inline pass.
+- `readability-improver`, `a11y-accessibility-reviewer`: prompts no longer name Claude Code tools, so they read the same in Codex.
+
 ## [1.17.0] - 2026-11-26
 
 ### Added

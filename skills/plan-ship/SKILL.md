@@ -4,7 +4,7 @@ description: Plan a change from a description, issue, or spec in its own git wor
 license: MIT
 compatibility: Requires git, and the `pr` skill to open the PR (which assumes GitHub and the `gh` CLI); without `pr` the run ends with the work implemented and uncommitted. Uses the `commit` and `test-bdd` skills when installed.
 metadata:
-  version: 1.1.1
+  version: 1.1.2
   author: ai-standards
 allowed-tools: Bash Read Glob Grep AskUserQuestion Skill Agent
 ---
