@@ -51,7 +51,7 @@ If no repos have changes, tell the user "Nothing to release" and stop.
 For each changed repo, show what changed (files added, modified, removed), and classify it:
 
 - **Content**: the skill's `SKILL.md`, `references/`, `scripts/` or `assets/`, or the agent's `.md` file changed.
-- **Packaging only**: only generated files changed (`README.md`, `plugin.json`, `.claude-plugin/`, `.agents/plugins/`), because the generator or the manifests changed.
+- **Packaging only**: only generated files changed (`README.md`, `plugin.json`, `.claude-plugin/`, `.agents/plugins/`, `codex/agents/`), because the generator or the manifests changed.
 
 Check content changes against the source, not only the dist diff: `git diff <last-release-commit> -- skills/<name>` or `agents/<name>.md`, where the last release commit is the newest "Bump versions for release".
 

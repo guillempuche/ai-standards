@@ -36,6 +36,7 @@ ai-standards/
 │   └── references/         # Source of references several skills ship; copied by sync-manifests.sh
 ├── agents/
 │   └── <agent-name>.md     # Agent with YAML frontmatter
+├── codex/agents/           # Codex versions of agents/, generated
 ├── plugin.json             # Portable manifest (Codex, Antigravity), generated
 ├── .claude-plugin/          # Claude Code plugin and marketplace manifests
 ├── .agents/plugins/         # Codex marketplace, generated
@@ -121,13 +122,15 @@ A reference that two or more skills need lives once under `shared/references/` a
 Edit the source in `shared/references/`, never a copy, and list new shared files and the skills that get them in `SHARED` in that script.
 Skills read repo config from `.agents/git-workflow.md`, falling back to `.claude/git-workflow.md`; never add a lookup that only one agent's folder satisfies.
 
-Agents in `agents/` are Claude Code subagents only; the README says so, and that note must stay accurate.
+Agents in `agents/` are Claude Code subagents; the README says so, and that note must stay accurate.
+`./scripts/sync-manifests.sh` also writes each one to `codex/agents/<name>.toml` as a Codex custom agent, keeping only `name`, `description`, and the prompt; edit the `.md`, never the TOML.
 The README **Compatibility** table lists each agent's skill directories; re-check those agents' official docs before changing it.
 
 ## Adding a New Agent
 
 Agents live at `agents/<agent-name>.md` and are picked up by auto-discovery.
 `.claude-plugin/plugin.json` deliberately omits the `agents` field: setting it *replaces* the default `agents/` scan, so a newly added agent would silently never load.
+After adding or editing an agent, run `./scripts/sync-manifests.sh` to regenerate its Codex TOML; the `manifests` CI check fails on a stale one.
 
 Frontmatter follows the [Claude Code subagent reference](https://code.claude.com/docs/en/sub-agents), not the Agent Skills spec:
 

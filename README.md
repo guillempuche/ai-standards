@@ -254,8 +254,9 @@ Skills follow the [Agent Skills specification](https://agentskills.io/specificat
 
 `allowed-tools` is experimental in the spec: Claude Code uses it to pre-approve the listed tools for the turn, and support in other agents varies (the [`skills` CLI table](https://github.com/vercel-labs/skills#compatibility) marks Kiro CLI and Zencoder as not supporting it).
 
-Agents in `agents/` use the [Claude Code subagent format](https://code.claude.com/docs/en/sub-agents) and only load in Claude Code.
-Other tools define subagents differently (Codex, for example, uses TOML files), so copy the prompt body if you want one elsewhere.
+Agents in `agents/` use the [Claude Code subagent format](https://code.claude.com/docs/en/sub-agents), and the plugin installs them only in Claude Code.
+For Codex, `codex/agents/` holds each one as a [custom agent](https://developers.openai.com/codex/subagents) TOML file, generated from `agents/`: copy it into `.codex/agents/` (project) or `~/.codex/agents/` (personal), since Codex plugins cannot install agents.
+Other tools define subagents their own way, so copy the prompt body if you want one elsewhere.
 
 ## Creating Skills
 
